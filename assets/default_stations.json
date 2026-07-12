@@ -1,0 +1,50 @@
+[
+  {
+    "id": "ndls",
+    "name": "New Delhi Railway Station (NDLS)",
+    "latitude": 28.6418,
+    "longitude": 77.2192
+  },
+  {
+    "id": "csmt",
+    "name": "Chhatrapati Shivaji Maharaj Terminus (CSMT), Mumbai",
+    "latitude": 18.9400,
+    "longitude": 72.8354
+  },
+  {
+    "id": "hwh",
+    "name": "Howrah Junction (HWH), Kolkata",
+    "latitude": 22.5836,
+    "longitude": 88.3414
+  },
+  {
+    "id": "mas",
+    "name": "Chennai Central (MAS)",
+    "latitude": 13.0827,
+    "longitude": 80.2707
+  },
+  {
+    "id": "sbc",
+    "name": "KSR Bengaluru City Junction (SBC)",
+    "latitude": 12.9782,
+    "longitude": 77.5696
+  },
+  {
+    "id": "sc",
+    "name": "Secunderabad Junction (SC), Hyderabad",
+    "latitude": 17.4339,
+    "longitude": 78.5019
+  },
+  {
+    "id": "pune",
+    "name": "Pune Junction (PUNE)",
+    "latitude": 18.5289,
+    "longitude": 73.8739
+  },
+  {
+    "id": "adi",
+    "name": "Ahmedabad Junction (ADI)",
+    "latitude": 23.0270,
+    "longitude": 72.6012
+  }
+]
