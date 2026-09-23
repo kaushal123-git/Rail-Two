@@ -195,7 +195,7 @@ class _AddStationScreenState extends State<AddStationScreen> {
                   label: const Text('Autofill Current Coordinates'),
                   onPressed: _autofillCurrentLocation,
                   style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: theme.colorScheme.secondary.withOpacity(0.5)),
+                    side: BorderSide(color: theme.colorScheme.secondary.withValues(alpha: 0.5)),
                     foregroundColor: theme.colorScheme.secondary,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     padding: const EdgeInsets.symmetric(vertical: 12),
@@ -210,7 +210,7 @@ class _AddStationScreenState extends State<AddStationScreen> {
                     decoration: BoxDecoration(
                       color: theme.colorScheme.surface,
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: theme.colorScheme.secondary.withOpacity(0.3), width: 1),
+                      border: Border.all(color: theme.colorScheme.secondary.withValues(alpha: 0.3), width: 1),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -267,7 +267,7 @@ class _AddStationScreenState extends State<AddStationScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: theme.colorScheme.primary,
                     foregroundColor: Colors.white,
-                    shadowColor: theme.colorScheme.primary.withOpacity(0.4),
+                    shadowColor: theme.colorScheme.primary.withValues(alpha: 0.4),
                     elevation: 8,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                     padding: const EdgeInsets.symmetric(vertical: 16),
@@ -306,15 +306,15 @@ class _AddStationScreenState extends State<AddStationScreen> {
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide(color: Colors.white.withOpacity(0.05), width: 1),
+        borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.05), width: 1),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide(color: theme.colorScheme.secondary.withOpacity(0.5), width: 1),
+        borderSide: BorderSide(color: theme.colorScheme.secondary.withValues(alpha: 0.5), width: 1),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide(color: theme.colorScheme.error.withOpacity(0.5), width: 1),
+        borderSide: BorderSide(color: theme.colorScheme.error.withValues(alpha: 0.5), width: 1),
       ),
     );
   }

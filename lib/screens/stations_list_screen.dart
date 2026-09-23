@@ -121,11 +121,11 @@ class _StationsListScreenState extends State<StationsListScreen> {
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide(color: Colors.white.withOpacity(0.05), width: 1),
+                  borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.05), width: 1),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide(color: theme.colorScheme.primary.withOpacity(0.5), width: 1),
+                  borderSide: BorderSide(color: theme.colorScheme.primary.withValues(alpha: 0.5), width: 1),
                 ),
               ),
             ),
@@ -138,7 +138,7 @@ class _StationsListScreenState extends State<StationsListScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.search_off_rounded, size: 64, color: Colors.white24),
+                        const Icon(Icons.search_off_rounded, size: 64, color: Colors.white24),
                         const SizedBox(height: 16),
                         Text(
                           'No stations found',
@@ -163,13 +163,13 @@ class _StationsListScreenState extends State<StationsListScreen> {
                           duration: const Duration(milliseconds: 300),
                           decoration: BoxDecoration(
                             color: isNearest 
-                                ? theme.colorScheme.primary.withOpacity(0.15) 
+                                ? theme.colorScheme.primary.withValues(alpha: 0.15) 
                                 : theme.cardTheme.color,
                             borderRadius: BorderRadius.circular(18),
                             border: Border.all(
                               color: isNearest
-                                  ? theme.colorScheme.secondary.withOpacity(0.5)
-                                  : Colors.white.withOpacity(0.05),
+                                  ? theme.colorScheme.secondary.withValues(alpha: 0.5)
+                                  : Colors.white.withValues(alpha: 0.05),
                               width: isNearest ? 1.5 : 1,
                             ),
                           ),
@@ -182,8 +182,8 @@ class _StationsListScreenState extends State<StationsListScreen> {
                                 height: 44,
                                 decoration: BoxDecoration(
                                   color: isNearest 
-                                      ? theme.colorScheme.secondary.withOpacity(0.2)
-                                      : Colors.white.withOpacity(0.05),
+                                      ? theme.colorScheme.secondary.withValues(alpha: 0.2)
+                                      : Colors.white.withValues(alpha: 0.05),
                                   shape: BoxShape.circle,
                                 ),
                                 child: Icon(
@@ -203,7 +203,7 @@ class _StationsListScreenState extends State<StationsListScreen> {
                                     Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                       decoration: BoxDecoration(
-                                        color: theme.colorScheme.secondary.withOpacity(0.2),
+                                        color: theme.colorScheme.secondary.withValues(alpha: 0.2),
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       child: Text(
@@ -226,7 +226,7 @@ class _StationsListScreenState extends State<StationsListScreen> {
                                       Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                         decoration: BoxDecoration(
-                                          color: Colors.black.withOpacity(0.2),
+                                          color: Colors.black.withValues(alpha: 0.2),
                                           borderRadius: BorderRadius.circular(6),
                                         ),
                                         child: Row(

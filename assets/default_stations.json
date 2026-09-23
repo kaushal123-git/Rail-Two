@@ -1,50 +1,152 @@
 [
   {
-    "id": "ndls",
-    "name": "New Delhi Railway Station (NDLS)",
-    "latitude": 28.6418,
-    "longitude": 77.2192
+    "id": "dahanu-road",
+    "name": "Dahanu Road",
+    "latitude": 19.991179019446427,
+    "longitude": 72.74330835010146
   },
   {
-    "id": "csmt",
-    "name": "Chhatrapati Shivaji Maharaj Terminus (CSMT), Mumbai",
-    "latitude": 18.9400,
-    "longitude": 72.8354
+    "id": "vangaon",
+    "name": "Vangaon",
+    "latitude": 19.883205084923734,
+    "longitude": 72.76354239560251
   },
   {
-    "id": "hwh",
-    "name": "Howrah Junction (HWH), Kolkata",
-    "latitude": 22.5836,
-    "longitude": 88.3414
+    "id": "boisar",
+    "name": "Boisar",
+    "latitude": 19.797715381561275,
+    "longitude": 72.76057672258503
   },
   {
-    "id": "mas",
-    "name": "Chennai Central (MAS)",
-    "latitude": 13.0827,
-    "longitude": 80.2707
+    "id": "palghar",
+    "name": "Palghar",
+    "latitude": 19.697861600064716,
+    "longitude": 72.77196093607478
   },
   {
-    "id": "sbc",
-    "name": "KSR Bengaluru City Junction (SBC)",
-    "latitude": 12.9782,
-    "longitude": 77.5696
+    "id": "kelve-road",
+    "name": "Kelve Road",
+    "latitude": 19.626721998197887,
+    "longitude": 72.79062289559548
   },
   {
-    "id": "sc",
-    "name": "Secunderabad Junction (SC), Hyderabad",
-    "latitude": 17.4339,
-    "longitude": 78.5019
+    "id": "saphale",
+    "name": "Saphale",
+    "latitude": 19.577276962605925,
+    "longitude": 72.82157936860919
   },
   {
-    "id": "pune",
-    "name": "Pune Junction (PUNE)",
-    "latitude": 18.5289,
-    "longitude": 73.8739
+    "id": "vaitarna",
+    "name": "Vaitarna",
+    "latitude": 19.518876143113893,
+    "longitude": 72.85025276675677
   },
   {
-    "id": "adi",
-    "name": "Ahmedabad Junction (ADI)",
-    "latitude": 23.0270,
-    "longitude": 72.6012
+    "id": "virar",
+    "name": "Virar",
+    "latitude": 19.45478712811886,
+    "longitude": 72.81198936508129
+  },
+  {
+    "id": "nalasopara",
+    "name": "Nalasopara",
+    "latitude": 19.41756125567338,
+    "longitude": 72.8187820763475
+  },
+  {
+    "id": "vasai-road",
+    "name": "Vasai Road",
+    "latitude": 19.38252550246553,
+    "longitude": 72.83258937840338
+  },
+  {
+    "id": "naigaon",
+    "name": "Naigaon",
+    "latitude": 19.35119367793264,
+    "longitude": 72.84621715078411
+  },
+  {
+    "id": "bhayandar",
+    "name": "Bhayandar",
+    "latitude": 19.3112829053513,
+    "longitude": 72.85249143325139
+  },
+  {
+    "id": "mira-road",
+    "name": "Mira Road",
+    "latitude": 19.280898533008,
+    "longitude": 72.8559964035437
+  },
+  {
+    "id": "dahisar",
+    "name": "Dahisar",
+    "latitude": 19.249497943995898,
+    "longitude": 72.85950042281918
+  },
+  {
+    "id": "borivali",
+    "name": "Borivali",
+    "latitude": 19.22902229914062,
+    "longitude": 72.85732482393026
+  },
+  {
+    "id": "kandivali",
+    "name": "Kandivali",
+    "latitude": 19.204113675716442,
+    "longitude": 72.85176737134705
+  },
+  {
+    "id": "malad",
+    "name": "Malad",
+    "latitude": 19.186931720435982,
+    "longitude": 72.84886916519646
+  },
+  {
+    "id": "andheri",
+    "name": "Andheri",
+    "latitude": 19.120013378713246,
+    "longitude": 72.84730455749789
+  },
+  {
+    "id": "bandra",
+    "name": "Bandra",
+    "latitude": 19.05481788579514,
+    "longitude": 72.84066614901407
+  },
+  {
+    "id": "dadar",
+    "name": "Dadar",
+    "latitude": 19.019255259419225,
+    "longitude": 72.84389557447689
+  },
+  {
+    "id": "mumbai-central",
+    "name": "Mumbai Central",
+    "latitude": 18.96966073619898,
+    "longitude": 72.81928608023445
+  },
+  {
+    "id": "grant-road",
+    "name": "Grant Road",
+    "latitude": 18.963269015620458,
+    "longitude": 72.8162427050303
+  },
+  {
+    "id": "charni-road",
+    "name": "Charni Road",
+    "latitude": 18.951734946039505,
+    "longitude": 72.81829343739103
+  },
+  {
+    "id": "marine-lines",
+    "name": "Marine Lines",
+    "latitude": 18.946004040833824,
+    "longitude": 72.82356704957182
+  },
+  {
+    "id": "churchgate",
+    "name": "Churchgate",
+    "latitude": 18.935213556853114,
+    "longitude": 72.82717139951959
   }
 ]

@@ -1,59 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/home_screen.dart';
+import 'screens/signin_screen.dart';
+import 'screens/login_screen.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const RailwayFinderApp());
+  
+  final prefs = await SharedPreferences.getInstance();
+  final isRegistered = prefs.getBool('isRegistered') ?? false;
+  final hasMpin = prefs.getString('mpin') != null;
+
+  Widget initialScreen = const SignInScreen();
+  if (isRegistered && hasMpin) {
+    initialScreen = const LoginScreen();
+  }
+
+  runApp(RailwayFinderApp(initialScreen: initialScreen));
 }
 
 class RailwayFinderApp extends StatelessWidget {
-  const RailwayFinderApp({super.key});
+  final Widget initialScreen;
+  
+  const RailwayFinderApp({super.key, required this.initialScreen});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Rail S2 Finder',
+      title: 'Rail App',
       debugShowCheckedModeBanner: false,
-      themeMode: ThemeMode.dark, // Default to dark mode for premium aesthetics
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        primaryColor: Colors.indigo,
-        scaffoldBackgroundColor: const Color(0xFF0F111E), // Ultra-deep blue/indigo-black
-        colorScheme: const ColorScheme.dark(
-          primary: Colors.indigoAccent,
-          secondary: Colors.tealAccent,
-          surface: Color(0xFF1E2235), // Dark indigo-card color
-          background: Color(0xFF0F111E),
-          error: Colors.redAccent,
+      themeMode: ThemeMode.light,
+      theme: ThemeData(
+        brightness: Brightness.light,
+        scaffoldBackgroundColor: const Color(0xFFF7F8FA),
+        primaryColor: const Color(0xFF0066FF),
+        colorScheme: const ColorScheme.light(
+          primary: Color(0xFF0066FF),
+          secondary: Color(0xFF1A2A4E),
         ),
         textTheme: const TextTheme(
-          displayLarge: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'Outfit'),
-          titleLarge: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.white, fontFamily: 'Outfit'),
-          bodyLarge: TextStyle(fontSize: 16, color: Color(0xFFC5C9E0)),
-          bodyMedium: TextStyle(fontSize: 14, color: Color(0xFF8F94B5)),
-        ),
-        cardTheme: CardThemeData(
-          color: const Color(0xFF1E2235),
-          elevation: 8,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-            side: BorderSide(color: Colors.white.withOpacity(0.08), width: 1),
-          ),
-        ),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF0F111E),
-          elevation: 0,
-          centerTitle: true,
-          titleTextStyle: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-            letterSpacing: 1.2,
-          ),
+          bodyLarge: TextStyle(color: Color(0xFF1E293B)),
+          bodyMedium: TextStyle(color: Color(0xFF475569)),
         ),
         useMaterial3: true,
       ),
-      home: const HomeScreen(),
+      home: initialScreen,
     );
   }
 }

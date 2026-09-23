@@ -12,6 +12,13 @@
 .swiftpm/
 migrate_working_dir/
 
+# Media Files
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.webm
+
 # IntelliJ related
 *.iml
 *.ipr
