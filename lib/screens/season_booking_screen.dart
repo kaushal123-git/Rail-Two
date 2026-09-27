@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import '../models/station.dart';
 import '../models/ticket.dart';
 import '../services/ticket_storage.dart';
+import '../services/location_service.dart';
+import '../services/s2_service.dart';
 import 'my_bookings_screen.dart';
+import 'payment_checkout_modal.dart';
 
 class SeasonBookingScreen extends StatefulWidget {
   final RailwayStation? initialFromStation;
@@ -20,11 +23,8 @@ class SeasonBookingScreen extends StatefulWidget {
 }
 
 class _SeasonBookingScreenState extends State<SeasonBookingScreen> {
-  // Mode selection
-  bool _isSeasonMode = true; // true = Season, false = Normal
   String _seasonType = 'ISSUE'; // ISSUE, RENEW
   String _bookingFor = 'Self'; // Self, Others
-  String _locationOption = 'Outside Station'; // Outside Station, At Station
 
   // Selected Stations
   RailwayStation _fromStation = RailwayStation(
@@ -79,14 +79,6 @@ class _SeasonBookingScreenState extends State<SeasonBookingScreen> {
   }
 
   int _calculateFare() {
-    if (!_isSeasonMode) {
-      // Normal journey fare
-      int base = 5;
-      if (_classType == 'FIRST') base += 45;
-      if (_trainType == 'AC EMU TRAIN') base += 45;
-      return base;
-    }
-
     // Season ticket fare logic matching reference video
     int fare = 215; // Base Monthly Second Class
     if (_classType == 'FIRST') fare = 670;
@@ -353,15 +345,35 @@ class _SeasonBookingScreenState extends State<SeasonBookingScreen> {
   }
 
   Future<void> _processProceedToPay() async {
-    if (_isSeasonMode && !_isIdAttached && _seasonType == 'ISSUE') {
+    if (!_isIdAttached && _seasonType == 'ISSUE') {
       _showAlertDialog(
         title: 'Identity Required',
-        message: 'Kindly enter your identity type and corresponding ID number to continue.',
+        message: 'Kindly attach your photo / identity card to continue.',
       );
       return;
     }
 
+    final fareAmount = _calculateFare().toDouble();
+
+    // Launch Multi-Gateway Payment Checkout Sheet
+    final paymentResult = await PaymentCheckoutModal.show(
+      context,
+      amount: fareAmount,
+      title: 'Season Ticket Pass',
+      description: '${_fromStation.name} ➔ ${_toStation.name} ($_duration)',
+    );
+
+    if (paymentResult == null || paymentResult['success'] != true) {
+      return; // User cancelled or payment failed
+    }
+
     // Generate ticket
+    final position = await LocationService.getCurrentLocation();
+    final double lat = position?.latitude ?? _fromStation.latitude;
+    final double lng = position?.longitude ?? _fromStation.longitude;
+    final s2Token = S2Service.getCellToken(lat, lng);
+    final s2Id = S2Service.getCellIdString(lat, lng);
+
     final randomDigits = Random().nextInt(900000) + 100000;
     final utsCode = 'XODHE${randomDigits}';
     final fromCode = _getStationCode(_fromStation.name);
@@ -373,12 +385,12 @@ class _SeasonBookingScreenState extends State<SeasonBookingScreen> {
       fromStationCode: fromCode,
       toStationName: _toStation.name,
       toStationCode: toCode,
-      ticketType: _isSeasonMode ? TicketType.season : TicketType.journey,
+      ticketType: TicketType.season,
       bookingType: _seasonType == 'RENEW' ? BookingType.renew : BookingType.issue,
       trainType: _trainType,
-      duration: _isSeasonMode ? _duration : 'SINGLE',
+      duration: _duration,
       classType: _classType,
-      fare: _calculateFare(),
+      fare: fareAmount.toInt(),
       bookingDate: DateTime.now(),
       status: TicketStatus.upcoming,
       distanceKm: 3.0,
@@ -387,6 +399,12 @@ class _SeasonBookingScreenState extends State<SeasonBookingScreen> {
       passengerIdType: 'PAN Card',
       passengerIdNumber: 'SENP******',
       passengerPhotoPath: _attachedPhotoPath,
+      s2CellToken: s2Token,
+      s2CellId: s2Id,
+      latitude: lat,
+      longitude: lng,
+      locationAccuracyMeters: position?.accuracy ?? 10.0,
+      geofenceVerified: true,
     );
 
     await TicketStorage.addTicket(newTicket);
@@ -395,7 +413,7 @@ class _SeasonBookingScreenState extends State<SeasonBookingScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Ticket Booked Successfully! UTS Code: $utsCode'),
+        content: Text('Season Pass Issued via ${paymentResult['payment_method']}! (UTS: $utsCode)'),
         backgroundColor: Colors.green,
       ),
     );
@@ -418,9 +436,18 @@ class _SeasonBookingScreenState extends State<SeasonBookingScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(
-          _isSeasonMode ? 'Unreserved Season Ticket' : 'Unreserved E-Ticket',
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Unreserved Season Ticket',
+              style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'E-Ticket Booking Procedure',
+              style: TextStyle(color: Colors.blue.shade100, fontSize: 12),
+            ),
+          ],
         ),
         actions: [
           IconButton(
@@ -432,97 +459,31 @@ class _SeasonBookingScreenState extends State<SeasonBookingScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Mode Segmented Control (Normal | Season)
-            Container(
-              color: const Color(0xFF0066FF),
-              padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => setState(() => _isSeasonMode = false),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          decoration: BoxDecoration(
-                            color: !_isSeasonMode ? Colors.white : Colors.transparent,
-                            borderRadius: BorderRadius.circular(24),
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            'Normal',
-                            style: TextStyle(
-                              color: !_isSeasonMode ? const Color(0xFF0066FF) : Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => setState(() => _isSeasonMode = true),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          decoration: BoxDecoration(
-                            color: _isSeasonMode ? Colors.white : Colors.transparent,
-                            borderRadius: BorderRadius.circular(24),
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            'Season',
-                            style: TextStyle(
-                              color: _isSeasonMode ? const Color(0xFF0066FF) : Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
+            // Route Header Card
+            _buildRouteHeader(),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Location Option (Outside Station | At Station)
+                    // Season Type (ISSUE | RENEW)
                     Row(
                       children: [
-                        _buildRadioChip('Outside Station', _locationOption == 'Outside Station', (v) => setState(() => _locationOption = v)),
-                        const SizedBox(width: 12),
-                        _buildRadioChip('At Station', _locationOption == 'At Station', (v) => setState(() => _locationOption = v)),
+                        const Text('Type: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                        const SizedBox(width: 8),
+                        _buildChoiceChip('ISSUE', _seasonType == 'ISSUE', (v) => setState(() => _seasonType = v)),
+                        const SizedBox(width: 8),
+                        _buildChoiceChip('RENEW', _seasonType == 'RENEW', (v) => setState(() => _seasonType = v)),
+                        const Spacer(),
+                        const Text('Booking For: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                        const SizedBox(width: 4),
+                        _buildChoiceChip('Self', _bookingFor == 'Self', (v) => setState(() => _bookingFor = v)),
                       ],
                     ),
                     const SizedBox(height: 16),
 
-                    if (_isSeasonMode) ...[
-                      // Season Type (ISSUE | RENEW)
-                      Row(
-                        children: [
-                          const Text('Type: ', style: TextStyle(fontWeight: FontWeight.bold)),
-                          const SizedBox(width: 8),
-                          _buildChoiceChip('ISSUE', _seasonType == 'ISSUE', (v) => setState(() => _seasonType = v)),
-                          const SizedBox(width: 8),
-                          _buildChoiceChip('RENEW', _seasonType == 'RENEW', (v) => setState(() => _seasonType = v)),
-                          const Spacer(),
-                          const Text('Booking For: ', style: TextStyle(fontWeight: FontWeight.bold)),
-                          const SizedBox(width: 4),
-                          _buildChoiceChip('Self', _bookingFor == 'Self', (v) => setState(() => _bookingFor = v)),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-
-                    if (_isSeasonMode && _seasonType == 'RENEW') ...[
+                    if (_seasonType == 'RENEW') ...[
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
@@ -550,24 +511,6 @@ class _SeasonBookingScreenState extends State<SeasonBookingScreen> {
                       const SizedBox(height: 16),
                     ],
 
-                    // Source Station Card
-                    _buildStationCard(
-                      label: 'From',
-                      stationName: '${_getStationCode(_fromStation.name)} - ${_fromStation.name}',
-                      onTap: () => _showStationPicker(isFrom: true),
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Destination Station Card
-                    _buildStationCard(
-                      label: 'To',
-                      stationName: _toStation.name.isEmpty
-                          ? 'Select Destination'
-                          : '${_getStationCode(_toStation.name)} - ${_toStation.name}',
-                      onTap: () => _showStationPicker(isFrom: false),
-                    ),
-                    const SizedBox(height: 20),
-
                     // Train Type Selection
                     const Text('Train Type', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
                     const SizedBox(height: 8),
@@ -582,26 +525,24 @@ class _SeasonBookingScreenState extends State<SeasonBookingScreen> {
                     ),
                     const SizedBox(height: 20),
 
-                    if (_isSeasonMode) ...[
-                      // Duration Selection
-                      const Text('Duration', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                      const SizedBox(height: 8),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: [
-                            _buildChoiceChip('MONTHLY', _duration == 'MONTHLY', (v) => setState(() => _duration = v)),
-                            const SizedBox(width: 8),
-                            _buildChoiceChip('QUARTERLY', _duration == 'QUARTERLY', (v) => setState(() => _duration = v)),
-                            const SizedBox(width: 8),
-                            _buildChoiceChip('HALF YEARLY', _duration == 'HALF YEARLY', (v) => setState(() => _duration = v)),
-                            const SizedBox(width: 8),
-                            _buildChoiceChip('YEARLY', _duration == 'YEARLY', (v) => setState(() => _duration = v)),
-                          ],
-                        ),
+                    // Duration Selection
+                    const Text('Duration', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                    const SizedBox(height: 8),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          _buildChoiceChip('MONTHLY', _duration == 'MONTHLY', (v) => setState(() => _duration = v)),
+                          const SizedBox(width: 8),
+                          _buildChoiceChip('QUARTERLY', _duration == 'QUARTERLY', (v) => setState(() => _duration = v)),
+                          const SizedBox(width: 8),
+                          _buildChoiceChip('HALF YEARLY', _duration == 'HALF YEARLY', (v) => setState(() => _duration = v)),
+                          const SizedBox(width: 8),
+                          _buildChoiceChip('YEARLY', _duration == 'YEARLY', (v) => setState(() => _duration = v)),
+                        ],
                       ),
-                      const SizedBox(height: 20),
-                    ],
+                    ),
+                    const SizedBox(height: 20),
 
                     // Class Selection
                     const Text('Class', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
@@ -740,59 +681,52 @@ class _SeasonBookingScreenState extends State<SeasonBookingScreen> {
     );
   }
 
-  Widget _buildStationCard({required String label, required String stationName, required VoidCallback onTap}) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.blue.shade100),
-        ),
-        child: Row(
-          children: [
-            Text('$label: ', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                stationName,
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF1E293B)),
-                overflow: TextOverflow.ellipsis,
+  Widget _buildRouteHeader() {
+    String fromCode = _getStationCode(_fromStation.name);
+    String toCode = _getStationCode(_toStation.name);
+
+    return Container(
+      color: const Color(0xFFF8FAFC),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: InkWell(
+              onTap: () => _showStationPicker(isFrom: true),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _fromStation.name.toUpperCase(),
+                    style: const TextStyle(fontWeight: FontWeight.w700, color: Color(0xFF1E293B), fontSize: 15),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    fromCode,
+                    style: const TextStyle(color: Color(0xFF64748B), fontSize: 13),
+                  ),
+                ],
               ),
             ),
-            const Icon(Icons.arrow_forward_ios, size: 16, color: Color(0xFF0066FF)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildRadioChip(String label, bool isSelected, Function(String) onTap) {
-    return GestureDetector(
-      onTap: () => onTap(label),
-      child: Row(
-        children: [
-          Icon(
-            isSelected ? Icons.info : Icons.info_outline,
-            size: 18,
-            color: isSelected ? const Color(0xFF0066FF) : Colors.grey,
           ),
-          const SizedBox(width: 4),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: isSelected ? Colors.blue.shade50 : Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: isSelected ? const Color(0xFF0066FF) : Colors.grey.shade300),
-            ),
-            child: Text(
-              label,
-              style: TextStyle(
-                color: isSelected ? const Color(0xFF0066FF) : Colors.grey.shade700,
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
+          const Icon(Icons.arrow_forward_rounded, color: Color(0xFF0066FF)),
+          Expanded(
+            child: InkWell(
+              onTap: () => _showStationPicker(isFrom: false),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    _toStation.name.toUpperCase(),
+                    style: const TextStyle(fontWeight: FontWeight.w700, color: Color(0xFF1E293B), fontSize: 15),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    toCode,
+                    style: const TextStyle(color: Color(0xFF64748B), fontSize: 13),
+                  ),
+                ],
               ),
             ),
           ),

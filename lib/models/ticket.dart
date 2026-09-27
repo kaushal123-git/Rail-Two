@@ -27,6 +27,15 @@ class BookedTicket {
   final String passengerIdNumber;
   final String? passengerPhotoPath;
 
+  // RO1: Spatial Indexing & Geofence Verification Metadata
+  final String? s2CellToken;
+  final String? s2CellId;
+  final double? latitude;
+  final double? longitude;
+  final double? locationAccuracyMeters;
+  final bool geofenceVerified;
+  final bool offlineCreated;
+
   BookedTicket({
     required this.id,
     required this.fromStationName,
@@ -47,6 +56,13 @@ class BookedTicket {
     required this.passengerIdType,
     required this.passengerIdNumber,
     this.passengerPhotoPath,
+    this.s2CellToken,
+    this.s2CellId,
+    this.latitude,
+    this.longitude,
+    this.locationAccuracyMeters,
+    this.geofenceVerified = true,
+    this.offlineCreated = false,
   });
 
   Map<String, dynamic> toJson() {
@@ -70,6 +86,13 @@ class BookedTicket {
       'passengerIdType': passengerIdType,
       'passengerIdNumber': passengerIdNumber,
       'passengerPhotoPath': passengerPhotoPath,
+      's2CellToken': s2CellToken,
+      's2CellId': s2CellId,
+      'latitude': latitude,
+      'longitude': longitude,
+      'locationAccuracyMeters': locationAccuracyMeters,
+      'geofenceVerified': geofenceVerified,
+      'offlineCreated': offlineCreated,
     };
   }
 
@@ -103,6 +126,13 @@ class BookedTicket {
       passengerIdType: json['passengerIdType'] as String? ?? 'PAN Card',
       passengerIdNumber: json['passengerIdNumber'] as String? ?? 'SENP******',
       passengerPhotoPath: json['passengerPhotoPath'] as String?,
+      s2CellToken: json['s2CellToken'] as String?,
+      s2CellId: json['s2CellId'] as String?,
+      latitude: (json['latitude'] as num?)?.toDouble(),
+      longitude: (json['longitude'] as num?)?.toDouble(),
+      locationAccuracyMeters: (json['locationAccuracyMeters'] as num?)?.toDouble(),
+      geofenceVerified: json['geofenceVerified'] as bool? ?? true,
+      offlineCreated: json['offlineCreated'] as bool? ?? false,
     );
   }
 }

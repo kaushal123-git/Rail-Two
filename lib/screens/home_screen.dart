@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import '../models/station.dart';
 import '../services/station_storage.dart';
 import '../services/location_service.dart';
+import '../services/auth_service.dart';
+import '../widgets/mobile_qr_scanner_modal.dart';
 import 'package:geolocator/geolocator.dart';
 import 'booking_screen.dart';
 import 'season_booking_screen.dart';
 import 'my_bookings_screen.dart';
+import 'research_validation_screen.dart';
+import 'signin_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,6 +19,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  UserModel? _currentUser;
   int _ticketTypeIndex = 0; // 0 for Normal, 1 for Season
   int _stationTypeIndex = 0; // 0 for Outside Station, 1 for At Station
 
@@ -33,7 +38,17 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    _loadUserData();
     _loadStations();
+  }
+
+  Future<void> _loadUserData() async {
+    final user = await AuthService.getCurrentUser();
+    if (mounted) {
+      setState(() {
+        _currentUser = user;
+      });
+    }
   }
 
   Future<void> _loadStations() async {
@@ -46,7 +61,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _determineNearestStations() async {
     final position = await LocationService.getCurrentLocation();
-    if (position == null) return;
 
     List<RailwayStation> sorted = List.from(_stations);
     sorted.sort((a, b) {
@@ -60,14 +74,368 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _currentPosition = position;
       _nearestStations = top3;
-      if (_fromStation == null && top3.isNotEmpty && _stationTypeIndex == 0) {
-        _fromStation = top3.first;
-        if (_fromController != null) {
-          _fromController!.text = top3.first.name;
+      if (top3.isNotEmpty && _stationTypeIndex == 0) {
+        if (_fromStation == null || !top3.any((s) => s.id == _fromStation!.id)) {
+          _fromStation = top3.first;
+          if (_fromController != null) {
+            _fromController!.text = top3.first.name;
+          }
         }
       }
     });
   }
+
+  void _showOutsideStationLimitDialog() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        final currentStationName = _nearestStations.isNotEmpty ? _nearestStations.first.name : 'Unknown';
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.amber.shade100,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(Icons.warning_amber_rounded, color: Colors.amber.shade900, size: 26),
+                  ),
+                  const SizedBox(width: 12),
+                  const Expanded(
+                    child: Text(
+                      'Outside Station Range Limit Exceeded',
+                      style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              RichText(
+                text: TextSpan(
+                  style: const TextStyle(fontSize: 13, color: Colors.black87, height: 1.4),
+                  children: [
+                    const TextSpan(text: 'Selected station '),
+                    TextSpan(
+                      text: _fromStation?.name ?? '',
+                      style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent),
+                    ),
+                    const TextSpan(text: ' is beyond your 3 nearest stations.\n\nIn '),
+                    const TextSpan(text: 'Outside Station Mode', style: TextStyle(fontWeight: FontWeight.bold)),
+                    const TextSpan(text: ', UTS rules allow ticket booking ONLY from your '),
+                    const TextSpan(text: '3 nearest stations', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF0066FF))),
+                    TextSpan(text: ' relative to your current location (nearest to $currentStationName):'),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 14),
+              Column(
+                children: _nearestStations.map((st) {
+                  final distStr = _getStationDistanceText(st);
+                  final isSelected = _fromStation?.id == st.id;
+
+                  return Container(
+                    margin: const EdgeInsets.symmetric(vertical: 4),
+                    decoration: BoxDecoration(
+                      color: isSelected ? const Color(0xFFEBF3FF) : const Color(0xFFF8FAFC),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: isSelected ? const Color(0xFF0066FF) : Colors.grey.shade300,
+                        width: isSelected ? 1.5 : 1,
+                      ),
+                    ),
+                    child: ListTile(
+                      dense: true,
+                      leading: const Icon(Icons.train_rounded, color: Color(0xFF0066FF)),
+                      title: Text(
+                        st.name,
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                      ),
+                      subtitle: Text(
+                        distStr.isNotEmpty ? '$distStr away from your current location' : 'Nearest Station',
+                        style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                      ),
+                      trailing: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF0066FF),
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _fromStation = st;
+                            if (_fromController != null) {
+                              _fromController!.text = st.name;
+                            }
+                          });
+                          Navigator.pop(context);
+                        },
+                        child: const Text('Select Station'),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 14),
+              OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 44),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                icon: const Icon(Icons.my_location_rounded, color: Color(0xFF0066FF)),
+                label: const Text('Fix / Change Your Location Preset'),
+                onPressed: () {
+                  Navigator.pop(context);
+                  _showLocationOverrideDialog();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _showLocationOverrideDialog() async {
+    final customName = await LocationService.getCustomLocationName();
+
+    if (!mounted) return;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Row(
+                    children: [
+                      Icon(Icons.my_location_rounded, color: Color(0xFF0066FF)),
+                      SizedBox(width: 8),
+                      Text(
+                        'Set / Fix Your Current Location',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+              if (customName != null) ...[
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.amber.shade50,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.amber.shade300),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.info_outline, size: 16, color: Colors.amber.shade900),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Active Location Override: $customName',
+                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.amber.shade900),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+              ],
+              const Text(
+                'Select your location to calculate the 3 nearest station recommendations:',
+                style: TextStyle(fontSize: 13, color: Colors.black87),
+              ),
+              const SizedBox(height: 14),
+
+              // Re-detect Device / Browser GPS Option
+              InkWell(
+                onTap: () async {
+                  await LocationService.clearCustomLocation();
+                  final pos = await LocationService.forceFetchDeviceGps();
+                  if (context.mounted) Navigator.pop(context);
+                  setState(() {
+                    _fromStation = null;
+                  });
+                  await _determineNearestStations();
+
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        backgroundColor: const Color(0xFF0066FF),
+                        content: Text('Location updated: ${_currentUser?.name ?? "User"} (${pos.latitude.toStringAsFixed(2)}, ${pos.longitude.toStringAsFixed(2)})'),
+                      ),
+                    );
+                  }
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFEBF3FF),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: const Color(0xFF0066FF), width: 1.5),
+                  ),
+                  child: const Row(
+                    children: [
+                      Icon(Icons.gps_fixed, color: Color(0xFF0066FF), size: 22),
+                      SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '📡 Use Real Device / Browser GPS',
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Color(0xFF0066FF)),
+                            ),
+                            Text(
+                              'Clears override & uses live device location.',
+                              style: TextStyle(fontSize: 11, color: Colors.black54),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(Icons.chevron_right, color: Color(0xFF0066FF)),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              const Text('Popular Station Location Presets:', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black54)),
+              const SizedBox(height: 8),
+
+              // Presets Grid / List
+              _buildPresetLocationTile(
+                name: 'Vasai Road (BSR)',
+                subtitle: 'Suggests Vasai Road, Naigaon & Nalasopara',
+                lat: 19.3825255,
+                lng: 72.8325893,
+              ),
+              const SizedBox(height: 6),
+              _buildPresetLocationTile(
+                name: 'Borivali (BVI)',
+                subtitle: 'Suggests Borivali, Kandivali & Dahisar',
+                lat: 19.2290222,
+                lng: 72.8573248,
+              ),
+              const SizedBox(height: 6),
+              _buildPresetLocationTile(
+                name: 'Andheri (ADH)',
+                subtitle: 'Suggests Andheri, Malad & Bandra',
+                lat: 19.1200133,
+                lng: 72.8473045,
+              ),
+              const SizedBox(height: 6),
+              _buildPresetLocationTile(
+                name: 'Dadar (DDR)',
+                subtitle: 'Suggests Dadar, Bandra & Mumbai Central',
+                lat: 19.0192552,
+                lng: 72.8438955,
+              ),
+              const SizedBox(height: 14),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildPresetLocationTile({
+    required String name,
+    required String subtitle,
+    required double lat,
+    required double lng,
+  }) {
+    return InkWell(
+      onTap: () async {
+        await LocationService.setCustomLocation(lat, lng, name: name);
+        if (context.mounted) Navigator.pop(context);
+        setState(() {
+          _fromStation = null;
+        });
+        await _determineNearestStations();
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: const Color(0xFF2E7D32),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              content: Row(
+                children: [
+                  const Icon(Icons.check_circle, color: Colors.white),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      '✓ Location set to $name! 3 nearest stations updated.',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF8FAFC),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey.shade300),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.location_on_rounded, color: Color(0xFF0066FF), size: 20),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Color(0xFF1E293B))),
+                  Text(subtitle, style: TextStyle(fontSize: 11, color: Colors.grey.shade600)),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right, size: 18, color: Colors.grey),
+          ],
+        ),
+      ),
+    );
+  }
+
 
   String _getStationDistanceText(RailwayStation station) {
     if (_currentPosition == null) return '';
@@ -255,152 +623,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showQrScannerDialog() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        height: MediaQuery.of(context).size.height * 0.75,
-        decoration: const BoxDecoration(
-          color: Color(0xFF1E293B),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-        ),
-        child: Column(
-          children: [
-            const SizedBox(height: 12),
-            Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade600,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Scan Station QR Code',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                      ),
-                      SizedBox(height: 2),
-                      Text(
-                        'Align Station QR code inside frame',
-                        style: TextStyle(fontSize: 12, color: Colors.grey),
-                      ),
-                    ],
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close, color: Colors.white),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            
-            // Simulated Camera Frame
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.black45,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: const Color(0xFF0066FF), width: 2),
-                  ),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      const Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.qr_code_scanner, size: 80, color: Color(0xFF0066FF)),
-                          SizedBox(height: 12),
-                          Text(
-                            'Point Camera at Station QR Code',
-                            style: TextStyle(color: Colors.white70, fontSize: 13),
-                          ),
-                        ],
-                      ),
-                      Positioned(
-                        bottom: 16,
-                        left: 16,
-                        right: 16,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.6),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.radar, color: Colors.cyanAccent, size: 16),
-                              SizedBox(width: 8),
-                              Text(
-                                '500 m Geofence GPS Active',
-                                style: TextStyle(color: Colors.cyanAccent, fontSize: 12, fontWeight: FontWeight.w600),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            
-            // Quick station scan buttons for easy testing
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Tap a Station to Simulate QR Scan:',
-                  style: TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            SizedBox(
-              height: 48,
-              child: ListView.separated(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                scrollDirection: Axis.horizontal,
-                itemCount: _stations.length,
-                separatorBuilder: (context, index) => const SizedBox(width: 8),
-                itemBuilder: (context, index) {
-                  final station = _stations[index];
-                  return ActionChip(
-                    avatar: const Icon(Icons.qr_code, size: 16, color: Color(0xFF0066FF)),
-                    label: Text(
-                      station.name,
-                      style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
-                    ),
-                    backgroundColor: const Color(0xFF334155),
-                    side: BorderSide.none,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    onPressed: () {
-                      Navigator.pop(context);
-                      _verifyAndSetScannedStation(station);
-                    },
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 20),
-          ],
-        ),
-      ),
+    MobileQrScannerModal.show(
+      context,
+      onStationScanned: (station, distanceKm) {
+        _verifyAndSetScannedStation(station);
+      },
     );
   }
 
@@ -438,16 +665,6 @@ class _HomeScreenState extends State<HomeScreen> {
               context,
               MaterialPageRoute(builder: (context) => const MyBookingsScreen()),
             );
-          } else if (index == 2) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SeasonBookingScreen(
-                  initialFromStation: _fromStation,
-                  initialToStation: _toStation,
-                ),
-              ),
-            );
           }
         },
         items: const [
@@ -459,22 +676,38 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icon(Icons.confirmation_number),
             label: 'My Bookings',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.card_membership),
-            label: 'Season Booking',
-          ),
         ],
       ),
     );
   }
 
   Widget _buildAppBar() {
+    final userName = _currentUser?.name ?? 'Commuter';
+    final userPhone = _currentUser?.phone ?? '';
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const SizedBox(width: 32),
+          IconButton(
+            tooltip: 'RO1-RO4 Research Dashboard',
+            icon: Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade50,
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.blue.shade200),
+              ),
+              child: const Icon(Icons.analytics_rounded, color: Color(0xFF0066FF), size: 20),
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ResearchValidationScreen()),
+              );
+            },
+          ),
           const Text(
             'Unreserved E-Ticket',
             style: TextStyle(
@@ -483,15 +716,61 @@ class _HomeScreenState extends State<HomeScreen> {
               color: Color(0xFF1A2A4E),
             ),
           ),
-          Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.blue.shade100, width: 1.5),
+          PopupMenuButton<String>(
+            tooltip: 'Account Profile',
+            offset: const Offset(0, 40),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            icon: Container(
+              padding: const EdgeInsets.all(4.0),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.blue.shade200, width: 1.5),
+                color: Colors.blue.shade50,
+              ),
+              child: const Icon(Icons.person, color: Color(0xFF0066FF), size: 20),
             ),
-            child: const Padding(
-              padding: EdgeInsets.all(4.0),
-              child: Icon(Icons.close, color: Color(0xFF0066FF), size: 20),
-            ),
+            onSelected: (value) async {
+              if (value == 'logout') {
+                await AuthService.logout();
+                if (mounted) {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => const SignInScreen()),
+                    (route) => false,
+                  );
+                }
+              }
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem<String>(
+                enabled: false,
+                child: Row(
+                  children: [
+                    const Icon(Icons.account_circle, color: Color(0xFF0066FF), size: 28),
+                    const SizedBox(width: 10),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(userName, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87, fontSize: 14)),
+                        if (userPhone.isNotEmpty)
+                          Text('+91 $userPhone', style: TextStyle(color: Colors.grey.shade600, fontSize: 11)),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const PopupMenuDivider(),
+              const PopupMenuItem<String>(
+                value: 'logout',
+                child: Row(
+                  children: [
+                    Icon(Icons.logout_rounded, color: Colors.redAccent, size: 20),
+                    SizedBox(width: 10),
+                    Text('Logout Session', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold, fontSize: 14)),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -517,6 +796,12 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           _buildTicketTypeToggle(),
           const SizedBox(height: 16),
+
+          if (_ticketTypeIndex == 1) ...[
+            _buildSeasonPassBanner(),
+            const SizedBox(height: 16),
+          ],
+
           _buildStationTypeToggle(),
           const SizedBox(height: 16),
           
@@ -563,15 +848,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   if (_nearestStations.isNotEmpty &&
                       !_nearestStations.any((s) => s.id == _fromStation!.id)) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        backgroundColor: Colors.amber.shade900,
-                        content: const Text(
-                          'Outside Station mode is limited to the 3 nearest stations. Please choose one of the suggested stations.',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    );
+                    _showOutsideStationLimitDialog();
                     return;
                   }
                 }
@@ -649,9 +926,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 elevation: 0,
               ),
-              child: const Text(
-                'Proceed To Book',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              child: Text(
+                _ticketTypeIndex == 1 ? 'Proceed To Book Season Pass' : 'Proceed To Book Normal Ticket',
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
           ),
@@ -699,6 +976,28 @@ class _HomeScreenState extends State<HomeScreen> {
               style: TextStyle(fontSize: 12, color: Colors.blue.shade900, fontWeight: FontWeight.w600),
             ),
           ),
+          InkWell(
+            onTap: _showLocationOverrideDialog,
+            borderRadius: BorderRadius.circular(20),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: const Color(0xFF0066FF),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.edit_location_alt_rounded, color: Colors.white, size: 13),
+                  SizedBox(width: 4),
+                  Text(
+                    'Fix Location',
+                    style: TextStyle(fontSize: 11, color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -727,6 +1026,29 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget _buildSeasonPassBanner() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.indigo.shade50,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.indigo.shade200),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.card_membership, color: Colors.indigo.shade800, size: 20),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              'Season Pass Mode: Issue or Renew Monthly, Quarterly, Half-Yearly & Yearly Suburban Railway Passes.',
+              style: TextStyle(fontSize: 12, color: Colors.indigo.shade900, fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildNearestStationsSuggestions() {
     if (_nearestStations.isEmpty) return const SizedBox.shrink();
 
@@ -744,15 +1066,26 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Color(0xFF1E293B),
               ),
             ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(
-                color: Colors.blue.shade100,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                'Outside Station Only',
-                style: TextStyle(fontSize: 10, color: Colors.blue.shade900, fontWeight: FontWeight.bold),
+            InkWell(
+              onTap: _showLocationOverrideDialog,
+              borderRadius: BorderRadius.circular(10),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade100,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.my_location_rounded, size: 12, color: Colors.blue.shade900),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Fix / Set Location',
+                      style: TextStyle(fontSize: 10, color: Colors.blue.shade900, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -861,15 +1194,6 @@ class _HomeScreenState extends State<HomeScreen> {
             child: GestureDetector(
               onTap: () {
                 setState(() => _ticketTypeIndex = 1);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SeasonBookingScreen(
-                      initialFromStation: _fromStation,
-                      initialToStation: _toStation,
-                    ),
-                  ),
-                );
               },
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 12),
@@ -1120,14 +1444,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Autocomplete<RailwayStation>(
                       displayStringForOption: (station) => station.name,
                       optionsBuilder: (TextEditingValue textEditingValue) {
-                        Iterable<RailwayStation> options = _nearestStations.isNotEmpty
-                            ? _nearestStations
-                            : _stations.take(3);
-                        if (textEditingValue.text.isNotEmpty) {
-                          options = options.where((station) {
-                            return station.name.toLowerCase().contains(textEditingValue.text.toLowerCase());
-                          });
-                        }
+                        Iterable<RailwayStation> options = textEditingValue.text.isEmpty
+                            ? (_nearestStations.isNotEmpty ? _nearestStations : _stations)
+                            : _stations.where((station) {
+                                return station.name.toLowerCase().contains(textEditingValue.text.toLowerCase());
+                              });
                         if (_toStation != null) {
                           options = options.where((s) => s.id != _toStation!.id);
                         }
@@ -1137,6 +1458,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         setState(() {
                           _fromStation = selection;
                         });
+                        if (_stationTypeIndex == 0 &&
+                            _nearestStations.isNotEmpty &&
+                            !_nearestStations.any((s) => s.id == selection.id)) {
+                          _showOutsideStationLimitDialog();
+                        }
                       },
                       fieldViewBuilder: (context, textEditingController, focusNode, onFieldSubmitted) {
                         if (_fromController != textEditingController) {
@@ -1146,7 +1472,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           controller: textEditingController,
                           focusNode: focusNode,
                           decoration: InputDecoration(
-                            hintText: 'Select Source (3 Nearest Stations)',
+                            hintText: 'Select Source Station (Search any station)',
                             hintStyle: TextStyle(
                               color: Colors.grey.shade400,
                               fontWeight: FontWeight.w500,

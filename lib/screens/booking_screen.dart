@@ -1,5 +1,12 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import '../models/station.dart';
+import '../models/ticket.dart';
+import '../services/ticket_storage.dart';
+import '../services/location_service.dart';
+import '../services/s2_service.dart';
+import 'my_bookings_screen.dart';
+import 'payment_checkout_modal.dart';
 
 class BookingScreen extends StatefulWidget {
   final RailwayStation fromStation;
@@ -357,9 +364,73 @@ class _BookingScreenState extends State<BookingScreen> {
           padding: const EdgeInsets.all(16.0),
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
+              final fareAmount = _calculateFare().toDouble();
+
+              // Launch Multi-Gateway Payment Checkout Modal
+              final paymentResult = await PaymentCheckoutModal.show(
+                context,
+                amount: fareAmount,
+                title: 'Rail Ticket Payment',
+                description: '${widget.fromStation.name} ➔ ${widget.toStation.name}',
+              );
+
+              if (paymentResult == null || paymentResult['success'] != true) {
+                return; // User cancelled or payment failed
+              }
+
+              final position = await LocationService.getCurrentLocation();
+              final double lat = position?.latitude ?? widget.fromStation.latitude;
+              final double lng = position?.longitude ?? widget.fromStation.longitude;
+              final s2Token = S2Service.getCellToken(lat, lng);
+              final s2Id = S2Service.getCellIdString(lat, lng);
+
+              final randomDigits = Random().nextInt(900000) + 100000;
+              final utsCode = 'XODHE${randomDigits}';
+              final fromCode = _getStationCode(widget.fromStation.id);
+              final toCode = _getStationCode(widget.toStation.id);
+
+              final newTicket = BookedTicket(
+                id: utsCode,
+                fromStationName: widget.fromStation.name,
+                fromStationCode: fromCode,
+                toStationName: widget.toStation.name,
+                toStationCode: toCode,
+                ticketType: _ticketType == 'RETURN' ? TicketType.returnTicket : TicketType.journey,
+                bookingType: BookingType.issue,
+                trainType: _trainType,
+                duration: _ticketType == 'RETURN' ? 'RETURN' : 'SINGLE',
+                classType: _classType,
+                fare: fareAmount.toInt(),
+                bookingDate: DateTime.now(),
+                status: TicketStatus.upcoming,
+                distanceKm: (widget.stationDifference * 3.0) > 0 ? (widget.stationDifference * 3.0) : 3.0,
+                passengerName: 'Rakhi sinha',
+                passengerAddress: '006-yashwant sneh, YK Nagar NX Virar West, Thane, India',
+                passengerIdType: 'PAN Card',
+                passengerIdNumber: 'SENP******',
+                s2CellToken: s2Token,
+                s2CellId: s2Id,
+                latitude: lat,
+                longitude: lng,
+                locationAccuracyMeters: position?.accuracy ?? 10.0,
+                geofenceVerified: true,
+              );
+
+              await TicketStorage.addTicket(newTicket);
+
+              if (!mounted) return;
+
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Ticket Booked Successfully!')),
+                SnackBar(
+                  content: Text('Payment Successful via ${paymentResult['payment_method']}! Ticket Issued (UTS: $utsCode)'),
+                  backgroundColor: Colors.green,
+                ),
+              );
+
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const MyBookingsScreen()),
               );
             },
             style: ElevatedButton.styleFrom(

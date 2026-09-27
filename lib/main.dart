@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'screens/home_screen.dart';
+import 'services/auth_service.dart';
 import 'screens/signin_screen.dart';
 import 'screens/login_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  final prefs = await SharedPreferences.getInstance();
-  final isRegistered = prefs.getBool('isRegistered') ?? false;
-  final hasMpin = prefs.getString('mpin') != null;
+  final registered = await AuthService.isRegistered();
 
   Widget initialScreen = const SignInScreen();
-  if (isRegistered && hasMpin) {
+  if (registered) {
     initialScreen = const LoginScreen();
   }
 
