@@ -1,152 +1,332 @@
 [
   {
-    "id": "dahanu-road",
-    "name": "Dahanu Road",
-    "latitude": 19.991179019446427,
-    "longitude": 72.74330835010146
-  },
-  {
-    "id": "vangaon",
-    "name": "Vangaon",
-    "latitude": 19.883205084923734,
-    "longitude": 72.76354239560251
-  },
-  {
-    "id": "boisar",
-    "name": "Boisar",
-    "latitude": 19.797715381561275,
-    "longitude": 72.76057672258503
-  },
-  {
-    "id": "palghar",
-    "name": "Palghar",
-    "latitude": 19.697861600064716,
-    "longitude": 72.77196093607478
-  },
-  {
-    "id": "kelve-road",
-    "name": "Kelve Road",
-    "latitude": 19.626721998197887,
-    "longitude": 72.79062289559548
-  },
-  {
-    "id": "saphale",
-    "name": "Saphale",
-    "latitude": 19.577276962605925,
-    "longitude": 72.82157936860919
-  },
-  {
-    "id": "vaitarna",
-    "name": "Vaitarna",
-    "latitude": 19.518876143113893,
-    "longitude": 72.85025276675677
-  },
-  {
-    "id": "virar",
-    "name": "Virar",
-    "latitude": 19.45478712811886,
-    "longitude": 72.81198936508129
-  },
-  {
-    "id": "nalasopara",
-    "name": "Nalasopara",
-    "latitude": 19.41756125567338,
-    "longitude": 72.8187820763475
-  },
-  {
-    "id": "vasai-road",
-    "name": "Vasai Road",
-    "latitude": 19.38252550246553,
-    "longitude": 72.83258937840338
-  },
-  {
-    "id": "naigaon",
-    "name": "Naigaon",
-    "latitude": 19.35119367793264,
-    "longitude": 72.84621715078411
-  },
-  {
-    "id": "bhayandar",
-    "name": "Bhayandar",
-    "latitude": 19.3112829053513,
-    "longitude": 72.85249143325139
-  },
-  {
-    "id": "mira-road",
-    "name": "Mira Road",
-    "latitude": 19.280898533008,
-    "longitude": 72.8559964035437
-  },
-  {
-    "id": "dahisar",
-    "name": "Dahisar",
-    "latitude": 19.249497943995898,
-    "longitude": 72.85950042281918
-  },
-  {
-    "id": "borivali",
-    "name": "Borivali",
-    "latitude": 19.22902229914062,
-    "longitude": 72.85732482393026
-  },
-  {
-    "id": "kandivali",
-    "name": "Kandivali",
-    "latitude": 19.204113675716442,
-    "longitude": 72.85176737134705
-  },
-  {
-    "id": "malad",
-    "name": "Malad",
-    "latitude": 19.186931720435982,
-    "longitude": 72.84886916519646
-  },
-  {
-    "id": "andheri",
-    "name": "Andheri",
-    "latitude": 19.120013378713246,
-    "longitude": 72.84730455749789
-  },
-  {
-    "id": "bandra",
-    "name": "Bandra",
-    "latitude": 19.05481788579514,
-    "longitude": 72.84066614901407
-  },
-  {
-    "id": "dadar",
-    "name": "Dadar",
-    "latitude": 19.019255259419225,
-    "longitude": 72.84389557447689
-  },
-  {
-    "id": "mumbai-central",
-    "name": "Mumbai Central",
-    "latitude": 18.96966073619898,
-    "longitude": 72.81928608023445
-  },
-  {
-    "id": "grant-road",
-    "name": "Grant Road",
-    "latitude": 18.963269015620458,
-    "longitude": 72.8162427050303
-  },
-  {
-    "id": "charni-road",
-    "name": "Charni Road",
-    "latitude": 18.951734946039505,
-    "longitude": 72.81829343739103
+    "id": "churchgate",
+    "name": "Churchgate",
+    "latitude": 18.935213,
+    "longitude": 72.827171,
+    "line": "Western",
+    "isJunction": false,
+    "crowdLevel": "High",
+    "platformsCount": 4
   },
   {
     "id": "marine-lines",
     "name": "Marine Lines",
-    "latitude": 18.946004040833824,
-    "longitude": 72.82356704957182
+    "latitude": 18.946004,
+    "longitude": 72.823567,
+    "line": "Western",
+    "isJunction": false,
+    "crowdLevel": "Moderate",
+    "platformsCount": 4
   },
   {
-    "id": "churchgate",
-    "name": "Churchgate",
-    "latitude": 18.935213556853114,
-    "longitude": 72.82717139951959
+    "id": "charni-road",
+    "name": "Charni Road",
+    "latitude": 18.951734,
+    "longitude": 72.818293,
+    "line": "Western",
+    "isJunction": false,
+    "crowdLevel": "Moderate",
+    "platformsCount": 4
+  },
+  {
+    "id": "grant-road",
+    "name": "Grant Road",
+    "latitude": 18.963269,
+    "longitude": 72.816242,
+    "line": "Western",
+    "isJunction": false,
+    "crowdLevel": "Moderate",
+    "platformsCount": 4
+  },
+  {
+    "id": "mumbai-central",
+    "name": "Mumbai Central",
+    "latitude": 18.969660,
+    "longitude": 72.819286,
+    "line": "Western",
+    "isJunction": true,
+    "crowdLevel": "High",
+    "platformsCount": 5
+  },
+  {
+    "id": "mahalaxmi",
+    "name": "Mahalaxmi",
+    "latitude": 18.982700,
+    "longitude": 72.824200,
+    "line": "Western",
+    "isJunction": false,
+    "crowdLevel": "Moderate",
+    "platformsCount": 3
+  },
+  {
+    "id": "lower-parel",
+    "name": "Lower Parel",
+    "latitude": 18.995800,
+    "longitude": 72.831000,
+    "line": "Western",
+    "isJunction": false,
+    "crowdLevel": "High",
+    "platformsCount": 3
+  },
+  {
+    "id": "dadar",
+    "name": "Dadar",
+    "latitude": 19.019255,
+    "longitude": 72.843895,
+    "line": "Western",
+    "isJunction": true,
+    "crowdLevel": "Very High",
+    "platformsCount": 8
+  },
+  {
+    "id": "bandra",
+    "name": "Bandra",
+    "latitude": 19.054817,
+    "longitude": 72.840666,
+    "line": "Western",
+    "isJunction": true,
+    "crowdLevel": "Very High",
+    "platformsCount": 7
+  },
+  {
+    "id": "andheri",
+    "name": "Andheri",
+    "latitude": 19.120013,
+    "longitude": 72.847304,
+    "line": "Western",
+    "isJunction": true,
+    "crowdLevel": "Very High",
+    "platformsCount": 9
+  },
+  {
+    "id": "goregaon",
+    "name": "Goregaon",
+    "latitude": 19.164300,
+    "longitude": 72.849200,
+    "line": "Western",
+    "isJunction": false,
+    "crowdLevel": "High",
+    "platformsCount": 7
+  },
+  {
+    "id": "malad",
+    "name": "Malad",
+    "latitude": 19.186931,
+    "longitude": 72.848869,
+    "line": "Western",
+    "isJunction": false,
+    "crowdLevel": "High",
+    "platformsCount": 4
+  },
+  {
+    "id": "kandivali",
+    "name": "Kandivali",
+    "latitude": 19.204113,
+    "longitude": 72.851767,
+    "line": "Western",
+    "isJunction": false,
+    "crowdLevel": "High",
+    "platformsCount": 4
+  },
+  {
+    "id": "borivali",
+    "name": "Borivali",
+    "latitude": 19.229022,
+    "longitude": 72.857324,
+    "line": "Western",
+    "isJunction": true,
+    "crowdLevel": "Very High",
+    "platformsCount": 10
+  },
+  {
+    "id": "dahisar",
+    "name": "Dahisar",
+    "latitude": 19.249497,
+    "longitude": 72.859500,
+    "line": "Western",
+    "isJunction": false,
+    "crowdLevel": "Moderate",
+    "platformsCount": 4
+  },
+  {
+    "id": "mira-road",
+    "name": "Mira Road",
+    "latitude": 19.280898,
+    "longitude": 72.855996,
+    "line": "Western",
+    "isJunction": false,
+    "crowdLevel": "High",
+    "platformsCount": 4
+  },
+  {
+    "id": "bhayandar",
+    "name": "Bhayandar",
+    "latitude": 19.311282,
+    "longitude": 72.852491,
+    "line": "Western",
+    "isJunction": false,
+    "crowdLevel": "High",
+    "platformsCount": 6
+  },
+  {
+    "id": "naigaon",
+    "name": "Naigaon",
+    "latitude": 19.351193,
+    "longitude": 72.846217,
+    "line": "Western",
+    "isJunction": false,
+    "crowdLevel": "Moderate",
+    "platformsCount": 2
+  },
+  {
+    "id": "vasai-road",
+    "name": "Vasai Road",
+    "latitude": 19.382525,
+    "longitude": 72.832589,
+    "line": "Western",
+    "isJunction": true,
+    "crowdLevel": "High",
+    "platformsCount": 7
+  },
+  {
+    "id": "nalasopara",
+    "name": "Nalasopara",
+    "latitude": 19.417561,
+    "longitude": 72.818782,
+    "line": "Western",
+    "isJunction": false,
+    "crowdLevel": "Very High",
+    "platformsCount": 4
+  },
+  {
+    "id": "virar",
+    "name": "Virar",
+    "latitude": 19.454787,
+    "longitude": 72.811989,
+    "line": "Western",
+    "isJunction": true,
+    "crowdLevel": "Very High",
+    "platformsCount": 8
+  },
+  {
+    "id": "palghar",
+    "name": "Palghar",
+    "latitude": 19.697861,
+    "longitude": 72.771960,
+    "line": "Western",
+    "isJunction": false,
+    "crowdLevel": "Moderate",
+    "platformsCount": 3
+  },
+  {
+    "id": "dahanu-road",
+    "name": "Dahanu Road",
+    "latitude": 19.991179,
+    "longitude": 72.743308,
+    "line": "Western",
+    "isJunction": true,
+    "crowdLevel": "Moderate",
+    "platformsCount": 3
+  },
+  {
+    "id": "csmt",
+    "name": "CSMT",
+    "latitude": 18.940178,
+    "longitude": 72.835335,
+    "line": "Central",
+    "isJunction": true,
+    "crowdLevel": "Very High",
+    "platformsCount": 18
+  },
+  {
+    "id": "byculla",
+    "name": "Byculla",
+    "latitude": 18.975400,
+    "longitude": 72.834000,
+    "line": "Central",
+    "isJunction": false,
+    "crowdLevel": "Moderate",
+    "platformsCount": 4
+  },
+  {
+    "id": "kurla",
+    "name": "Kurla",
+    "latitude": 19.065300,
+    "longitude": 72.879300,
+    "line": "Central",
+    "isJunction": true,
+    "crowdLevel": "Very High",
+    "platformsCount": 8
+  },
+  {
+    "id": "ghatkopar",
+    "name": "Ghatkopar",
+    "latitude": 19.086300,
+    "longitude": 72.908000,
+    "line": "Central",
+    "isJunction": true,
+    "crowdLevel": "Very High",
+    "platformsCount": 5
+  },
+  {
+    "id": "thane",
+    "name": "Thane",
+    "latitude": 19.186000,
+    "longitude": 72.975900,
+    "line": "Central",
+    "isJunction": true,
+    "crowdLevel": "Very High",
+    "platformsCount": 10
+  },
+  {
+    "id": "kalyan",
+    "name": "Kalyan",
+    "latitude": 19.243700,
+    "longitude": 73.135500,
+    "line": "Central",
+    "isJunction": true,
+    "crowdLevel": "Very High",
+    "platformsCount": 8
+  },
+  {
+    "id": "wadala-road",
+    "name": "Wadala Road",
+    "latitude": 19.016600,
+    "longitude": 72.859000,
+    "line": "Harbour",
+    "isJunction": true,
+    "crowdLevel": "High",
+    "platformsCount": 4
+  },
+  {
+    "id": "chembur",
+    "name": "Chembur",
+    "latitude": 19.062400,
+    "longitude": 72.899600,
+    "line": "Harbour",
+    "isJunction": false,
+    "crowdLevel": "Moderate",
+    "platformsCount": 2
+  },
+  {
+    "id": "vashi",
+    "name": "Vashi",
+    "latitude": 19.064500,
+    "longitude": 72.998300,
+    "line": "Harbour",
+    "isJunction": true,
+    "crowdLevel": "High",
+    "platformsCount": 4
+  },
+  {
+    "id": "panvel",
+    "name": "Panvel",
+    "latitude": 18.989400,
+    "longitude": 73.121400,
+    "line": "Harbour",
+    "isJunction": true,
+    "crowdLevel": "High",
+    "platformsCount": 7
   }
 ]

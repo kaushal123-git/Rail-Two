@@ -1,0 +1,2931 @@
+{
+  "dataset_type": "synthetic_navigation_seed",
+  "warning": "Approximate geometry; verify before safety/navigation deployment.",
+  "stations": [
+    {
+      "station": "Churchgate",
+      "fob_id": "FOB-5978",
+      "fob_coordinate": {
+        "latitude": 18.9403,
+        "longitude": 72.82029999999999
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Marine Lines",
+      "fob_id": "FOB-2596",
+      "fob_coordinate": {
+        "latitude": 18.9468,
+        "longitude": 72.8243
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Charni Road",
+      "fob_id": "FOB-9253",
+      "fob_coordinate": {
+        "latitude": 18.9533,
+        "longitude": 72.8283
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Grant Road",
+      "fob_id": "FOB-6835",
+      "fob_coordinate": {
+        "latitude": 18.959799999999998,
+        "longitude": 72.83229999999999
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Mumbai Central",
+      "fob_id": "FOB-9967",
+      "fob_coordinate": {
+        "latitude": 18.9663,
+        "longitude": 72.8363
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Mahalaxmi",
+      "fob_id": "FOB-5403",
+      "fob_coordinate": {
+        "latitude": 18.9728,
+        "longitude": 72.8403
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Lower Parel",
+      "fob_id": "FOB-1460",
+      "fob_coordinate": {
+        "latitude": 18.9793,
+        "longitude": 72.84429999999999
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Prabhadevi",
+      "fob_id": "FOB-0056",
+      "fob_coordinate": {
+        "latitude": 18.985799999999998,
+        "longitude": 72.8483
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Dadar",
+      "fob_id": "FOB-6358",
+      "fob_coordinate": {
+        "latitude": 18.9923,
+        "longitude": 72.8523
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Matunga Road",
+      "fob_id": "FOB-8248",
+      "fob_coordinate": {
+        "latitude": 18.9988,
+        "longitude": 72.85629999999999
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Mahim",
+      "fob_id": "FOB-5129",
+      "fob_coordinate": {
+        "latitude": 19.0053,
+        "longitude": 72.8603
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Bandra",
+      "fob_id": "FOB-4373",
+      "fob_coordinate": {
+        "latitude": 19.0118,
+        "longitude": 72.8643
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Khar Road",
+      "fob_id": "FOB-9069",
+      "fob_coordinate": {
+        "latitude": 19.0183,
+        "longitude": 72.86829999999999
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Santacruz",
+      "fob_id": "FOB-3751",
+      "fob_coordinate": {
+        "latitude": 19.0248,
+        "longitude": 72.8723
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Vile Parle",
+      "fob_id": "FOB-7112",
+      "fob_coordinate": {
+        "latitude": 19.031299999999998,
+        "longitude": 72.8763
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Andheri",
+      "fob_id": "FOB-9434",
+      "fob_coordinate": {
+        "latitude": 19.0378,
+        "longitude": 72.88029999999999
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Jogeshwari",
+      "fob_id": "FOB-4937",
+      "fob_coordinate": {
+        "latitude": 19.0443,
+        "longitude": 72.8843
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Ram Mandir",
+      "fob_id": "FOB-5343",
+      "fob_coordinate": {
+        "latitude": 19.0508,
+        "longitude": 72.8883
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Goregaon",
+      "fob_id": "FOB-1363",
+      "fob_coordinate": {
+        "latitude": 19.057299999999998,
+        "longitude": 72.89229999999999
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Malad",
+      "fob_id": "FOB-8881",
+      "fob_coordinate": {
+        "latitude": 19.0638,
+        "longitude": 72.8963
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Kandivali",
+      "fob_id": "FOB-0429",
+      "fob_coordinate": {
+        "latitude": 19.0703,
+        "longitude": 72.9003
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Borivali",
+      "fob_id": "FOB-3272",
+      "fob_coordinate": {
+        "latitude": 19.0768,
+        "longitude": 72.90429999999999
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Dahisar",
+      "fob_id": "FOB-9092",
+      "fob_coordinate": {
+        "latitude": 19.083299999999998,
+        "longitude": 72.9083
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Mira Road",
+      "fob_id": "FOB-7271",
+      "fob_coordinate": {
+        "latitude": 19.0898,
+        "longitude": 72.9123
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Bhayandar",
+      "fob_id": "FOB-2229",
+      "fob_coordinate": {
+        "latitude": 19.0963,
+        "longitude": 72.91629999999999
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Naigaon",
+      "fob_id": "FOB-7154",
+      "fob_coordinate": {
+        "latitude": 19.1028,
+        "longitude": 72.9203
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Vasai Road",
+      "fob_id": "FOB-1822",
+      "fob_coordinate": {
+        "latitude": 19.1093,
+        "longitude": 72.9243
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Nalasopara",
+      "fob_id": "FOB-7822",
+      "fob_coordinate": {
+        "latitude": 19.1158,
+        "longitude": 72.9283
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Virar",
+      "fob_id": "FOB-4007",
+      "fob_coordinate": {
+        "latitude": 19.1223,
+        "longitude": 72.9323
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "CSMT",
+      "fob_id": "FOB-3219",
+      "fob_coordinate": {
+        "latitude": 18.9453,
+        "longitude": 72.83529999999999
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Byculla",
+      "fob_id": "FOB-0414",
+      "fob_coordinate": {
+        "latitude": 18.9518,
+        "longitude": 72.8393
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Chinchpokli",
+      "fob_id": "FOB-7348",
+      "fob_coordinate": {
+        "latitude": 18.958299999999998,
+        "longitude": 72.8433
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Currey Road",
+      "fob_id": "FOB-6346",
+      "fob_coordinate": {
+        "latitude": 18.9648,
+        "longitude": 72.84729999999999
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Parel",
+      "fob_id": "FOB-8474",
+      "fob_coordinate": {
+        "latitude": 18.9713,
+        "longitude": 72.8513
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Matunga",
+      "fob_id": "FOB-4777",
+      "fob_coordinate": {
+        "latitude": 18.9843,
+        "longitude": 72.85929999999999
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Sion",
+      "fob_id": "FOB-2146",
+      "fob_coordinate": {
+        "latitude": 18.9908,
+        "longitude": 72.8633
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Kurla",
+      "fob_id": "FOB-4166",
+      "fob_coordinate": {
+        "latitude": 18.9973,
+        "longitude": 72.8673
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Vidyavihar",
+      "fob_id": "FOB-6604",
+      "fob_coordinate": {
+        "latitude": 19.0038,
+        "longitude": 72.87129999999999
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Ghatkopar",
+      "fob_id": "FOB-5539",
+      "fob_coordinate": {
+        "latitude": 19.0103,
+        "longitude": 72.8753
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Vikhroli",
+      "fob_id": "FOB-4992",
+      "fob_coordinate": {
+        "latitude": 19.0168,
+        "longitude": 72.8793
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Kanjurmarg",
+      "fob_id": "FOB-7069",
+      "fob_coordinate": {
+        "latitude": 19.0233,
+        "longitude": 72.88329999999999
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Bhandup",
+      "fob_id": "FOB-4794",
+      "fob_coordinate": {
+        "latitude": 19.029799999999998,
+        "longitude": 72.8873
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Nahur",
+      "fob_id": "FOB-6720",
+      "fob_coordinate": {
+        "latitude": 19.0363,
+        "longitude": 72.8913
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Mulund",
+      "fob_id": "FOB-4526",
+      "fob_coordinate": {
+        "latitude": 19.0428,
+        "longitude": 72.89529999999999
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Thane",
+      "fob_id": "FOB-5479",
+      "fob_coordinate": {
+        "latitude": 19.0493,
+        "longitude": 72.8993
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Kalwa",
+      "fob_id": "FOB-3399",
+      "fob_coordinate": {
+        "latitude": 19.055799999999998,
+        "longitude": 72.9033
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Mumbra",
+      "fob_id": "FOB-5304",
+      "fob_coordinate": {
+        "latitude": 19.0623,
+        "longitude": 72.90729999999999
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Diva",
+      "fob_id": "FOB-6557",
+      "fob_coordinate": {
+        "latitude": 19.0688,
+        "longitude": 72.9113
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Kopar",
+      "fob_id": "FOB-0313",
+      "fob_coordinate": {
+        "latitude": 19.0753,
+        "longitude": 72.9153
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Dombivli",
+      "fob_id": "FOB-3905",
+      "fob_coordinate": {
+        "latitude": 19.081799999999998,
+        "longitude": 72.91929999999999
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Thakurli",
+      "fob_id": "FOB-9132",
+      "fob_coordinate": {
+        "latitude": 19.0883,
+        "longitude": 72.9233
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Kalyan",
+      "fob_id": "FOB-5176",
+      "fob_coordinate": {
+        "latitude": 19.0948,
+        "longitude": 72.9273
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Masjid",
+      "fob_id": "FOB-0613",
+      "fob_coordinate": {
+        "latitude": 18.956799999999998,
+        "longitude": 72.8543
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Sandhurst Road",
+      "fob_id": "FOB-3685",
+      "fob_coordinate": {
+        "latitude": 18.9633,
+        "longitude": 72.8583
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Dockyard Road",
+      "fob_id": "FOB-6133",
+      "fob_coordinate": {
+        "latitude": 18.9698,
+        "longitude": 72.86229999999999
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Reay Road",
+      "fob_id": "FOB-0101",
+      "fob_coordinate": {
+        "latitude": 18.9763,
+        "longitude": 72.8663
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Cotton Green",
+      "fob_id": "FOB-4839",
+      "fob_coordinate": {
+        "latitude": 18.9828,
+        "longitude": 72.8703
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Sewri",
+      "fob_id": "FOB-1153",
+      "fob_coordinate": {
+        "latitude": 18.9893,
+        "longitude": 72.87429999999999
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Wadala Road",
+      "fob_id": "FOB-5600",
+      "fob_coordinate": {
+        "latitude": 18.9958,
+        "longitude": 72.8783
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Guru Tegh Bahadur Nagar",
+      "fob_id": "FOB-0741",
+      "fob_coordinate": {
+        "latitude": 19.002299999999998,
+        "longitude": 72.8823
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Chunabhatti",
+      "fob_id": "FOB-0036",
+      "fob_coordinate": {
+        "latitude": 19.0088,
+        "longitude": 72.88629999999999
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Tilak Nagar",
+      "fob_id": "FOB-6791",
+      "fob_coordinate": {
+        "latitude": 19.0218,
+        "longitude": 72.8943
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Chembur",
+      "fob_id": "FOB-0457",
+      "fob_coordinate": {
+        "latitude": 19.028299999999998,
+        "longitude": 72.89829999999999
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Govandi",
+      "fob_id": "FOB-5986",
+      "fob_coordinate": {
+        "latitude": 19.0348,
+        "longitude": 72.9023
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Mankhurd",
+      "fob_id": "FOB-1168",
+      "fob_coordinate": {
+        "latitude": 19.0413,
+        "longitude": 72.9063
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Vashi",
+      "fob_id": "FOB-8137",
+      "fob_coordinate": {
+        "latitude": 19.0478,
+        "longitude": 72.91029999999999
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Sanpada",
+      "fob_id": "FOB-1417",
+      "fob_coordinate": {
+        "latitude": 19.054299999999998,
+        "longitude": 72.9143
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Juinagar",
+      "fob_id": "FOB-5334",
+      "fob_coordinate": {
+        "latitude": 19.0608,
+        "longitude": 72.9183
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Nerul",
+      "fob_id": "FOB-1363",
+      "fob_coordinate": {
+        "latitude": 19.0673,
+        "longitude": 72.92229999999999
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Seawoods-Darave",
+      "fob_id": "FOB-2141",
+      "fob_coordinate": {
+        "latitude": 19.0738,
+        "longitude": 72.9263
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "CBD Belapur",
+      "fob_id": "FOB-2929",
+      "fob_coordinate": {
+        "latitude": 19.080299999999998,
+        "longitude": 72.9303
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Kharghar",
+      "fob_id": "FOB-6606",
+      "fob_coordinate": {
+        "latitude": 19.0868,
+        "longitude": 72.9343
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Mansarovar",
+      "fob_id": "FOB-7153",
+      "fob_coordinate": {
+        "latitude": 19.0933,
+        "longitude": 72.9383
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Khandeshwar",
+      "fob_id": "FOB-1411",
+      "fob_coordinate": {
+        "latitude": 19.0998,
+        "longitude": 72.94229999999999
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    },
+    {
+      "station": "Panvel",
+      "fob_id": "FOB-1799",
+      "fob_coordinate": {
+        "latitude": 19.1063,
+        "longitude": 72.9463
+      },
+      "stairs": [
+        {
+          "id": "ST-A",
+          "relative_x_m": 20,
+          "relative_y_m": 8
+        },
+        {
+          "id": "ST-B",
+          "relative_x_m": -18,
+          "relative_y_m": 6
+        }
+      ],
+      "exits": [
+        {
+          "gate": "E1",
+          "relative_x_m": 35,
+          "relative_y_m": -10,
+          "toward": "main road"
+        },
+        {
+          "gate": "E2",
+          "relative_x_m": -30,
+          "relative_y_m": -12,
+          "toward": "bus/auto side"
+        }
+      ],
+      "coach_alignment": {
+        "C1": "north_end",
+        "C6": "center",
+        "C12": "south_end"
+      }
+    }
+  ]
+}

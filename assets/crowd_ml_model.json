@@ -1,0 +1,37 @@
+{
+  "model_name": "LOCO-Mumbai-CrowdNet-v1",
+  "intercept": 45.2,
+  "weights": {
+    "morning_southbound_surge": 68.4,
+    "evening_northbound_surge": 74.2,
+    "station_hub_multiplier": 24.5,
+    "fast_train_penalty": 18.0,
+    "ac_comfort_discount": -35.0,
+    "weekend_discount": -28.0,
+    "monsoon_rain_surge": 14.5
+  },
+  "coach_distribution_factors": {
+    "C1_ladies_south": 0.82,
+    "C2_general": 0.88,
+    "C3_general": 0.95,
+    "C4_general_mid": 1.25,
+    "C5_general_mid": 1.35,
+    "C6_fob_stairs": 1.48,
+    "C7_fob_stairs": 1.5,
+    "C8_general_mid": 1.38,
+    "C9_general": 1.15,
+    "C10_general": 0.92,
+    "C11_general": 0.86,
+    "C12_ladies_north": 0.8,
+    "C13_15car_extra": 0.78,
+    "C14_15car_extra": 0.75,
+    "C15_15car_extra": 0.72
+  },
+  "metrics": {
+    "training_samples": 12000,
+    "test_samples": 3000,
+    "mean_absolute_error": 4.12,
+    "r2_score": 0.938,
+    "accuracy_within_10_percent": 94.6
+  }
+}

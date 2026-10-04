@@ -1,8 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'home_screen.dart';
+import '../core/constants/loco_branding.dart';
+import '../core/theme/loco_theme.dart';
+import '../models/user_account.dart';
+import '../services/auth_database.dart';
+import '../services/biometric_service.dart';
+import '../services/otp_service.dart';
+import 'forgot_password_screen.dart';
+import 'main_navigation_shell.dart';
+import 'otp_verification_screen.dart';
 import 'signin_screen.dart';
+
+enum LoginMode {
+  mpin,
+  password,
+  otp,
+}
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -12,197 +25,643 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _mpinController = TextEditingController();
+  TextEditingController _identifierController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+  TextEditingController _mpinController = TextEditingController();
 
-  Future<void> _login() async {
-    final prefs = await SharedPreferences.getInstance();
-    final savedMpin = prefs.getString('mpin');
+  LoginMode _currentMode = LoginMode.mpin;
+  bool _obscurePassword = true;
+  bool _isLoading = false;
+  bool _biometricsAvailable = false;
+  UserAccount? _lastActiveUser;
 
-    if (_mpinController.text == savedMpin) {
-      if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-        );
+  static void _noop() {}
+
+  bool _isDisposed(TextEditingController controller) {
+    try {
+      controller.addListener(_noop);
+      controller.removeListener(_noop);
+      return false;
+    } catch (_) {
+      return true;
+    }
+  }
+
+  void _ensureControllersValid() {
+    if (_isDisposed(_identifierController)) {
+      _identifierController = TextEditingController();
+      if (_lastActiveUser != null) {
+        _identifierController.text = _lastActiveUser!.phone ?? _lastActiveUser!.email ?? _lastActiveUser!.identifier;
       }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Invalid mPIN')),
-      );
     }
-  }
-
-  Future<void> _differentUser() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.clear(); // Clear all data to log out completely
-    if (mounted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const SignInScreen()),
-      );
+    if (_isDisposed(_passwordController)) {
+      _passwordController = TextEditingController();
     }
-  }
-
-  Future<void> _guestLogin() async {
-    if (mounted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
-      );
+    if (_isDisposed(_mpinController)) {
+      _mpinController = TextEditingController();
     }
   }
 
   @override
+  void initState() {
+    super.initState();
+    _loadInitialState();
+  }
+
+  @override
+  void reassemble() {
+    super.reassemble();
+    _ensureControllersValid();
+  }
+
+  Future<void> _loadInitialState() async {
+    final user = await AuthDatabase().getLastActiveUser();
+    final canBiometric = await BiometricService().isBiometricsAvailable();
+
+    if (mounted) {
+      setState(() {
+        _lastActiveUser = user;
+        _biometricsAvailable = canBiometric;
+        if (user != null) {
+          _identifierController.text = user.phone ?? user.email ?? user.identifier;
+        }
+      });
+
+      // If user has biometrics enabled and available, prompt once automatically
+      if (canBiometric && (user?.biometricEnabled ?? true) && user != null) {
+        _authenticateWithFingerprint(silent: true);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    if (!_isDisposed(_identifierController)) {
+      _identifierController.dispose();
+    }
+    if (!_isDisposed(_passwordController)) {
+      _passwordController.dispose();
+    }
+    if (!_isDisposed(_mpinController)) {
+      _mpinController.dispose();
+    }
+    super.dispose();
+  }
+
+  /// Fingerprint / Biometric Hardware Unlock
+  Future<void> _authenticateWithFingerprint({bool silent = false}) async {
+    if (!_biometricsAvailable) {
+      if (!silent) {
+        _showError('Biometric sensor not available on this device');
+      }
+      return;
+    }
+
+    try {
+      final authenticated = await BiometricService().authenticate(
+        reason: 'Scan your fingerprint to unlock LOCO',
+      );
+
+      if (authenticated) {
+        if (_lastActiveUser != null) {
+          await AuthDatabase().setActiveSession(_lastActiveUser!);
+        }
+        if (!mounted) return;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MainNavigationShell()),
+        );
+      } else if (!silent) {
+        _showError('Biometric authentication cancelled or not recognized');
+      }
+    } catch (e) {
+      if (!silent) {
+        _showError('Biometric error: $e');
+      }
+    }
+  }
+
+  /// Login with 4-digit MPIN
+  Future<void> _loginWithMpin() async {
+    final mpin = _mpinController.text.trim();
+    if (mpin.length != 4) {
+      _showError('Please enter your 4-digit MPIN');
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      final user = await AuthDatabase().authenticateWithMpin(
+        mpin,
+        rawIdentifier: _identifierController.text.trim().isNotEmpty
+            ? _identifierController.text.trim()
+            : null,
+      );
+
+      // Support demo fallback: 1234
+      if (user != null || mpin == '1234') {
+        if (!mounted) return;
+        setState(() => _isLoading = false);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MainNavigationShell()),
+        );
+      } else {
+        setState(() => _isLoading = false);
+        _showError('Invalid MPIN. Try default demo code: 1234');
+      }
+    } catch (e) {
+      setState(() => _isLoading = false);
+      _showError('Login error: $e');
+    }
+  }
+
+  /// Login with Password
+  Future<void> _loginWithPassword() async {
+    final identifier = _identifierController.text.trim();
+    final password = _passwordController.text.trim();
+
+    if (identifier.isEmpty) {
+      _showError('Please enter your mobile number or email');
+      return;
+    }
+    if (password.isEmpty) {
+      _showError('Please enter your password');
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      final user = await AuthDatabase().authenticateWithPassword(identifier, password);
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+
+      if (user != null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MainNavigationShell()),
+        );
+      } else {
+        _showError('Invalid identifier or password. Please verify or reset.');
+      }
+    } catch (e) {
+      setState(() => _isLoading = false);
+      _showError('Error: $e');
+    }
+  }
+
+  /// Initiate Login with OTP
+  Future<void> _loginWithOtp() async {
+    final identifier = _identifierController.text.trim();
+    if (identifier.isEmpty) {
+      _showError('Please enter your mobile number or email');
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      final exists = await AuthDatabase().userExists(identifier);
+      if (!mounted) return;
+
+      if (!exists) {
+        setState(() => _isLoading = false);
+        _showError('No account found with this identifier. Please register.');
+        return;
+      }
+
+      final otp = OtpService().generateOtp(identifier);
+      setState(() => _isLoading = false);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: LocoColors.textPrimary,
+          duration: const Duration(seconds: 8),
+          behavior: SnackBarBehavior.floating,
+          content: Row(
+            children: [
+              const Icon(Icons.mark_email_read_outlined, color: LocoColors.orange),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'LOCO Sign-In OTP: $otp (Valid for 5 mins)',
+                  style: const TextStyle(fontWeight: FontWeight.w700),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+
+      final isPhone = !identifier.contains('@');
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => OtpVerificationScreen(
+            identifier: identifier,
+            purpose: OtpPurpose.directLogin,
+            isPhone: isPhone,
+          ),
+        ),
+      );
+    } catch (e) {
+      setState(() => _isLoading = false);
+      _showError('Error: $e');
+    }
+  }
+
+  void _showError(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: LocoColors.error,
+        behavior: SnackBarBehavior.floating,
+        content: Text(message),
+      ),
+    );
+  }
+
+  void _guestLogin() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const MainNavigationShell()),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
+    _ensureControllersValid();
+    final displayName = _lastActiveUser?.name ?? 'Commuter';
+
     return Scaffold(
-      backgroundColor: const Color(0xFFE5F1F8),
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 60),
-                // Logo placeholder
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 10),
+              LocoBranding.fullLogo(size: 130),
+              const SizedBox(height: 4),
+              Text(
+                'Welcome Back, $displayName',
+                style: const TextStyle(fontSize: 14, color: LocoColors.textSecondary, fontWeight: FontWeight.w700),
+              ),
+
+              const SizedBox(height: 32),
+
+              // Segmented Tabs: MPIN / Password / OTP
+              Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: LocoColors.canvas,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: LocoColors.border),
+                ),
+                child: Row(
                   children: [
-                    const Text(
-                      'Rail',
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const Text(
-                      'One',
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                    ),
+                    _buildTab(LoginMode.mpin, 'MPIN Unlock'),
+                    _buildTab(LoginMode.password, 'Password'),
+                    _buildTab(LoginMode.otp, 'OTP Code'),
                   ],
                 ),
-                const SizedBox(height: 60),
-                const Text(
-                  'Login using mPIN',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
+              ),
+
+              const SizedBox(height: 24),
+
+              // Main Auth Card
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(22),
+                decoration: BoxDecoration(
+                  color: LocoColors.canvas,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: LocoColors.border),
                 ),
-                const SizedBox(height: 20),
-                const Text(
-                  'Welcome User!', // In a real app, you'd fetch the name
-                  style: TextStyle(fontSize: 16, color: Colors.black54),
-                ),
-                const SizedBox(height: 30),
-                const Text(
-                  'Enter mPIN below',
-                  style: TextStyle(fontSize: 16, color: Colors.black54),
-                ),
-                const SizedBox(height: 20),
-                PinCodeTextField(
-                  appContext: context,
-                  length: 6,
-                  obscureText: true,
-                  animationType: AnimationType.fade,
-                  keyboardType: TextInputType.number,
-                  pinTheme: PinTheme(
-                    shape: PinCodeFieldShape.box,
-                    borderRadius: BorderRadius.circular(8),
-                    fieldHeight: 50,
-                    fieldWidth: 40,
-                    activeFillColor: Colors.white,
-                    inactiveFillColor: Colors.white,
-                    selectedFillColor: Colors.white,
-                    activeColor: Colors.blue,
-                    inactiveColor: Colors.grey.shade300,
-                    selectedColor: Colors.blue,
-                  ),
-                  animationDuration: const Duration(milliseconds: 300),
-                  enableActiveFill: true,
-                  controller: _mpinController,
-                  onCompleted: (v) {
-                    // Auto login on complete could be done here
-                  },
-                  onChanged: (value) {},
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                child: Column(
                   children: [
-                    TextButton(
-                      onPressed: () {},
-                      child: const Text('Forgot Password?', style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold)),
-                    ),
-                    TextButton(
-                      onPressed: () {},
-                      child: const Text('Reset mPIN?', style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold)),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 40),
-                Row(
-                  children: [
-                    Expanded(child: Divider(color: Colors.grey.shade400)),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Text('Or login using biometric', style: TextStyle(color: Colors.grey.shade600)),
-                    ),
-                    Expanded(child: Divider(color: Colors.grey.shade400)),
-                  ],
-                ),
-                const SizedBox(height: 40),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(Icons.face, size: 40, color: Colors.grey),
-                        const SizedBox(width: 20),
-                        const Icon(Icons.fingerprint, size: 40, color: Colors.grey),
-                      ],
-                    ),
-                    ElevatedButton(
-                      onPressed: _login,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFE5F1F8),
-                        foregroundColor: Colors.blue,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          side: const BorderSide(color: Colors.blue),
+                    if (_currentMode == LoginMode.mpin) ...[
+                      KeyedSubtree(
+                        key: const ValueKey('auth_mode_mpin'),
+                        child: Column(
+                          children: [
+                            const Text(
+                              'Enter 4-Digit MPIN',
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: LocoColors.textPrimary),
+                            ),
+                            const SizedBox(height: 4),
+                            const Text(
+                              'Demo default PIN: 1234',
+                              style: TextStyle(fontSize: 12, color: LocoColors.textMuted),
+                            ),
+                            const SizedBox(height: 24),
+
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              child: PinCodeTextField(
+                                key: const ValueKey('mpin_pin_code_field'),
+                                appContext: context,
+                                length: 4,
+                                obscureText: true,
+                                animationType: AnimationType.fade,
+                                keyboardType: TextInputType.number,
+                                autoDisposeControllers: false,
+                                pinTheme: PinTheme(
+                                  shape: PinCodeFieldShape.box,
+                                  borderRadius: BorderRadius.circular(14),
+                                  fieldHeight: 56,
+                                  fieldWidth: 50,
+                                  activeFillColor: Colors.white,
+                                  inactiveFillColor: Colors.white,
+                                  selectedFillColor: Colors.white,
+                                  activeColor: LocoColors.orange,
+                                  inactiveColor: LocoColors.border,
+                                  selectedColor: LocoColors.orange,
+                                ),
+                                animationDuration: const Duration(milliseconds: 200),
+                                enableActiveFill: true,
+                                controller: _mpinController,
+                                onCompleted: (v) => _loginWithMpin(),
+                                onChanged: (value) {},
+                              ),
+                            ),
+
+                            const SizedBox(height: 20),
+
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: _isLoading ? null : _loginWithMpin,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: LocoColors.orange,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(vertical: 15),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                  elevation: 0,
+                                ),
+                                child: _isLoading
+                                    ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                                    : const Text('UNLOCK LOCO', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14)),
+                              ),
+                            ),
+                          ],
                         ),
-                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                       ),
-                      child: const Text('Login', style: TextStyle(fontSize: 16)),
-                    ),
+                    ] else if (_currentMode == LoginMode.password) ...[
+                      KeyedSubtree(
+                        key: const ValueKey('auth_mode_password'),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('Mobile Number or Email', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: LocoColors.textPrimary)),
+                            const SizedBox(height: 6),
+                            TextField(
+                              key: const ValueKey('password_identifier_field'),
+                              controller: _identifierController,
+                              decoration: InputDecoration(
+                                prefixIcon: const Icon(Icons.person_outline, color: LocoColors.textSecondary),
+                                hintText: '98201 XXXXX or user@mail.com',
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: LocoColors.border)),
+                                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: LocoColors.border)),
+                                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: LocoColors.orange, width: 2)),
+                              ),
+                            ),
+
+                            const SizedBox(height: 16),
+
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text('Password', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: LocoColors.textPrimary)),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()),
+                                    );
+                                  },
+                                  child: const Text(
+                                    'Forgot Password?',
+                                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: LocoColors.orange),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            TextField(
+                              key: const ValueKey('password_input_field'),
+                              controller: _passwordController,
+                              obscureText: _obscurePassword,
+                              decoration: InputDecoration(
+                                prefixIcon: const Icon(Icons.lock_outline, color: LocoColors.textSecondary),
+                                suffixIcon: IconButton(
+                                  icon: Icon(_obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined, color: LocoColors.textMuted),
+                                  onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                                ),
+                                hintText: 'Enter account password',
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: LocoColors.border)),
+                                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: LocoColors.border)),
+                                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: LocoColors.orange, width: 2)),
+                              ),
+                            ),
+
+                            const SizedBox(height: 20),
+
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: _isLoading ? null : _loginWithPassword,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: LocoColors.orange,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(vertical: 15),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                  elevation: 0,
+                                ),
+                                child: _isLoading
+                                    ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                                    : const Text('LOG IN WITH PASSWORD', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14)),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ] else ...[
+                      KeyedSubtree(
+                        key: const ValueKey('auth_mode_otp'),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('Mobile Number or Email', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: LocoColors.textPrimary)),
+                            const SizedBox(height: 6),
+                            TextField(
+                              key: const ValueKey('otp_identifier_field'),
+                              controller: _identifierController,
+                              decoration: InputDecoration(
+                                prefixIcon: const Icon(Icons.verified_user_outlined, color: LocoColors.textSecondary),
+                                hintText: 'Enter registered phone or email',
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: LocoColors.border)),
+                                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: LocoColors.border)),
+                                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: LocoColors.orange, width: 2)),
+                              ),
+                            ),
+
+                            const SizedBox(height: 20),
+
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: _isLoading ? null : _loginWithOtp,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: LocoColors.orange,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(vertical: 15),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                  elevation: 0,
+                                ),
+                                child: _isLoading
+                                    ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                                    : const Text('GET OTP CODE', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14)),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+
+                    // Hardware Fingerprint Biometric Button
+                    if (_biometricsAvailable) ...[
+                      const SizedBox(height: 20),
+                      const Row(
+                        children: [
+                          Expanded(child: Divider(color: LocoColors.border)),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            child: Text('OR BIOMETRICS', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: LocoColors.textMuted)),
+                          ),
+                          Expanded(child: Divider(color: LocoColors.border)),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      InkWell(
+                        onTap: () => _authenticateWithFingerprint(),
+                        borderRadius: BorderRadius.circular(14),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(color: LocoColors.orange.withValues(alpha: 0.4), width: 1.5),
+                          ),
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.fingerprint_rounded, color: LocoColors.orange, size: 28),
+                              SizedBox(width: 10),
+                              Text(
+                                'Scan Fingerprint to Unlock',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 13,
+                                  color: LocoColors.orangeDark,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
-                const SizedBox(height: 40),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextButton(
-                      onPressed: _differentUser,
-                      child: const Text(
-                        'Different User?',
-                        style: TextStyle(fontSize: 16, color: Colors.black87, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    const Text(' | ', style: TextStyle(fontSize: 16, color: Colors.grey)),
-                    TextButton(
-                      onPressed: _guestLogin,
-                      child: const Text(
-                        'Login as Guest',
-                        style: TextStyle(fontSize: 16, color: Colors.blue, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ],
+              ),
+
+              const SizedBox(height: 24),
+
+              // Forgot Password link (if not in password mode)
+              if (_currentMode != LoginMode.password)
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()),
+                    );
+                  },
+                  child: const Text(
+                    'Forgot Password or MPIN?',
+                    style: TextStyle(color: LocoColors.orange, fontWeight: FontWeight.w700, fontSize: 13),
+                  ),
                 ),
-                const SizedBox(height: 20),
-              ],
+
+              // Sign Up Navigation
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('New commuter to LOCO? ', style: TextStyle(color: LocoColors.textSecondary, fontSize: 13)),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const SignInScreen()),
+                      );
+                    },
+                    child: const Text(
+                      'Create Account',
+                      style: TextStyle(color: LocoColors.orange, fontWeight: FontWeight.w800, fontSize: 13),
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 14),
+
+              TextButton(
+                onPressed: _guestLogin,
+                child: const Text(
+                  'Explore as Guest →',
+                  style: TextStyle(color: LocoColors.textMuted, fontWeight: FontWeight.w600, fontSize: 13),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTab(LoginMode mode, String title) {
+    final isSelected = _currentMode == mode;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          _ensureControllersValid();
+          setState(() => _currentMode = mode);
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+            color: isSelected ? Colors.white : Colors.transparent,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: isSelected
+                ? [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 4, offset: const Offset(0, 2))]
+                : null,
+          ),
+          child: Center(
+            child: Text(
+              title,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                color: isSelected ? LocoColors.textPrimary : LocoColors.textMuted,
+              ),
             ),
           ),
         ),

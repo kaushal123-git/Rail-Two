@@ -1,0 +1,48 @@
+corridor,station,authorised,unauthorised,total,trains_8_22
+Western,Churchgate,505110,0,505110,687
+Western,Mumbai Central,234759,3472,238231,683
+Western,Dadar West,286960,0,286960,730
+Western,Mahim,113074,9865,122939,541
+Western,Bandra,491106,0,491106,873
+Western,Andheri,604244,0,604244,849
+Western,Goregaon,272868,12336,285204,432
+Western,Borivali,392417,0,392417,644
+Western,Mira Road,170262,0,170262,301
+Western,Bhayander,235621,25421,261042,304
+Western,Vasai Road,202868,12428,215296,263
+Western,Nala Sopara,322365,3422,325787,236
+Western,Virar,318459,76636,395095,237
+Virar-Dahanu Road,Virar,318459,76636,395095,
+Virar-Dahanu Road,Vaitarna,2583,1107,3690,
+Virar-Dahanu Road,Saphale,14035,0,14035,
+Virar-Dahanu Road,Kelve Road,9814,0,9814,
+Virar-Dahanu Road,Palghar,27831,0,27831,
+Virar-Dahanu Road,Umroli,2074,321,2395,
+Virar-Dahanu Road,Boisar,29364,1560,30924,
+Virar-Dahanu Road,Vangaon,6702,0,6702,
+Virar-Dahanu Road,Dahanu Road,36987,1908,38895,
+Central,CST,636661,0,636661,951
+Central,Masjid,245627,0,245627,760
+Central,Byculla,130247,2072,132319,528
+Central,Dadar,286394,4143,290537,593
+Central,Kurla,348003,32927,380930,886
+Central,Ghatkopar,268225,0,268225,520
+Central,Bhandup,175273,0,175273,385
+Central,Mulund,255711,0,255711,433
+Central,Thane,599249,54679,653928,726
+Central,Dombivilli,283362,0,283362,426
+Central,Kalyan,330942,29406,360348,373
+Central,Kasara,13744,3471,17215,22
+Central,Karjat,16630,5410,22040,48
+Central,Khopoli,8058,6256,14314,22
+Harbour,Vadala Road,160645,0,160645,438
+Harbour,GTB Nagar,97231,23871,121102,297
+Harbour,Chembur,134902,38886,173788,293
+Harbour,Govandi,78349,54612,132961,292
+Harbour,Vashi,219672,15097,234769,370
+Harbour,Nerul,67948,35975,103923,341
+Harbour,CBD Belapur,169134,13717,182851,287
+Harbour,Karghar,102721,9072,111793,213
+Harbour,Panvel,89536,17200,106736,210
+Harbour,Airoli,68963,17192,86155,164
+Harbour,Turbe,49806,15411,65217,164

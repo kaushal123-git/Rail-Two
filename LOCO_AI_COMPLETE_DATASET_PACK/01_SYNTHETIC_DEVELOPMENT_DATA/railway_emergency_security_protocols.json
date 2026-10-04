@@ -1,0 +1,28 @@
+{
+  "dataset_type": "safety_reference",
+  "warning": "Do not hard-code emergency numbers without validating against current official railway/RPF/GRP sources.",
+  "protocols": [
+    {
+      "scenario": "medical_emergency",
+      "action": "Contact station medical/help facilities or emergency services; provide station, platform and train details."
+    },
+    {
+      "scenario": "security_threat",
+      "action": "Move to a safe staffed area and contact railway security/RPF/GRP through currently published official channels."
+    },
+    {
+      "scenario": "women_safety",
+      "action": "Use staffed help points/security assistance and current official railway safety channels."
+    },
+    {
+      "scenario": "lost_child",
+      "action": "Immediately contact station staff/security and provide last known location and description."
+    }
+  ],
+  "authoritative_sources": [
+    "Indian Railways",
+    "Ministry of Railways",
+    "Western Railway",
+    "Central Railway"
+  ]
+}

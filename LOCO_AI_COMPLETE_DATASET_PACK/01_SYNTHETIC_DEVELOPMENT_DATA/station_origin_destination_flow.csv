@@ -1,0 +1,644 @@
+hour,line,origin,destination,passenger_volume,interchange
+0,western,Prabhadevi,Churchgate,410,False
+0,western,Churchgate,Mumbai Central,936,False
+0,western,Mumbai Central,Nalasopara,1256,False
+0,western,Virar,Mumbai Central,1135,False
+0,western,Dahisar,Mumbai Central,562,False
+0,western,Vasai Road,Virar,701,False
+0,western,Bhayandar,Prabhadevi,1332,False
+0,western,Marine Lines,Kandivali,1732,False
+0,western,Nalasopara,Marine Lines,1181,False
+0,western,Kandivali,Churchgate,1482,False
+0,central,Sion,Kalyan,1225,False
+0,central,Ghatkopar,Diva,1528,False
+0,central,Kalyan,Mulund,582,False
+0,central,Dadar,Kanjurmarg,1525,True
+0,central,Diva,Currey Road,1658,False
+0,central,Thakurli,Kanjurmarg,605,False
+0,central,Kanjurmarg,Sion,1592,False
+0,central,Currey Road,Mulund,1563,False
+0,central,Mulund,Matunga,1798,False
+0,central,Matunga,Currey Road,958,False
+0,harbour,Nerul,Juinagar,101,False
+0,harbour,Tilak Nagar,Panvel,130,False
+0,harbour,Sewri,CSMT,523,False
+0,harbour,Sandhurst Road,CSMT,132,False
+0,harbour,Guru Tegh Bahadur Nagar,Sewri,1013,False
+0,harbour,CSMT,Chembur,269,False
+0,harbour,Juinagar,Guru Tegh Bahadur Nagar,886,False
+0,harbour,Mansarovar,Juinagar,1739,False
+0,harbour,Panvel,Sewri,883,False
+1,western,Charni Road,Santacruz,1682,False
+1,western,Andheri,Matunga Road,1389,False
+1,western,Mira Road,Mumbai Central,1191,False
+1,western,Bhayandar,Goregaon,1469,False
+1,western,Lower Parel,Goregaon,1791,False
+1,western,Santacruz,Goregaon,420,False
+1,western,Mahalaxmi,Mumbai Central,1507,False
+1,western,Goregaon,Mira Road,1435,False
+1,western,Mumbai Central,Lower Parel,417,False
+1,western,Matunga Road,Mumbai Central,339,False
+1,central,Chinchpokli,Dadar,423,True
+1,central,Kurla,Thane,1496,True
+1,central,Bhandup,Kurla,423,True
+1,central,Dadar,Thane,686,True
+1,central,Diva,Bhandup,1498,False
+1,central,Kopar,Bhandup,465,False
+1,central,Mumbra,Kopar,1251,False
+1,central,Kalwa,Chinchpokli,808,False
+1,central,Thane,Bhandup,1013,True
+1,central,Thakurli,Chinchpokli,1599,False
+1,harbour,Nerul,Guru Tegh Bahadur Nagar,348,False
+1,harbour,Mansarovar,Chunabhatti,1228,False
+1,harbour,Masjid,Dockyard Road,1680,False
+1,harbour,Dockyard Road,Guru Tegh Bahadur Nagar,814,False
+1,harbour,Guru Tegh Bahadur Nagar,Sandhurst Road,1403,False
+1,harbour,Khandeshwar,Nerul,1089,False
+1,harbour,Sandhurst Road,Panvel,471,False
+1,harbour,Cotton Green,Panvel,1466,False
+1,harbour,Panvel,Masjid,1448,False
+2,western,Kandivali,Malad,590,False
+2,western,Marine Lines,Mahalaxmi,422,False
+2,western,Dadar,Mahalaxmi,1152,True
+2,western,Santacruz,Dadar,444,True
+2,western,Mahalaxmi,Lower Parel,935,False
+2,western,Dahisar,Lower Parel,1338,False
+2,western,Malad,Virar,767,False
+2,western,Lower Parel,Virar,183,False
+2,central,CSMT,Kurla,141,True
+2,central,Ghatkopar,Vikhroli,1452,False
+2,central,Byculla,Kurla,1676,True
+2,central,Mumbra,Mulund,284,False
+2,central,Kurla,Byculla,392,True
+2,central,Thakurli,Byculla,48,False
+2,central,Mulund,CSMT,1007,False
+2,central,Vikhroli,CSMT,1165,False
+2,central,Vidyavihar,Thakurli,163,False
+2,harbour,Juinagar,Kharghar,364,False
+2,harbour,Govandi,Panvel,220,False
+2,harbour,Seawoods-Darave,Sanpada,1141,False
+2,harbour,Sanpada,Kharghar,1343,False
+2,harbour,Kharghar,Chembur,1800,False
+2,harbour,Chembur,Kharghar,104,False
+2,harbour,Mankhurd,Mansarovar,1326,False
+2,harbour,Mansarovar,Chembur,1190,False
+2,harbour,Panvel,Seawoods-Darave,1381,False
+3,western,Vasai Road,Churchgate,1301,False
+3,western,Vile Parle,Mumbai Central,1547,False
+3,western,Borivali,Vasai Road,1556,False
+3,western,Churchgate,Mira Road,747,False
+3,western,Mira Road,Mahalaxmi,384,False
+3,western,Mahalaxmi,Churchgate,166,False
+3,western,Mahim,Vile Parle,885,False
+3,western,Nalasopara,Mahalaxmi,932,False
+3,western,Bandra,Mahalaxmi,1340,False
+3,central,CSMT,Mumbra,430,False
+3,central,Kopar,Ghatkopar,1702,False
+3,central,Mumbra,Kurla,369,True
+3,central,Ghatkopar,Mumbra,1484,False
+3,central,Kanjurmarg,Kopar,68,False
+3,central,Vidyavihar,Ghatkopar,675,False
+3,central,Sion,Kurla,1761,True
+3,harbour,Khandeshwar,Reay Road,999,False
+3,harbour,Wadala Road,Sandhurst Road,325,True
+3,harbour,Reay Road,Govandi,409,False
+3,harbour,Govandi,Panvel,108,False
+3,harbour,Sandhurst Road,Masjid,153,False
+3,harbour,Chunabhatti,Sandhurst Road,1404,False
+3,harbour,Mansarovar,Chunabhatti,1112,False
+3,harbour,Nerul,Reay Road,1352,False
+3,harbour,Masjid,Khandeshwar,1287,False
+4,western,Virar,Mahalaxmi,584,False
+4,western,Mira Road,Borivali,929,False
+4,western,Bandra,Nalasopara,917,False
+4,western,Prabhadevi,Vasai Road,969,False
+4,western,Nalasopara,Virar,910,False
+4,western,Charni Road,Dahisar,1352,False
+4,western,Dahisar,Nalasopara,597,False
+4,western,Vasai Road,Bandra,1056,False
+4,western,Borivali,Mahalaxmi,1304,False
+4,central,CSMT,Dombivli,1738,False
+4,central,Thane,Kalwa,1599,True
+4,central,Chinchpokli,Sion,781,False
+4,central,Thakurli,Chinchpokli,1261,False
+4,central,Kalwa,Dombivli,283,False
+4,central,Vikhroli,Byculla,250,False
+4,harbour,Sanpada,Khandeshwar,919,False
+4,harbour,Nerul,Sanpada,1519,False
+4,harbour,CSMT,Nerul,1187,False
+4,harbour,Seawoods-Darave,Vashi,83,False
+4,harbour,Guru Tegh Bahadur Nagar,Nerul,1184,False
+4,harbour,Juinagar,Sandhurst Road,445,False
+4,harbour,Sandhurst Road,Khandeshwar,1480,False
+5,western,Santacruz,Charni Road,1422,False
+5,western,Matunga Road,Dadar,173,True
+5,western,Marine Lines,Santacruz,1659,False
+5,western,Dadar,Mumbai Central,778,True
+5,western,Charni Road,Santacruz,464,False
+5,western,Mumbai Central,Matunga Road,766,False
+5,western,Bhayandar,Vile Parle,1071,False
+5,western,Borivali,Mumbai Central,99,False
+5,central,Kanjurmarg,Kalwa,486,False
+5,central,Bhandup,Vikhroli,167,False
+5,central,CSMT,Vikhroli,845,False
+5,central,Thakurli,Kanjurmarg,1180,False
+5,central,Nahur,Vikhroli,266,False
+5,central,Vikhroli,Nahur,1493,False
+5,central,Currey Road,CSMT,957,False
+5,central,Kalwa,Kanjurmarg,1423,False
+5,central,Parel,CSMT,153,False
+5,harbour,Kurla,Panvel,376,True
+5,harbour,Wadala Road,Seawoods-Darave,1752,True
+5,harbour,Juinagar,Wadala Road,544,True
+5,harbour,Dockyard Road,CBD Belapur,1282,False
+5,harbour,CBD Belapur,Chembur,559,False
+5,harbour,Panvel,Wadala Road,93,True
+5,harbour,Seawoods-Darave,Panvel,235,False
+5,harbour,Mansarovar,Panvel,686,False
+5,harbour,Sandhurst Road,Kurla,1313,True
+6,western,Dadar,Mahalaxmi,1042,True
+6,western,Mahalaxmi,Andheri,34,False
+6,western,Mahim,Grant Road,317,False
+6,western,Lower Parel,Dadar,1137,True
+6,western,Grant Road,Mahim,677,False
+6,western,Marine Lines,Andheri,635,False
+6,western,Vasai Road,Dadar,1143,True
+6,central,Thane,Diva,854,True
+6,central,Bhandup,Thane,223,True
+6,central,Byculla,Thane,1212,True
+6,central,Diva,Kopar,1197,False
+6,central,Thakurli,Diva,1621,False
+6,central,Mumbra,Bhandup,1726,False
+6,central,Parel,Kopar,221,False
+6,central,Ghatkopar,Thakurli,1602,False
+6,central,Sion,Thane,72,True
+6,harbour,Seawoods-Darave,Reay Road,1086,False
+6,harbour,Kharghar,Khandeshwar,1776,False
+6,harbour,Sanpada,Cotton Green,1521,False
+6,harbour,Dockyard Road,Kharghar,706,False
+6,harbour,Cotton Green,CBD Belapur,1788,False
+6,harbour,Panvel,Cotton Green,1295,False
+6,harbour,Mankhurd,Sanpada,1659,False
+6,harbour,Khandeshwar,Panvel,562,False
+6,harbour,Reay Road,Dockyard Road,630,False
+6,harbour,CBD Belapur,Panvel,1701,False
+7,western,Marine Lines,Mahalaxmi,1300,False
+7,western,Mumbai Central,Ram Mandir,1769,False
+7,western,Khar Road,Mahalaxmi,1740,False
+7,western,Santacruz,Mahalaxmi,590,False
+7,western,Dadar,Prabhadevi,148,True
+7,western,Kandivali,Mumbai Central,96,False
+7,western,Mahalaxmi,Kandivali,163,False
+7,western,Andheri,Khar Road,1178,False
+7,western,Prabhadevi,Khar Road,1451,False
+7,western,Ram Mandir,Andheri,323,False
+7,central,Kurla,Mumbra,952,True
+7,central,Matunga,Thane,1059,True
+7,central,CSMT,Matunga,43,False
+7,central,Bhandup,Thane,26,True
+7,central,Mulund,Sion,1435,False
+7,central,Diva,CSMT,534,False
+7,central,Mumbra,Kurla,1050,True
+7,central,Thane,Ghatkopar,1642,True
+7,central,Sion,Bhandup,1316,False
+7,central,Ghatkopar,Diva,190,False
+7,harbour,Mansarovar,Sewri,1640,False
+7,harbour,Panvel,Mankhurd,809,False
+7,harbour,Wadala Road,Panvel,1717,True
+7,harbour,Sewri,Mankhurd,1336,False
+7,harbour,Dockyard Road,Wadala Road,53,True
+7,harbour,Tilak Nagar,Panvel,933,False
+7,harbour,Mankhurd,Wadala Road,1227,True
+7,harbour,Cotton Green,Tilak Nagar,1522,False
+7,harbour,Masjid,Panvel,1411,False
+7,harbour,Juinagar,Wadala Road,801,True
+8,western,Kandivali,Vasai Road,1762,False
+8,western,Vasai Road,Kandivali,1155,False
+8,western,Khar Road,Borivali,23,False
+8,western,Borivali,Grant Road,75,False
+8,western,Ram Mandir,Grant Road,389,False
+8,western,Santacruz,Goregaon,820,False
+8,western,Dahisar,Marine Lines,1571,False
+8,western,Grant Road,Santacruz,62,False
+8,central,Thane,Vikhroli,1336,True
+8,central,Bhandup,Byculla,896,False
+8,central,Sion,Thane,1642,True
+8,central,Matunga,Mumbra,745,False
+8,central,Kopar,Thane,1097,True
+8,central,Mumbra,Thane,1348,True
+8,central,Vikhroli,Thane,715,True
+8,central,Byculla,Thane,1410,True
+8,central,Kanjurmarg,Diva,129,False
+8,central,Diva,Kanjurmarg,466,False
+8,harbour,Masjid,Tilak Nagar,902,False
+8,harbour,Govandi,Cotton Green,658,False
+8,harbour,CBD Belapur,Govandi,1218,False
+8,harbour,Seawoods-Darave,Kharghar,1553,False
+8,harbour,Tilak Nagar,Govandi,1748,False
+8,harbour,Panvel,CBD Belapur,555,False
+8,harbour,Sanpada,Seawoods-Darave,875,False
+8,harbour,Nerul,Govandi,823,False
+8,harbour,Kharghar,Masjid,781,False
+9,western,Churchgate,Dahisar,1210,False
+9,western,Mahalaxmi,Vile Parle,244,False
+9,western,Malad,Kandivali,1271,False
+9,western,Kandivali,Vile Parle,451,False
+9,western,Goregaon,Naigaon,1030,False
+9,western,Naigaon,Vile Parle,559,False
+9,western,Marine Lines,Khar Road,49,False
+9,western,Vile Parle,Malad,294,False
+9,western,Khar Road,Dahisar,941,False
+9,central,Kurla,Nahur,591,True
+9,central,Mumbra,Chinchpokli,1711,False
+9,central,Chinchpokli,Kalyan,714,False
+9,central,Currey Road,Chinchpokli,1531,False
+9,central,Mulund,Kurla,700,True
+9,central,Bhandup,Kalyan,745,False
+9,central,Kalyan,Mumbra,383,False
+9,central,Ghatkopar,Dadar,679,True
+9,central,Dadar,Nahur,1486,True
+9,harbour,Juinagar,CBD Belapur,616,False
+9,harbour,Wadala Road,Seawoods-Darave,899,True
+9,harbour,Panvel,CBD Belapur,1761,False
+9,harbour,Chembur,Sewri,830,False
+9,harbour,Masjid,CBD Belapur,772,False
+9,harbour,Sewri,Chembur,1601,False
+9,harbour,Nerul,Sewri,173,False
+9,harbour,CBD Belapur,Sewri,528,False
+9,harbour,Seawoods-Darave,Masjid,1374,False
+9,harbour,Govandi,CBD Belapur,602,False
+10,western,Lower Parel,Marine Lines,111,False
+10,western,Malad,Lower Parel,444,False
+10,western,Mumbai Central,Mahalaxmi,1125,False
+10,western,Andheri,Malad,1773,False
+10,western,Churchgate,Lower Parel,256,False
+10,western,Jogeshwari,Lower Parel,530,False
+10,western,Grant Road,Mumbai Central,1662,False
+10,western,Mahalaxmi,Lower Parel,1049,False
+10,western,Marine Lines,Mumbai Central,1754,False
+10,western,Vile Parle,Andheri,546,False
+10,central,Currey Road,Mulund,1115,False
+10,central,Kanjurmarg,Dombivli,253,False
+10,central,CSMT,Nahur,836,False
+10,central,Diva,Kanjurmarg,1172,False
+10,central,Kopar,Currey Road,1041,False
+10,central,Dombivli,Nahur,553,False
+10,central,Nahur,Kopar,564,False
+10,central,Vikhroli,Thane,118,True
+10,central,Mulund,Kopar,477,False
+10,harbour,Chunabhatti,Nerul,290,False
+10,harbour,Khandeshwar,Reay Road,234,False
+10,harbour,Kharghar,Chunabhatti,717,False
+10,harbour,Chembur,Sandhurst Road,1618,False
+10,harbour,Sandhurst Road,Chunabhatti,366,False
+10,harbour,Govandi,Reay Road,59,False
+10,harbour,Reay Road,Kharghar,1091,False
+10,harbour,Nerul,Sandhurst Road,1763,False
+10,harbour,Cotton Green,Reay Road,748,False
+10,harbour,Mankhurd,Govandi,1217,False
+11,western,Mumbai Central,Goregaon,1299,False
+11,western,Charni Road,Vasai Road,464,False
+11,western,Dahisar,Jogeshwari,1389,False
+11,western,Jogeshwari,Vasai Road,941,False
+11,western,Khar Road,Jogeshwari,1262,False
+11,western,Ram Mandir,Charni Road,1110,False
+11,western,Naigaon,Mumbai Central,380,False
+11,western,Vasai Road,Jogeshwari,1128,False
+11,central,Vidyavihar,Bhandup,1391,False
+11,central,Kalwa,Kurla,494,True
+11,central,Nahur,Mumbra,1599,False
+11,central,Bhandup,Vidyavihar,1290,False
+11,central,Chinchpokli,Vidyavihar,1068,False
+11,central,Mumbra,Kurla,715,True
+11,central,Kurla,Bhandup,1613,True
+11,central,Sion,Kurla,1254,True
+11,central,Vikhroli,Chinchpokli,926,False
+11,harbour,Chembur,Khandeshwar,1235,False
+11,harbour,Sewri,Dockyard Road,1335,False
+11,harbour,Dockyard Road,CSMT,1120,False
+11,harbour,Sanpada,Guru Tegh Bahadur Nagar,341,False
+11,harbour,Khandeshwar,Sanpada,624,False
+11,harbour,Guru Tegh Bahadur Nagar,Cotton Green,1503,False
+11,harbour,Cotton Green,Sewri,669,False
+11,harbour,CSMT,Sewri,1636,False
+11,harbour,Juinagar,Dockyard Road,248,False
+11,harbour,Nerul,Cotton Green,1027,False
+12,western,Khar Road,Marine Lines,669,False
+12,western,Mira Road,Vasai Road,1293,False
+12,western,Churchgate,Charni Road,1048,False
+12,western,Jogeshwari,Churchgate,1465,False
+12,western,Santacruz,Churchgate,1525,False
+12,western,Marine Lines,Santacruz,1755,False
+12,western,Charni Road,Marine Lines,758,False
+12,western,Virar,Churchgate,1567,False
+12,central,Mumbra,Ghatkopar,1196,False
+12,central,Matunga,Kopar,837,False
+12,central,Kalwa,Ghatkopar,1099,False
+12,central,Byculla,Vidyavihar,818,False
+12,central,Vidyavihar,CSMT,1567,False
+12,central,Dombivli,Mumbra,1091,False
+12,central,Kopar,Matunga,547,False
+12,central,CSMT,Kurla,1263,True
+12,harbour,Sanpada,Chembur,725,False
+12,harbour,Chembur,Reay Road,65,False
+12,harbour,Masjid,Wadala Road,54,True
+12,harbour,Reay Road,Wadala Road,1250,True
+12,harbour,Seawoods-Darave,Chembur,1285,False
+12,harbour,Khandeshwar,Sanpada,1650,False
+12,harbour,Kurla,Seawoods-Darave,1464,True
+12,harbour,Wadala Road,Cotton Green,1445,True
+12,harbour,Cotton Green,Wadala Road,1077,True
+12,harbour,Juinagar,Kurla,66,True
+13,western,Charni Road,Bandra,387,False
+13,western,Bandra,Mahim,1100,False
+13,western,Jogeshwari,Mahim,1342,False
+13,western,Prabhadevi,Dahisar,1563,False
+13,western,Bhayandar,Bandra,1060,False
+13,western,Dadar,Jogeshwari,428,True
+13,western,Mahim,Bhayandar,1167,False
+13,central,Thane,Mulund,475,True
+13,central,Currey Road,CSMT,1748,False
+13,central,Kopar,Thane,1700,True
+13,central,Mulund,Kopar,1238,False
+13,central,Parel,Thane,1351,True
+13,central,Vikhroli,Thane,927,True
+13,central,Sion,Parel,935,False
+13,harbour,Kurla,CSMT,823,True
+13,harbour,Khandeshwar,Seawoods-Darave,447,False
+13,harbour,Masjid,Sewri,159,False
+13,harbour,Mansarovar,Masjid,390,False
+13,harbour,Sewri,Masjid,986,False
+13,harbour,Seawoods-Darave,Masjid,193,False
+13,harbour,Vashi,Mansarovar,1585,False
+13,harbour,Chembur,Kurla,1721,True
+14,western,Santacruz,Charni Road,1595,False
+14,western,Mira Road,Prabhadevi,1452,False
+14,western,Prabhadevi,Malad,1356,False
+14,western,Malad,Virar,637,False
+14,western,Mahim,Charni Road,720,False
+14,western,Virar,Mira Road,928,False
+14,western,Dahisar,Charni Road,351,False
+14,western,Charni Road,Dahisar,1415,False
+14,western,Dadar,Mahim,1544,True
+14,central,Mulund,Diva,1391,False
+14,central,Kalyan,Kanjurmarg,1588,False
+14,central,Matunga,Kalyan,1239,False
+14,central,Byculla,Kurla,647,True
+14,central,Kanjurmarg,Mulund,1506,False
+14,central,Chinchpokli,Mulund,145,False
+14,central,Kurla,Kopar,337,True
+14,central,Diva,Chinchpokli,864,False
+14,central,Kopar,Byculla,1758,False
+14,harbour,Kharghar,Sanpada,1000,False
+14,harbour,Kurla,Mankhurd,692,True
+14,harbour,Seawoods-Darave,Govandi,20,False
+14,harbour,CBD Belapur,Seawoods-Darave,479,False
+14,harbour,Reay Road,Sanpada,1580,False
+14,harbour,Mankhurd,Kurla,599,True
+14,harbour,Sanpada,Reay Road,254,False
+14,harbour,Wadala Road,CBD Belapur,945,True
+14,harbour,Vashi,Govandi,1369,False
+15,western,Virar,Kandivali,390,False
+15,western,Churchgate,Borivali,476,False
+15,western,Bhayandar,Mahalaxmi,1000,False
+15,western,Mumbai Central,Kandivali,815,False
+15,western,Ram Mandir,Bhayandar,950,False
+15,western,Mahalaxmi,Ram Mandir,718,False
+15,western,Santacruz,Ram Mandir,48,False
+15,western,Bandra,Mumbai Central,1615,False
+15,western,Borivali,Ram Mandir,1216,False
+15,central,Kopar,Vikhroli,1364,False
+15,central,Thane,Diva,1306,True
+15,central,Sion,Mumbra,1424,False
+15,central,Diva,Kopar,1773,False
+15,central,Nahur,Currey Road,556,False
+15,central,Vikhroli,Kalwa,88,False
+15,central,Kalwa,Nahur,546,False
+15,central,Ghatkopar,Diva,1033,False
+15,central,Currey Road,Vikhroli,753,False
+15,harbour,Sanpada,Chembur,356,False
+15,harbour,Mansarovar,Juinagar,147,False
+15,harbour,Khandeshwar,Seawoods-Darave,1776,False
+15,harbour,Seawoods-Darave,Mankhurd,1126,False
+15,harbour,Sandhurst Road,Khandeshwar,1793,False
+15,harbour,Juinagar,Mankhurd,943,False
+15,harbour,Mankhurd,Mansarovar,1763,False
+15,harbour,Chembur,CSMT,1595,False
+16,western,Dahisar,Mumbai Central,1289,False
+16,western,Jogeshwari,Vasai Road,1488,False
+16,western,Prabhadevi,Dadar,1144,True
+16,western,Dadar,Bhayandar,656,True
+16,western,Bhayandar,Prabhadevi,1664,False
+16,western,Naigaon,Kandivali,144,False
+16,western,Vasai Road,Prabhadevi,1280,False
+16,western,Churchgate,Kandivali,1699,False
+16,western,Mumbai Central,Churchgate,1586,False
+16,central,CSMT,Thane,1741,True
+16,central,Vidyavihar,Kopar,1365,False
+16,central,Thane,Byculla,359,True
+16,central,Kanjurmarg,Byculla,1669,False
+16,central,Kalwa,Byculla,232,False
+16,central,Byculla,Vidyavihar,738,False
+16,central,Nahur,Byculla,1146,False
+16,central,Matunga,Byculla,416,False
+16,harbour,Vashi,Kurla,794,True
+16,harbour,Juinagar,Cotton Green,1750,False
+16,harbour,Sandhurst Road,Juinagar,500,False
+16,harbour,Kurla,Mansarovar,1499,True
+16,harbour,Govandi,Cotton Green,424,False
+16,harbour,Dockyard Road,Juinagar,617,False
+16,harbour,Chembur,Vashi,1450,False
+16,harbour,Cotton Green,Kurla,174,True
+16,harbour,Mansarovar,Panvel,1434,False
+16,harbour,Panvel,Juinagar,834,False
+17,western,Santacruz,Khar Road,1090,False
+17,western,Virar,Malad,1336,False
+17,western,Bhayandar,Mahalaxmi,1002,False
+17,western,Dahisar,Mahalaxmi,372,False
+17,western,Grant Road,Virar,1048,False
+17,western,Nalasopara,Bhayandar,388,False
+17,western,Mahalaxmi,Grant Road,971,False
+17,western,Matunga Road,Malad,1308,False
+17,western,Khar Road,Bhayandar,277,False
+17,western,Malad,Grant Road,1031,False
+17,central,Kanjurmarg,Currey Road,208,False
+17,central,Kopar,Nahur,1082,False
+17,central,Kalwa,Thakurli,755,False
+17,central,Bhandup,Currey Road,1268,False
+17,central,Nahur,Kalwa,703,False
+17,central,Byculla,Currey Road,1119,False
+17,central,Diva,Byculla,1436,False
+17,central,Currey Road,Kalwa,413,False
+17,central,Kalyan,Byculla,329,False
+17,harbour,Sanpada,Sewri,718,False
+17,harbour,Masjid,Sewri,283,False
+17,harbour,CSMT,Sewri,999,False
+17,harbour,Seawoods-Darave,Masjid,154,False
+17,harbour,Sewri,Chunabhatti,664,False
+17,harbour,Chunabhatti,Mankhurd,400,False
+17,harbour,Sandhurst Road,CSMT,155,False
+17,harbour,Wadala Road,Mankhurd,251,True
+17,harbour,Mankhurd,Juinagar,702,False
+17,harbour,Juinagar,Masjid,930,False
+18,western,Charni Road,Dahisar,424,False
+18,western,Malad,Churchgate,219,False
+18,western,Churchgate,Santacruz,1788,False
+18,western,Santacruz,Churchgate,1153,False
+18,western,Bhayandar,Churchgate,415,False
+18,western,Andheri,Santacruz,626,False
+18,western,Dahisar,Malad,734,False
+18,central,Ghatkopar,Sion,710,False
+18,central,CSMT,Dombivli,1449,False
+18,central,Sion,Dadar,943,True
+18,central,Vikhroli,Diva,1595,False
+18,central,Dombivli,Mulund,161,False
+18,central,Diva,Dombivli,1206,False
+18,central,Dadar,Mulund,1389,True
+18,central,Chinchpokli,Mulund,753,False
+18,central,Byculla,Mulund,1582,False
+18,central,Mulund,Chinchpokli,985,False
+18,harbour,Masjid,Reay Road,421,False
+18,harbour,Wadala Road,Dockyard Road,104,True
+18,harbour,Dockyard Road,Wadala Road,564,True
+18,harbour,CSMT,Tilak Nagar,647,False
+18,harbour,Juinagar,Vashi,1628,False
+18,harbour,Reay Road,Govandi,984,False
+19,western,Jogeshwari,Prabhadevi,1390,False
+19,western,Virar,Prabhadevi,1493,False
+19,western,Borivali,Prabhadevi,1206,False
+19,western,Naigaon,Bhayandar,259,False
+19,western,Prabhadevi,Jogeshwari,1375,False
+19,western,Santacruz,Nalasopara,417,False
+19,western,Nalasopara,Borivali,1625,False
+19,western,Mira Road,Nalasopara,1780,False
+19,western,Bhayandar,Mira Road,1579,False
+19,western,Vasai Road,Naigaon,1176,False
+19,central,Parel,Thane,1789,True
+19,central,Kopar,CSMT,1568,False
+19,central,CSMT,Kopar,203,False
+19,central,Kanjurmarg,Thane,1718,True
+19,central,Dombivli,CSMT,565,False
+19,central,Kurla,Vidyavihar,557,True
+19,central,Kalyan,Kanjurmarg,1335,False
+19,central,Vidyavihar,Kurla,122,True
+19,central,Kalwa,Kalyan,1253,False
+19,central,Thane,Vidyavihar,1128,True
+19,harbour,Cotton Green,Nerul,57,False
+19,harbour,Masjid,Mansarovar,1067,False
+19,harbour,Mansarovar,Seawoods-Darave,1279,False
+19,harbour,Sewri,Dockyard Road,413,False
+19,harbour,Sanpada,Seawoods-Darave,1569,False
+19,harbour,Vashi,Seawoods-Darave,1728,False
+19,harbour,Reay Road,Cotton Green,234,False
+19,harbour,Dockyard Road,Sanpada,25,False
+19,harbour,Seawoods-Darave,Sanpada,1293,False
+20,western,Bandra,Kandivali,90,False
+20,western,Matunga Road,Santacruz,98,False
+20,western,Andheri,Charni Road,1509,False
+20,western,Santacruz,Bandra,32,False
+20,western,Charni Road,Naigaon,1417,False
+20,western,Naigaon,Charni Road,880,False
+20,western,Ram Mandir,Kandivali,54,False
+20,western,Marine Lines,Matunga Road,1666,False
+20,western,Kandivali,Santacruz,262,False
+20,western,Khar Road,Charni Road,452,False
+20,central,Sion,Bhandup,265,False
+20,central,Bhandup,Kurla,564,True
+20,central,CSMT,Kopar,700,False
+20,central,Vikhroli,Kopar,1313,False
+20,central,Mulund,Kopar,286,False
+20,central,Kurla,Kopar,187,True
+20,central,Matunga,Dadar,1239,True
+20,central,Dadar,Bhandup,1241,True
+20,central,Currey Road,Matunga,1745,False
+20,harbour,Kharghar,Chembur,1452,False
+20,harbour,Masjid,Govandi,283,False
+20,harbour,Seawoods-Darave,Kharghar,1742,False
+20,harbour,Sandhurst Road,Chembur,1195,False
+20,harbour,Chembur,Vashi,1319,False
+20,harbour,Chunabhatti,Sandhurst Road,1630,False
+20,harbour,Panvel,Chunabhatti,71,False
+20,harbour,Vashi,Govandi,75,False
+20,harbour,Govandi,Masjid,881,False
+21,western,Jogeshwari,Santacruz,808,False
+21,western,Churchgate,Bhayandar,450,False
+21,western,Grant Road,Santacruz,633,False
+21,western,Bhayandar,Charni Road,1313,False
+21,western,Charni Road,Grant Road,1361,False
+21,western,Mahim,Bhayandar,1264,False
+21,western,Lower Parel,Grant Road,278,False
+21,western,Santacruz,Vasai Road,26,False
+21,central,Mumbra,Currey Road,386,False
+21,central,Bhandup,Matunga,904,False
+21,central,Currey Road,Vikhroli,1406,False
+21,central,Vikhroli,CSMT,1139,False
+21,central,Matunga,CSMT,1344,False
+21,central,Ghatkopar,CSMT,55,False
+21,central,Kalyan,Vikhroli,1240,False
+21,central,CSMT,Kalyan,108,False
+21,central,Dadar,Vikhroli,863,True
+21,harbour,Guru Tegh Bahadur Nagar,Kharghar,84,False
+21,harbour,Juinagar,Tilak Nagar,1586,False
+21,harbour,Mansarovar,Chembur,1569,False
+21,harbour,Kurla,Kharghar,224,True
+21,harbour,Kharghar,Juinagar,1331,False
+21,harbour,Tilak Nagar,Cotton Green,439,False
+21,harbour,Dockyard Road,Tilak Nagar,427,False
+21,harbour,Chembur,Cotton Green,221,False
+21,harbour,Sewri,Guru Tegh Bahadur Nagar,500,False
+21,harbour,Cotton Green,Sewri,1338,False
+22,western,Bhayandar,Virar,337,False
+22,western,Charni Road,Churchgate,1724,False
+22,western,Dahisar,Virar,1405,False
+22,western,Khar Road,Churchgate,1761,False
+22,western,Virar,Andheri,1106,False
+22,western,Andheri,Bhayandar,554,False
+22,western,Vile Parle,Dahisar,1261,False
+22,western,Churchgate,Khar Road,315,False
+22,central,CSMT,Dombivli,1266,False
+22,central,Byculla,Mulund,112,False
+22,central,Thane,Dombivli,999,True
+22,central,Dombivli,CSMT,458,False
+22,central,Mumbra,Kalwa,985,False
+22,central,Parel,Dombivli,1559,False
+22,central,Ghatkopar,Byculla,334,False
+22,central,Kalwa,CSMT,774,False
+22,central,Kurla,Mulund,858,True
+22,harbour,Nerul,Mankhurd,959,False
+22,harbour,CBD Belapur,Mankhurd,179,False
+22,harbour,Mansarovar,Chunabhatti,544,False
+22,harbour,Chunabhatti,Nerul,1500,False
+22,harbour,Sanpada,Guru Tegh Bahadur Nagar,734,False
+22,harbour,Tilak Nagar,CBD Belapur,580,False
+22,harbour,Sewri,Nerul,674,False
+22,harbour,Masjid,Nerul,1542,False
+22,harbour,Mankhurd,CBD Belapur,1153,False
+22,harbour,Guru Tegh Bahadur Nagar,CBD Belapur,517,False
+23,western,Dahisar,Vasai Road,1698,False
+23,western,Nalasopara,Andheri,643,False
+23,western,Virar,Nalasopara,1502,False
+23,western,Khar Road,Virar,1416,False
+23,western,Charni Road,Khar Road,1382,False
+23,western,Andheri,Charni Road,1056,False
+23,western,Marine Lines,Nalasopara,37,False
+23,western,Churchgate,Dadar,602,True
+23,western,Vasai Road,Andheri,358,False
+23,western,Dadar,Andheri,689,True
+23,central,Sion,Parel,227,False
+23,central,Thakurli,Mumbra,1378,False
+23,central,Mumbra,Diva,1130,False
+23,central,Kanjurmarg,Bhandup,145,False
+23,central,Parel,Thakurli,1741,False
+23,central,Ghatkopar,Sion,1273,False
+23,central,Vikhroli,Kanjurmarg,1374,False
+23,central,Bhandup,Mumbra,268,False
+23,central,Chinchpokli,Ghatkopar,318,False
+23,harbour,Guru Tegh Bahadur Nagar,Vashi,533,False
+23,harbour,Dockyard Road,Guru Tegh Bahadur Nagar,1246,False
+23,harbour,Vashi,Seawoods-Darave,1554,False
+23,harbour,Govandi,CBD Belapur,1570,False
+23,harbour,Khandeshwar,Vashi,1406,False
+23,harbour,CBD Belapur,Seawoods-Darave,1685,False
+23,harbour,Seawoods-Darave,Dockyard Road,289,False
+23,harbour,Chunabhatti,Dockyard Road,814,False
+23,harbour,Sanpada,Seawoods-Darave,1482,False

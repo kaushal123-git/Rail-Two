@@ -275,7 +275,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> with SingleTickerPr
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8, offset: const Offset(0, 2)),
+          BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 2)),
         ],
         border: Border.all(color: Colors.grey.shade200),
       ),
@@ -285,7 +285,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> with SingleTickerPr
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             decoration: BoxDecoration(
-              color: Colors.blue.shade50.withOpacity(0.5),
+              color: Colors.blue.shade50.withValues(alpha: 0.5),
               borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
             ),
             child: Row(
@@ -406,7 +406,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> with SingleTickerPr
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => SeasonBookingScreen(),
+                          builder: (context) => const SeasonBookingScreen(),
                         ),
                       );
                     },

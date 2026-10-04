@@ -1,5 +1,5 @@
 name: railway_station_finder
-description: A Flutter application to find the nearest railway station using S2 Geometry.
+description: "LOCO - AI-Powered Intelligent Urban Rail Mobility Platform for Mumbai."
 publish_to: 'none'
 
 version: 1.0.0+1
@@ -17,6 +17,11 @@ dependencies:
   path_provider: ^2.1.2
   shared_preferences: ^2.2.3
   pin_code_fields: ^8.0.1
+  sqflite: ^2.4.4
+  path: ^1.9.1
+  local_auth: ^3.0.2
+  crypto: ^3.0.7
+  sqflite_common_ffi: ^2.4.3
 
 dev_dependencies:
   flutter_test:
@@ -28,3 +33,6 @@ flutter:
 
   assets:
     - assets/default_stations.json
+    - assets/loco_logo.png
+    - assets/mumbai_live_rail_feed.json
+    - assets/crowd_ml_model.json

@@ -1,1247 +1,1515 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import '../core/constants/loco_branding.dart';
+import '../core/theme/loco_theme.dart';
 import '../models/station.dart';
-import '../services/station_storage.dart';
-import '../services/location_service.dart';
-import 'package:geolocator/geolocator.dart';
+import '../models/ticket.dart';
+import '../services/gemini_rail_service.dart';
+import '../services/station_state_service.dart';
+import '../services/ticket_storage.dart';
+import '../simulation/train_simulation_engine.dart';
+import '../widgets/digital_ticket_inspector.dart';
+import '../widgets/rail_ai_sheet.dart';
 import 'booking_screen.dart';
-import 'season_booking_screen.dart';
-import 'my_bookings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final Function(int tabIndex)? onSwitchTab;
+
+  const HomeScreen({super.key, this.onSwitchTab});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _ticketTypeIndex = 0; // 0 for Normal, 1 for Season
-  int _stationTypeIndex = 0; // 0 for Outside Station, 1 for At Station
-
-  List<RailwayStation> _stations = [];
-  RailwayStation? _fromStation;
-  RailwayStation? _toStation;
-
-  TextEditingController? _fromController;
-  TextEditingController? _toController;
-
-  List<RailwayStation> _nearestStations = [];
-  Position? _currentPosition;
-  double? _scannedDistanceKm;
-  bool _isQrScannedInAtStation = false;
+  final StationStateService _stationState = StationStateService();
+  StreamSubscription? _simSubscription;
+  Timer? _countdownTicker;
+  int _clockTick = 0;
 
   @override
   void initState() {
     super.initState();
-    _loadStations();
-  }
+    _stationState.addListener(_onStateChange);
 
-  Future<void> _loadStations() async {
-    final stations = await StationStorage.loadAllStations();
-    setState(() {
-      _stations = stations;
-    });
-    _determineNearestStations();
-  }
-
-  Future<void> _determineNearestStations() async {
-    final position = await LocationService.getCurrentLocation();
-    if (position == null) return;
-
-    List<RailwayStation> sorted = List.from(_stations);
-    sorted.sort((a, b) {
-      double distA = Geolocator.distanceBetween(position.latitude, position.longitude, a.latitude, a.longitude);
-      double distB = Geolocator.distanceBetween(position.latitude, position.longitude, b.latitude, b.longitude);
-      return distA.compareTo(distB);
+    // Refresh trains simulation every 15s
+    _simSubscription = TrainSimulationEngine().trainsStream.listen((_) {
+      if (mounted) setState(() {});
     });
 
-    final top3 = sorted.take(3).toList();
-
-    setState(() {
-      _currentPosition = position;
-      _nearestStations = top3;
-      if (_fromStation == null && top3.isNotEmpty && _stationTypeIndex == 0) {
-        _fromStation = top3.first;
-        if (_fromController != null) {
-          _fromController!.text = top3.first.name;
-        }
-      }
+    _countdownTicker = Timer.periodic(const Duration(seconds: 15), (_) {
+      if (mounted) setState(() => _clockTick++);
     });
   }
 
-  String _getStationDistanceText(RailwayStation station) {
-    if (_currentPosition == null) return '';
-    double meters = Geolocator.distanceBetween(
-      _currentPosition!.latitude,
-      _currentPosition!.longitude,
-      station.latitude,
-      station.longitude,
-    );
-    if (meters < 1000) {
-      return '${meters.toStringAsFixed(0)} m';
-    } else {
-      return '${(meters / 1000).toStringAsFixed(1)} km';
-    }
+  void _onStateChange() {
+    if (mounted) setState(() {});
   }
 
-  void _swapStations() {
-    // Swapping only allowed in Outside Station mode when both stations are set
-    if (_stationTypeIndex == 1) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('In "At Station" mode, source station is fixed by QR scan. Select destination station below.'),
-        ),
-      );
-      return;
-    }
-
-    setState(() {
-      final tempStation = _fromStation;
-      _fromStation = _toStation;
-      _toStation = tempStation;
-
-      if (_fromController != null && _toController != null) {
-        final tempText = _fromController!.text;
-        _fromController!.text = _toController!.text;
-        _toController!.text = tempText;
-      }
-    });
+  @override
+  void dispose() {
+    _stationState.removeListener(_onStateChange);
+    _simSubscription?.cancel();
+    _countdownTicker?.cancel();
+    super.dispose();
   }
 
-  Future<void> _verifyAndSetScannedStation(RailwayStation station) async {
-    final position = await LocationService.getCurrentLocation();
+  void _showStationPicker({required bool isFrom}) {
+    final stations = _stationState.stations;
+    String searchQuery = '';
 
-    if (position == null) {
-      _showRadiusLimitErrorDialog(
-        stationName: station.name,
-        distanceKm: null,
-        customMessage: "GPS position unavailable. Please ensure location services are enabled to verify the 500 m geofence radius.",
-      );
-      return;
-    }
-
-    double distMeters = Geolocator.distanceBetween(
-      position.latitude,
-      position.longitude,
-      station.latitude,
-      station.longitude,
-    );
-    double distKm = distMeters / 1000.0;
-
-    if (distKm <= 0.5) {
-      setState(() {
-        _fromStation = station;
-        _scannedDistanceKm = distKm;
-        _isQrScannedInAtStation = true;
-        if (_fromController != null) {
-          _fromController!.text = station.name;
-        }
-      });
-
-      String distStr = distKm < 1.0
-          ? '${distMeters.toStringAsFixed(0)} m'
-          : '${distKm.toStringAsFixed(1)} km';
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: const Color(0xFF2E7D32),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          content: Row(
-            children: [
-              const Icon(Icons.check_circle_rounded, color: Colors.white),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  '✓ QR Scanned: ${station.name} ($distStr away - Within 500m radius)',
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    } else {
-      _showRadiusLimitErrorDialog(
-        stationName: station.name,
-        distanceKm: distKm,
-      );
-    }
-  }
-
-  void _showRadiusLimitErrorDialog({
-    required String stationName,
-    required double? distanceKm,
-    String? customMessage,
-  }) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        backgroundColor: Colors.white,
-        title: const Row(
-          children: [
-            Icon(Icons.error_outline_rounded, color: Colors.redAccent, size: 28),
-            SizedBox(width: 10),
-            Text(
-              'Radius Limit Exceeded',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.redAccent),
-            ),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              customMessage ??
-                  'You are currently ${distanceKm != null ? (distanceKm < 1.0 ? '${(distanceKm * 1000).toStringAsFixed(0)} m' : '${distanceKm.toStringAsFixed(1)} km') : ''} away from $stationName. "At Station" QR booking is only permitted within a 500 m geofence radius.',
-              style: const TextStyle(fontSize: 14, height: 1.4, color: Colors.black87),
-            ),
-            if (distanceKm != null) ...[
-              const SizedBox(height: 14),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                decoration: BoxDecoration(
-                  color: Colors.red.shade50,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.red.shade200),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.location_off_rounded, color: Colors.red.shade700, size: 20),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'Current Distance: ${distanceKm < 1.0 ? '${(distanceKm * 1000).toStringAsFixed(0)} m' : '${distanceKm.toStringAsFixed(2)} km'}\n(Maximum Allowed: 500 m)',
-                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.red.shade900),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w600)),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              setState(() {
-                _stationTypeIndex = 0; // Switch to Outside Station mode
-                _isQrScannedInAtStation = false;
-                if (_nearestStations.isNotEmpty) {
-                  _fromStation = _nearestStations.first;
-                  if (_fromController != null) {
-                    _fromController!.text = _nearestStations.first.name;
-                  }
-                }
-              });
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF0066FF),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            ),
-            child: const Text('Switch to Outside Station', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showQrScannerDialog() {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        height: MediaQuery.of(context).size.height * 0.75,
-        decoration: const BoxDecoration(
-          color: Color(0xFF1E293B),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-        ),
-        child: Column(
-          children: [
-            const SizedBox(height: 12),
-            Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade600,
-                borderRadius: BorderRadius.circular(2),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            final filtered = stations.where((s) {
+              final q = searchQuery.toLowerCase().trim();
+              if (q.isEmpty) return true;
+              return s.name.toLowerCase().contains(q) ||
+                  s.code.toLowerCase().contains(q) ||
+                  s.line.toLowerCase().contains(q);
+            }).toList();
+
+            return Container(
+              height: MediaQuery.of(context).size.height * 0.8,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
               ),
-            ),
-            const SizedBox(height: 16),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Column(
                 children: [
-                  const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Scan Station QR Code',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                      ),
-                      SizedBox(height: 2),
-                      Text(
-                        'Align Station QR code inside frame',
-                        style: TextStyle(fontSize: 12, color: Colors.grey),
-                      ),
-                    ],
+                  Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.only(top: 12, bottom: 8),
+                    decoration: BoxDecoration(
+                      color: LocoColors.border,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.close, color: Colors.white),
-                    onPressed: () => Navigator.pop(context),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          isFrom ? 'Select Origin Station' : 'Select Destination Station',
+                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: LocoColors.textPrimary),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close, color: LocoColors.textMuted),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ],
+                    ),
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            
-            // Simulated Camera Frame
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.black45,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: const Color(0xFF0066FF), width: 2),
-                  ),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      const Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.qr_code_scanner, size: 80, color: Color(0xFF0066FF)),
-                          SizedBox(height: 12),
-                          Text(
-                            'Point Camera at Station QR Code',
-                            style: TextStyle(color: Colors.white70, fontSize: 13),
-                          ),
-                        ],
+
+                  // Station Search
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: TextField(
+                      onChanged: (val) => setModalState(() => searchQuery = val),
+                      decoration: InputDecoration(
+                        hintText: 'Search Mumbai Suburban station (e.g. Virar, Dadar)...',
+                        prefixIcon: const Icon(Icons.search, color: LocoColors.orange),
+                        filled: true,
+                        fillColor: LocoColors.canvas,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: const BorderSide(color: LocoColors.border),
+                        ),
                       ),
-                      Positioned(
-                        bottom: 16,
-                        left: 16,
-                        right: 16,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.6),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.radar, color: Colors.cyanAccent, size: 16),
-                              SizedBox(width: 8),
-                              Text(
-                                '500 m Geofence GPS Active',
-                                style: TextStyle(color: Colors.cyanAccent, fontSize: 12, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  // GPS Detection Tile
+                  if (isFrom)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                      child: ListTile(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          side: const BorderSide(color: LocoColors.orangeLight, width: 1.5),
+                        ),
+                        tileColor: LocoColors.orangeLight,
+                        leading: const Icon(Icons.my_location, color: LocoColors.orange),
+                        title: const Text(
+                          'Detect Current Location (GPS)',
+                          style: TextStyle(fontWeight: FontWeight.w800, color: LocoColors.orange, fontSize: 13.5),
+                        ),
+                        subtitle: const Text(
+                          'Sets default station across the entire app',
+                          style: TextStyle(fontSize: 11, color: LocoColors.textSecondary),
+                        ),
+                        onTap: () async {
+                          Navigator.pop(context);
+                          final detected = await _stationState.detectCurrentLocation();
+                          if (mounted && detected != null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: LocoColors.textPrimary,
+                                content: Text('📍 Location updated: ${detected.name} is now default throughout LOCO'),
                               ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            
-            // Quick station scan buttons for easy testing
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Tap a Station to Simulate QR Scan:',
-                  style: TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            SizedBox(
-              height: 48,
-              child: ListView.separated(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                scrollDirection: Axis.horizontal,
-                itemCount: _stations.length,
-                separatorBuilder: (context, index) => const SizedBox(width: 8),
-                itemBuilder: (context, index) {
-                  final station = _stations[index];
-                  return ActionChip(
-                    avatar: const Icon(Icons.qr_code, size: 16, color: Color(0xFF0066FF)),
-                    label: Text(
-                      station.name,
-                      style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
-                    ),
-                    backgroundColor: const Color(0xFF334155),
-                    side: BorderSide.none,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    onPressed: () {
-                      Navigator.pop(context);
-                      _verifyAndSetScannedStation(station);
-                    },
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 20),
-          ],
-        ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF2F4F7),
-      body: SafeArea(
-        child: Column(
-          children: [
-            _buildAppBar(),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 8),
-                    _buildBookingCard(),
-                    const SizedBox(height: 24),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        selectedItemColor: const Color(0xFF0066FF),
-        unselectedItemColor: Colors.grey,
-        onTap: (index) {
-          if (index == 1) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const MyBookingsScreen()),
-            );
-          } else if (index == 2) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SeasonBookingScreen(
-                  initialFromStation: _fromStation,
-                  initialToStation: _toStation,
-                ),
-              ),
-            );
-          }
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.confirmation_number),
-            label: 'My Bookings',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.card_membership),
-            label: 'Season Booking',
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAppBar() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const SizedBox(width: 32),
-          const Text(
-            'Unreserved E-Ticket',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w800,
-              color: Color(0xFF1A2A4E),
-            ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.blue.shade100, width: 1.5),
-            ),
-            child: const Padding(
-              padding: EdgeInsets.all(4.0),
-              child: Icon(Icons.close, color: Color(0xFF0066FF), size: 20),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBookingCard() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildTicketTypeToggle(),
-          const SizedBox(height: 16),
-          _buildStationTypeToggle(),
-          const SizedBox(height: 16),
-          
-          if (_stationTypeIndex == 0) _buildOutsideStationBanner(),
-          if (_stationTypeIndex == 1) _buildAtStationBanner(),
-          
-          const SizedBox(height: 16),
-          _buildRouteSelection(),
-          const SizedBox(height: 24),
-
-          if (_stationTypeIndex == 0) _buildNearestStationsSuggestions(),
-          
-          const SizedBox(height: 24),
-          
-          // Proceed To Book Button
-          SizedBox(
-            width: double.infinity,
-            height: 52,
-            child: ElevatedButton(
-              onPressed: () async {
-                if (_stationTypeIndex == 1) {
-                  // In "At Station" mode, QR scan is strictly required for source station!
-                  if (_fromStation == null || !_isQrScannedInAtStation) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        backgroundColor: Colors.redAccent,
-                        content: Text(
-                          'Please scan the Station QR Code first to select your source station in "At Station" mode.',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    );
-                    _showQrScannerDialog();
-                    return;
-                  }
-                } else {
-                  // In "Outside Station" mode
-                  if (_fromStation == null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Please select your source station.')),
-                    );
-                    return;
-                  }
-
-                  if (_nearestStations.isNotEmpty &&
-                      !_nearestStations.any((s) => s.id == _fromStation!.id)) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        backgroundColor: Colors.amber.shade900,
-                        content: const Text(
-                          'Outside Station mode is limited to the 3 nearest stations. Please choose one of the suggested stations.',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    );
-                    return;
-                  }
-                }
-
-                if (_toStation == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Please select your destination station.')),
-                  );
-                  return;
-                }
-
-                // Strictly validate 500m geofence radius if "At Station" is selected!
-                if (_stationTypeIndex == 1) {
-                  final position = await LocationService.getCurrentLocation();
-                  if (position == null) {
-                    _showRadiusLimitErrorDialog(
-                      stationName: _fromStation!.name,
-                      distanceKm: null,
-                      customMessage: "GPS position service is required to verify the 500 m geofence radius for At-Station booking.",
-                    );
-                    return;
-                  }
-
-                  double distMeters = Geolocator.distanceBetween(
-                    position.latitude,
-                    position.longitude,
-                    _fromStation!.latitude,
-                    _fromStation!.longitude,
-                  );
-                  double distKm = distMeters / 1000.0;
-
-                  if (distKm > 0.5) {
-                    _showRadiusLimitErrorDialog(
-                      stationName: _fromStation!.name,
-                      distanceKm: distKm,
-                    );
-                    return;
-                  }
-                }
-
-                int fromIndex = _stations.indexWhere((s) => s.id == _fromStation!.id);
-                int toIndex = _stations.indexWhere((s) => s.id == _toStation!.id);
-                int diff = (fromIndex - toIndex).abs();
-
-                if (mounted) {
-                  if (_ticketTypeIndex == 1) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SeasonBookingScreen(
-                          initialFromStation: _fromStation,
-                          initialToStation: _toStation,
-                        ),
-                      ),
-                    );
-                  } else {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => BookingScreen(
-                          fromStation: _fromStation!,
-                          toStation: _toStation!,
-                          stationDifference: diff,
-                        ),
-                      ),
-                    );
-                  }
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF0066FF),
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(26),
-                ),
-                elevation: 0,
-              ),
-              child: const Text(
-                'Proceed To Book',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          
-          // Check Upcoming Trains Button
-          SizedBox(
-            width: double.infinity,
-            height: 52,
-            child: OutlinedButton(
-              onPressed: () {},
-              style: OutlinedButton.styleFrom(
-                foregroundColor: const Color(0xFF0066FF),
-                side: const BorderSide(color: Color(0xFF0066FF), width: 1.5),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(26),
-                ),
-              ),
-              child: const Text(
-                'Check Upcoming Trains',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildOutsideStationBanner() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.blue.shade50,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.blue.shade200),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.location_searching, color: Colors.blue.shade800, size: 20),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              'Outside Station Mode: Select from the 3 nearest station suggestions.',
-              style: TextStyle(fontSize: 12, color: Colors.blue.shade900, fontWeight: FontWeight.w600),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAtStationBanner() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.teal.shade50,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.teal.shade200),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.qr_code_scanner, color: Colors.teal.shade800, size: 20),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              'At Station Mode: Scan Station QR Code (500 m Geofence) to unlock source station & choose destination.',
-              style: TextStyle(fontSize: 12, color: Colors.teal.shade900, fontWeight: FontWeight.w600),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNearestStationsSuggestions() {
-    if (_nearestStations.isEmpty) return const SizedBox.shrink();
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              '3 Nearest Station Suggestions',
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF1E293B),
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(
-                color: Colors.blue.shade100,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                'Outside Station Only',
-                style: TextStyle(fontSize: 10, color: Colors.blue.shade900, fontWeight: FontWeight.bold),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: _nearestStations.map((station) {
-            final isSelected = _fromStation?.id == station.id;
-            final distStr = _getStationDistanceText(station);
-
-            return InkWell(
-              onTap: () {
-                setState(() {
-                  _fromStation = station;
-                  if (_fromController != null) {
-                    _fromController!.text = station.name;
-                  }
-                });
-              },
-              borderRadius: BorderRadius.circular(14),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                decoration: BoxDecoration(
-                  color: isSelected ? const Color(0xFF0066FF) : Colors.grey.shade100,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(
-                    color: isSelected ? const Color(0xFF0066FF) : Colors.grey.shade300,
-                    width: isSelected ? 1.5 : 1,
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      isSelected ? Icons.check_circle : Icons.near_me,
-                      size: 16,
-                      color: isSelected ? Colors.white : const Color(0xFF0066FF),
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      station.name,
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: isSelected ? Colors.white : const Color(0xFF1E293B),
+                            );
+                          }
+                        },
                       ),
                     ),
-                    if (distStr.isNotEmpty) ...[
-                      const SizedBox(width: 4),
-                      Text(
-                        '($distStr)',
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.normal,
-                          color: isSelected ? Colors.white.withOpacity(0.9) : Colors.grey.shade600,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-      ],
-    );
-  }
 
-  Widget _buildTicketTypeToggle() {
-    return Container(
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: const Color(0xFFEEEEEE),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: GestureDetector(
-              onTap: () => setState(() => _ticketTypeIndex = 0),
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                decoration: BoxDecoration(
-                  color: _ticketTypeIndex == 0 ? Colors.white : Colors.transparent,
-                  borderRadius: BorderRadius.circular(8),
-                  border: _ticketTypeIndex == 0 ? Border.all(color: Colors.grey.shade300) : null,
-                  boxShadow: _ticketTypeIndex == 0
-                      ? [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4, offset: const Offset(0, 2))]
-                      : null,
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  'Normal',
-                  style: TextStyle(
-                    color: _ticketTypeIndex == 0 ? const Color(0xFF0066FF) : Colors.black87,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            child: GestureDetector(
-              onTap: () {
-                setState(() => _ticketTypeIndex = 1);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SeasonBookingScreen(
-                      initialFromStation: _fromStation,
-                      initialToStation: _toStation,
-                    ),
-                  ),
-                );
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                decoration: BoxDecoration(
-                  color: _ticketTypeIndex == 1 ? Colors.white : Colors.transparent,
-                  borderRadius: BorderRadius.circular(8),
-                  border: _ticketTypeIndex == 1 ? Border.all(color: Colors.grey.shade300) : null,
-                  boxShadow: _ticketTypeIndex == 1
-                      ? [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4, offset: const Offset(0, 2))]
-                      : null,
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  'Season',
-                  style: TextStyle(
-                    color: _ticketTypeIndex == 1 ? const Color(0xFF0066FF) : Colors.black87,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+                  const Divider(),
 
-  Widget _buildStationTypeToggle() {
-    return Row(
-      children: [
-        // Outside Station
-        Expanded(
-          child: GestureDetector(
-            onTap: () {
-              setState(() {
-                _stationTypeIndex = 0;
-                if (_nearestStations.isNotEmpty &&
-                    (_fromStation == null || !_nearestStations.any((s) => s.id == _fromStation!.id))) {
-                  _fromStation = _nearestStations.first;
-                  if (_fromController != null) {
-                    _fromController!.text = _nearestStations.first.name;
-                  }
-                }
-              });
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              decoration: BoxDecoration(
-                color: _stationTypeIndex == 0 ? const Color(0xFF0066FF) : Colors.white,
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(
-                  color: _stationTypeIndex == 0 ? const Color(0xFF0066FF) : Colors.grey.shade300,
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Outside Station',
-                    style: TextStyle(
-                      color: _stationTypeIndex == 0 ? Colors.white : Colors.grey.shade500,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  Icon(
-                    Icons.info_outline,
-                    size: 16,
-                    color: _stationTypeIndex == 0 ? Colors.white : Colors.grey.shade400,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(width: 8),
-        
-        // At Station
-        Expanded(
-          child: GestureDetector(
-            onTap: () {
-              setState(() {
-                _stationTypeIndex = 1;
-                // In At Station mode, clear fromStation if it was not scanned via QR code
-                if (!_isQrScannedInAtStation) {
-                  _fromStation = null;
-                  if (_fromController != null) {
-                    _fromController!.text = '';
-                  }
-                }
-              });
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              decoration: BoxDecoration(
-                color: _stationTypeIndex == 1 ? const Color(0xFF0066FF) : Colors.white,
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(
-                  color: _stationTypeIndex == 1 ? const Color(0xFF0066FF) : Colors.grey.shade300,
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'At Station',
-                    style: TextStyle(
-                      color: _stationTypeIndex == 1 ? Colors.white : Colors.grey.shade500,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  Icon(
-                    Icons.info_outline,
-                    size: 16,
-                    color: _stationTypeIndex == 1 ? Colors.white : Colors.grey.shade400,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildRouteSelection() {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // FROM Title
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'From',
-                  style: TextStyle(
-                    color: Color(0xFF0066FF),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                  ),
-                ),
-                Text(
-                  _stationTypeIndex == 0
-                      ? '3 Nearest Suggestions Only'
-                      : 'Scan QR at Station Only',
-                  style: TextStyle(
-                    color: _stationTypeIndex == 0 ? Colors.blue.shade800 : Colors.teal.shade800,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-
-            // In At Station mode, show dedicated QR scan button / scanned card for From station
-            if (_stationTypeIndex == 1) ...[
-              InkWell(
-                onTap: _showQrScannerDialog,
-                borderRadius: BorderRadius.circular(16),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-                  decoration: BoxDecoration(
-                    color: _isQrScannedInAtStation && _fromStation != null
-                        ? Colors.green.shade50
-                        : const Color(0xFFE8F0FE),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: _isQrScannedInAtStation && _fromStation != null
-                          ? Colors.green.shade300
-                          : const Color(0xFF0066FF).withOpacity(0.4),
-                      width: 1.5,
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        _isQrScannedInAtStation && _fromStation != null
-                            ? Icons.check_circle_rounded
-                            : Icons.qr_code_scanner,
-                        color: _isQrScannedInAtStation && _fromStation != null
-                            ? Colors.green.shade700
-                            : const Color(0xFF0066FF),
-                        size: 26,
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              _isQrScannedInAtStation && _fromStation != null
-                                  ? _fromStation!.name.toUpperCase()
-                                  : 'Scan Station QR Code',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: _isQrScannedInAtStation && _fromStation != null
-                                    ? Colors.green.shade900
-                                    : const Color(0xFF0066FF),
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              _isQrScannedInAtStation && _fromStation != null
-                                  ? '✓ Scanned & Verified within 500m radius'
-                                  : 'Tap to open scanner & set origin station',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: _isQrScannedInAtStation && _fromStation != null
-                                    ? Colors.green.shade800
-                                    : Colors.grey.shade700,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: _isQrScannedInAtStation && _fromStation != null
-                              ? Colors.green.shade700
-                              : const Color(0xFF0066FF),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          _isQrScannedInAtStation && _fromStation != null ? 'Rescan QR' : 'Scan QR',
-                          style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ] else ...[
-              // Outside Station mode: Autocomplete limited strictly to 3 nearest stations
-              Row(
-                children: [
-                  const Icon(Icons.directions_subway, color: Colors.grey),
-                  const SizedBox(width: 12),
                   Expanded(
-                    child: Autocomplete<RailwayStation>(
-                      displayStringForOption: (station) => station.name,
-                      optionsBuilder: (TextEditingValue textEditingValue) {
-                        Iterable<RailwayStation> options = _nearestStations.isNotEmpty
-                            ? _nearestStations
-                            : _stations.take(3);
-                        if (textEditingValue.text.isNotEmpty) {
-                          options = options.where((station) {
-                            return station.name.toLowerCase().contains(textEditingValue.text.toLowerCase());
-                          });
-                        }
-                        if (_toStation != null) {
-                          options = options.where((s) => s.id != _toStation!.id);
-                        }
-                        return options;
-                      },
-                      onSelected: (RailwayStation selection) {
-                        setState(() {
-                          _fromStation = selection;
-                        });
-                      },
-                      fieldViewBuilder: (context, textEditingController, focusNode, onFieldSubmitted) {
-                        if (_fromController != textEditingController) {
-                          _fromController = textEditingController;
-                        }
-                        return TextField(
-                          controller: textEditingController,
-                          focusNode: focusNode,
-                          decoration: InputDecoration(
-                            hintText: 'Select Source (3 Nearest Stations)',
-                            hintStyle: TextStyle(
-                              color: Colors.grey.shade400,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 15,
+                    child: ListView.builder(
+                      itemCount: filtered.length,
+                      itemBuilder: (context, index) {
+                        final s = filtered[index];
+                        final isSelected = isFrom
+                            ? s.id == _stationState.currentStation.id
+                            : s.id == _stationState.destinationStation.id;
+
+                        return ListTile(
+                          leading: Container(
+                            width: 38,
+                            height: 38,
+                            decoration: BoxDecoration(
+                              color: isSelected ? LocoColors.orange : LocoColors.orangeLight,
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            border: InputBorder.none,
-                            isDense: true,
+                            child: Center(
+                              child: Text(
+                                s.code,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 12,
+                                  color: isSelected ? Colors.white : LocoColors.orange,
+                                ),
+                              ),
+                            ),
                           ),
+                          title: Text(
+                            s.name,
+                            style: TextStyle(
+                              fontWeight: isSelected ? FontWeight.w800 : FontWeight.w700,
+                              color: isSelected ? LocoColors.orange : LocoColors.textPrimary,
+                              fontSize: 14.5,
+                            ),
+                          ),
+                          subtitle: Text(
+                            '${s.line} Railway • Platform 1-${s.platformsCount}',
+                            style: const TextStyle(fontSize: 12, color: LocoColors.textMuted),
+                          ),
+                          trailing: isSelected
+                              ? const Icon(Icons.check_circle, color: LocoColors.orange, size: 20)
+                              : const Icon(Icons.chevron_right, size: 18, color: LocoColors.textMuted),
+                          onTap: () {
+                            if (isFrom) {
+                              _stationState.setCurrentStation(s);
+                            } else {
+                              _stationState.setDestinationStation(s);
+                            }
+                            Navigator.pop(context);
+                          },
                         );
                       },
                     ),
                   ),
                 ],
               ),
-            ],
+            );
+          },
+        );
+      },
+    );
+  }
 
-            Divider(color: Colors.grey.shade300, height: 24, thickness: 1),
-            const SizedBox(height: 4),
+  void _openLoCoPilotAI([String? presetQuery]) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => RailAISheet(
+        initialQuery: presetQuery,
+        onViewTicket: () {
+          Navigator.pop(context);
+          if (widget.onSwitchTab != null) widget.onSwitchTab!(1);
+        },
+        onPlanJourney: () {
+          Navigator.pop(context);
+          _navigateToBooking();
+        },
+        onActionTriggered: (payload) {
+          Navigator.pop(context);
+          if (payload.actionType == 'BOOK_TICKET' || payload.actionType == 'PLAN_JOURNEY') {
+            _navigateToBooking();
+          } else if (payload.actionType == 'VIEW_CROWD_RADAR' || payload.actionType == 'VIEW_LIVE_ROUTES') {
+            if (widget.onSwitchTab != null) widget.onSwitchTab!(3);
+          } else if (payload.actionType == 'RENEW_SEASON_PASS') {
+            _navigateToBooking();
+          } else if (payload.actionType == 'EXPLORE_POI') {
+            if (widget.onSwitchTab != null) widget.onSwitchTab!(3);
+          } else {
+            _navigateToBooking();
+          }
+        },
+      ),
+    );
+  }
 
-            // TO Title
-            const Text(
-              'To',
-              style: TextStyle(
-                color: Color(0xFF0066FF),
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
+  void _navigateToBooking() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BookingScreen(
+          fromStation: _stationState.currentStation,
+          toStation: _stationState.destinationStation,
+          stationDifference: 7,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _issuePlatformPass() async {
+    final station = _stationState.currentStation;
+    final now = DateTime.now();
+    final passId = 'PLT-${station.code}-${now.millisecondsSinceEpoch % 10000}';
+
+    final ticket = BookedTicket(
+      id: passId,
+      fromStationName: station.name,
+      fromStationCode: station.code,
+      toStationName: station.name,
+      toStationCode: station.code,
+      ticketType: TicketType.journey,
+      bookingType: BookingType.issue,
+      trainType: 'PLATFORM PASS',
+      duration: '2 HOURS',
+      classType: 'PLATFORM PASS',
+      fare: 10,
+      bookingDate: now,
+      validUntil: now.add(const Duration(hours: 2)),
+      status: TicketStatus.upcoming,
+      distanceKm: 0.0,
+      passengerName: 'Aayush Sinha',
+      passengerAddress: 'Mumbai Suburban Area',
+      passengerIdType: 'Digital Identity',
+      passengerIdNumber: 'UTS-PASS',
+    );
+
+    await TicketStorage.addTicket(ticket);
+
+    if (mounted) {
+      showDialog(
+        context: context,
+        builder: (context) => DigitalTicketInspector(
+          ticket: ticket,
+          onSimulateScan: () {},
+        ),
+      );
+    }
+  }
+
+  Widget _buildLoCoPilotAIBossCard() {
+    final geminiService = GeminiRailService();
+    final hasCloud = geminiService.hasCloudGemini;
+    final liveInsight = geminiService.getHomeBannerInsight();
+    final quickQueries = [
+      '⚡ Crowd Radar',
+      '⏱ Delay Risk',
+      '🎫 Book Ticket',
+      '❄️ AC Local Times',
+      '🛡️ Journey Guardian',
+    ];
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF1E1015), Color(0xFF2E121A), Color(0xFF381219)],
+        ),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: const Color(0xFFFF5200).withValues(alpha: 0.4), width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFFF5200).withValues(alpha: 0.2),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header Row
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(7),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFF5200).withValues(alpha: 0.2),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: const Color(0xFFFF5200).withValues(alpha: 0.5)),
+                ),
+                child: const Icon(Icons.bolt_rounded, color: Color(0xFFFF5200), size: 20),
               ),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                const Icon(Icons.directions_subway_outlined, color: Colors.grey),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Autocomplete<RailwayStation>(
-                    displayStringForOption: (station) => station.name,
-                    optionsBuilder: (TextEditingValue textEditingValue) {
-                      Iterable<RailwayStation> options = textEditingValue.text.isEmpty
-                          ? _stations
-                          : _stations.where((station) {
-                              return station.name.toLowerCase().contains(textEditingValue.text.toLowerCase());
-                            });
-                      if (_fromStation != null) {
-                        options = options.where((s) => s.id != _fromStation!.id);
-                      }
-                      return options;
-                    },
-                    onSelected: (RailwayStation selection) {
-                      setState(() {
-                        _toStation = selection;
-                      });
-                    },
-                    fieldViewBuilder: (context, textEditingController, focusNode, onFieldSubmitted) {
-                      if (_toController != textEditingController) {
-                        _toController = textEditingController;
-                      }
-                      return TextField(
-                        controller: textEditingController,
-                        focusNode: focusNode,
-                        decoration: InputDecoration(
-                          hintText: 'Select Destination Station',
-                          hintStyle: TextStyle(
-                            color: Colors.grey.shade400,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 16,
+              const SizedBox(width: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Text(
+                        'LOCOpilot AI 2.0',
+                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 0.2),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: hasCloud ? const Color(0xFF10B981).withValues(alpha: 0.2) : const Color(0xFFFF5200).withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: hasCloud ? const Color(0xFF10B981) : const Color(0xFFFF5200),
+                            width: 0.8,
                           ),
-                          border: InputBorder.none,
-                          isDense: true,
                         ),
-                      );
-                    },
+                        child: Text(
+                          hasCloud ? 'GEMINI 1.5 ACTIVE' : 'MAIN BOSS ONLINE',
+                          style: TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w900,
+                            color: hasCloud ? const Color(0xFF34D399) : const Color(0xFFFF7A33),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 2),
+                  const Text(
+                    'Real-Time Autonomous Railway Command Engine',
+                    style: TextStyle(fontSize: 11, color: Color(0xFF94A3B8), fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // Live Predictive Insight Banner Box
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.06),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(top: 2),
+                  child: Icon(Icons.auto_awesome_rounded, color: Color(0xFFFF7A33), size: 16),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    liveInsight,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Color(0xFFF1F5F9),
+                      height: 1.35,
+                      fontWeight: FontWeight.w500,
+                      fontStyle: FontStyle.italic,
+                    ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 8),
-          ],
-        ),
-        
-        // Vertical Swap Icon Button (Only shown in Outside Station mode)
-        if (_stationTypeIndex == 0)
-          Positioned(
-            right: 16,
+          ),
+          const SizedBox(height: 12),
+
+          // Ask Bar (Tapping opens LOCOpilot AI with query or focus)
+          GestureDetector(
+            onTap: () => _openLoCoPilotAI(),
             child: Container(
+              height: 44,
+              padding: const EdgeInsets.symmetric(horizontal: 14),
               decoration: BoxDecoration(
-                color: Colors.blue.shade50,
-                shape: BoxShape.circle,
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
-              child: IconButton(
-                icon: const Icon(Icons.swap_vert, color: Color(0xFF0066FF)),
-                onPressed: _swapStations,
+              child: Row(
+                children: [
+                  const Icon(Icons.search_rounded, color: Color(0xFFFF5200), size: 18),
+                  const SizedBox(width: 10),
+                  const Expanded(
+                    child: Text(
+                      'Ask LOCOpilot AI (e.g. "Book ticket to Dadar")...',
+                      style: TextStyle(fontSize: 12.5, color: LocoColors.textMuted, fontWeight: FontWeight.w500),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFF5200),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.bolt, color: Colors.white, size: 14),
+                        SizedBox(width: 3),
+                        Text(
+                          'ASK AI',
+                          style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w900, color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
-      ],
+          const SizedBox(height: 10),
+
+          // Quick Action Query Chips
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: quickQueries.map((query) {
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: InkWell(
+                    onTap: () => _openLoCoPilotAI(query),
+                    borderRadius: BorderRadius.circular(14),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
+                      ),
+                      child: Text(
+                        query,
+                        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final currentStation = _stationState.currentStation;
+    final destinationStation = _stationState.destinationStation;
+
+    return Scaffold(
+      backgroundColor: const Color(0xFFF7F8FA),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 1. TOP HEADER (LOCO Wordmark Logo | Station Pill Selector | Profile Avatar)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // LOCO Logo
+                  LocoBranding.wordmark(fontSize: 26),
+
+                  Row(
+                    children: [
+                      // Station Selector Pill (matching UI/Home.png)
+                      GestureDetector(
+                        onTap: () => _showStationPicker(isFrom: true),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(22),
+                            border: Border.all(color: LocoColors.border),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.04),
+                                blurRadius: 6,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 8,
+                                height: 8,
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFFFF5722),
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                currentStation.name,
+                                style: const TextStyle(
+                                  fontSize: 13.5,
+                                  fontWeight: FontWeight.w700,
+                                  color: LocoColors.textPrimary,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              const Icon(Icons.keyboard_arrow_down_rounded, size: 18, color: LocoColors.textSecondary),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(width: 10),
+
+                      // User Profile Icon Button
+                      GestureDetector(
+                        onTap: () {
+                          if (widget.onSwitchTab != null) widget.onSwitchTab!(4);
+                        },
+                        child: Container(
+                          width: 38,
+                          height: 38,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: LocoColors.border),
+                          ),
+                          child: const Icon(Icons.person_outline_rounded, size: 20, color: LocoColors.textPrimary),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 14),
+
+              // 1.5. LOCOPILOT AI BOSS HERO COMMAND CARD
+              _buildLoCoPilotAIBossCard(),
+
+              const SizedBox(height: 18),
+
+              // 2. TWO MAIN CARDS ROW (Unreserved Ticket | Platform Ticket)
+              Row(
+                children: [
+                  // Card 1: Unreserved Ticket (Orange Gradient Card)
+                  Expanded(
+                    child: Container(
+                      height: 175,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [Color(0xFFFF5200), Color(0xFFE64A00)],
+                        ),
+                        borderRadius: BorderRadius.circular(22),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFFFF5200).withOpacity(0.32),
+                            blurRadius: 12,
+                            offset: const Offset(0, 5),
+                          ),
+                        ],
+                      ),
+                      child: Stack(
+                        children: [
+                          // Background subtle watermark train icon
+                          Positioned(
+                            right: -10,
+                            bottom: 10,
+                            child: Icon(
+                              Icons.directions_subway_rounded,
+                              size: 74,
+                              color: Colors.white.withOpacity(0.12),
+                            ),
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Top Tag & Arrow
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.22),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: const Text(
+                                      'DAILY TRAVEL',
+                                      style: TextStyle(
+                                        fontSize: 9.5,
+                                        fontWeight: FontWeight.w800,
+                                        color: Colors.white,
+                                        letterSpacing: 0.3,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: 22,
+                                    height: 22,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.22),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(Icons.arrow_forward_rounded, size: 12, color: Colors.white),
+                                  ),
+                                ],
+                              ),
+                              const Spacer(),
+                              const Text(
+                                'Unreserved Ticket',
+                                style: TextStyle(
+                                  fontSize: 16.5,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                'Single & Return\nsuburban locals',
+                                style: TextStyle(
+                                  fontSize: 11.5,
+                                  color: Colors.white.withOpacity(0.88),
+                                  height: 1.25,
+                                ),
+                              ),
+                              const Spacer(),
+                              // Bottom Row: Fare & Book Now
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    'From ₹5',
+                                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: Colors.white),
+                                  ),
+                                  GestureDetector(
+                                    onTap: _navigateToBooking,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(18),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(0.08),
+                                            blurRadius: 4,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                      child: const Text(
+                                        'Book Now',
+                                        style: TextStyle(
+                                          fontSize: 11.5,
+                                          fontWeight: FontWeight.w800,
+                                          color: Color(0xFFE64A00),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(width: 12),
+
+                  // Card 2: Platform Ticket (White Card with 1-Tap)
+                  Expanded(
+                    child: Container(
+                      height: 175,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(22),
+                        border: Border.all(color: LocoColors.border),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.03),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Top Tag & Plus
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFFF0E6),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Text(
+                                  'STATION PASS',
+                                  style: TextStyle(
+                                    fontSize: 9.5,
+                                    fontWeight: FontWeight.w800,
+                                    color: Color(0xFFFF5500),
+                                    letterSpacing: 0.3,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                width: 22,
+                                height: 22,
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFFF3F4F6),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(Icons.add, size: 14, color: LocoColors.textSecondary),
+                              ),
+                            ],
+                          ),
+                          const Spacer(),
+                          const Text(
+                            'Platform Ticket',
+                            style: TextStyle(
+                              fontSize: 16.5,
+                              fontWeight: FontWeight.w800,
+                              color: LocoColors.textPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Quick access at ${currentStation.name}',
+                            style: const TextStyle(
+                              fontSize: 11.5,
+                              color: LocoColors.textSecondary,
+                              height: 1.25,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const Spacer(),
+                          const Divider(height: 12, color: LocoColors.borderLight),
+                          // Bottom Row: Fixed Fare & 1-Tap
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'FIXED FARE',
+                                    style: TextStyle(fontSize: 8.5, fontWeight: FontWeight.w700, color: LocoColors.textMuted),
+                                  ),
+                                  Text(
+                                    '₹10',
+                                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: LocoColors.textPrimary),
+                                  ),
+                                ],
+                              ),
+                              GestureDetector(
+                                onTap: _issuePlatformPass,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF4A101D),
+                                    borderRadius: BorderRadius.circular(18),
+                                  ),
+                                  child: const Text(
+                                    '1-Tap',
+                                    style: TextStyle(
+                                      fontSize: 11.5,
+                                      fontWeight: FontWeight.w800,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 20),
+
+              // 3. SELECT ROUTE CARD
+              Container(
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(22),
+                  border: Border.all(color: LocoColors.border),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.03),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Title
+                    Row(
+                      children: [
+                        Container(
+                          width: 8,
+                          height: 8,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFFF5500),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'Select Route',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: LocoColors.textPrimary),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 14),
+
+                    // Origin & Destination Box with Floating Swap Button
+                    Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF9FAFB),
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(color: LocoColors.borderLight),
+                      ),
+                      child: Stack(
+                        alignment: Alignment.centerRight,
+                        children: [
+                          Column(
+                            children: [
+                              // Origin Line
+                              GestureDetector(
+                                onTap: () => _showStationPicker(isFrom: true),
+                                behavior: HitTestBehavior.opaque,
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 14,
+                                      height: 14,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(color: const Color(0xFFFF5500), width: 3),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          const Text(
+                                            'ORIGIN',
+                                            style: TextStyle(
+                                              fontSize: 9.5,
+                                              fontWeight: FontWeight.w700,
+                                              color: LocoColors.textMuted,
+                                              letterSpacing: 0.5,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 2),
+                                          Text(
+                                            currentStation.name,
+                                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: LocoColors.textPrimary),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 38),
+                                      child: Text(
+                                        currentStation.code,
+                                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: Color(0xFFFF5500)),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              const Divider(height: 20, color: LocoColors.borderLight),
+
+                              // Destination Line
+                              GestureDetector(
+                                onTap: () => _showStationPicker(isFrom: false),
+                                behavior: HitTestBehavior.opaque,
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 14,
+                                      height: 14,
+                                      decoration: const BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Color(0xFF4A101D),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          const Text(
+                                            'DESTINATION',
+                                            style: TextStyle(
+                                              fontSize: 9.5,
+                                              fontWeight: FontWeight.w700,
+                                              color: LocoColors.textMuted,
+                                              letterSpacing: 0.5,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 2),
+                                          Text(
+                                            destinationStation.name,
+                                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: LocoColors.textPrimary),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 38),
+                                      child: Text(
+                                        destinationStation.code,
+                                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: Color(0xFF880E4F)),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          // Floating Swap Button
+                          GestureDetector(
+                            onTap: () => _stationState.swapStations(),
+                            child: Container(
+                              width: 34,
+                              height: 34,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                                border: Border.all(color: LocoColors.border),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.06),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(Icons.swap_vert_rounded, color: Color(0xFFFF5500), size: 18),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 14),
+
+                    // Frequent Destinations Chips
+                    Row(
+                      children: [
+                        const Text(
+                          'Frequent:',
+                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: LocoColors.textMuted),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: [
+                                _buildFrequentChip('To Churchgate', 'churchgate'),
+                                _buildFrequentChip('To Borivali', 'borivali'),
+                                _buildFrequentChip('To Andheri', 'andheri'),
+                                _buildFrequentChip('To Dadar', 'dadar'),
+                                _buildFrequentChip('To CSMT', 'csmt'),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Book Ticket Button
+                    SizedBox(
+                      width: double.infinity,
+                      height: 52,
+                      child: ElevatedButton(
+                        onPressed: _navigateToBooking,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFFF5500),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          elevation: 0,
+                        ),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Book Ticket',
+                              style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.w800, color: Colors.white),
+                            ),
+                            SizedBox(width: 8),
+                            Icon(Icons.arrow_forward_rounded, size: 18, color: Colors.white),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              // 4. LOCOPILOT AI (Dark Theme Mumbai Intel Card)
+              Container(
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Color(0xFF2C0F16), Color(0xFF1B070C)],
+                  ),
+                  borderRadius: BorderRadius.circular(22),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF2C0F16).withOpacity(0.35),
+                      blurRadius: 14,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Top Bar
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              width: 8,
+                              height: 8,
+                              decoration: const BoxDecoration(
+                                color: Color(0xFFFF5500),
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            const Text(
+                              'LOCOPILOT AI',
+                              style: TextStyle(
+                                fontSize: 13.5,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.white,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF6B222E),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: const Text(
+                                'BETA',
+                                style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.w800, color: Colors.white),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Row(
+                          children: [
+                            Icon(Icons.bolt, size: 14, color: Color(0xFFFF9800)),
+                            SizedBox(width: 4),
+                            Text(
+                              'Live Mumbai Intel',
+                              style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: Color(0xFFFFB74D)),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 14),
+
+                    // Speech Bubble / Intel text
+                    Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.08),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Colors.white.withOpacity(0.08)),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: 32,
+                            height: 32,
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFFF5500),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(Icons.bolt, color: Colors.white, size: 18),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: RichText(
+                              text: TextSpan(
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.white,
+                                  height: 1.35,
+                                ),
+                                children: [
+                                  TextSpan(text: '"${currentStation.name} fast local at 09:45 AM has '),
+                                  const TextSpan(
+                                    text: 'moderate coach crowd',
+                                    style: TextStyle(color: Color(0xFFFFB74D), fontWeight: FontWeight.w800),
+                                  ),
+                                  const TextSpan(
+                                    text: '. Board middle coaches (C6-C8) for quicker interchange at Dadar."',
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 14),
+
+                    // Action Chips & Arrow Button
+                    Row(
+                      children: [
+                        _buildAiActionChip('⚡ Crowd Radar', () => _openLoCoPilotAI('Crowd radar')),
+                        const SizedBox(width: 6),
+                        _buildAiActionChip('⏱ Delay Risk', () => _openLoCoPilotAI('Delay risk')),
+                        const SizedBox(width: 6),
+                        _buildAiActionChip('🔄 AC Local S...', () => _openLoCoPilotAI('AC local schedules')),
+                        const Spacer(),
+                        GestureDetector(
+                          onTap: () => _openLoCoPilotAI(),
+                          child: Container(
+                            width: 36,
+                            height: 36,
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFFF5500),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(Icons.arrow_forward_rounded, size: 18, color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              // 5. NEXT TRAINS FROM STATION (Matching UI/Home.png)
+              Container(
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(22),
+                  border: Border.all(color: LocoColors.border),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.03),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    // Header Row
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              width: 24,
+                              height: 24,
+                              decoration: const BoxDecoration(
+                                color: Color(0xFFFFF0E6),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(Icons.access_time_filled, color: Color(0xFFFF5500), size: 15),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Next Trains from ${currentStation.name}',
+                              style: const TextStyle(fontSize: 14.5, fontWeight: FontWeight.w800, color: LocoColors.textPrimary),
+                            ),
+                          ],
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            if (widget.onSwitchTab != null) widget.onSwitchTab!(3); // Switch to Live Routes
+                          },
+                          child: const Text(
+                            'Live Routes',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w800,
+                              color: Color(0xFFFF5500),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 14),
+
+                    // Train 1: Churchgate Fast Local
+                    _buildNextTrainItem(
+                      platform: 'PF 2',
+                      platformColor: const Color(0xFFFF5500),
+                      title: 'Churchgate Fast Local',
+                      carTag: '15-Car',
+                      subtext: 'Stops: Borivali, Andheri, Bandra, Dadar',
+                      minsRemaining: '4 mins',
+                      scheduledTime: '09:45 AM',
+                      isGreenTime: true,
+                    ),
+
+                    const SizedBox(height: 10),
+
+                    // Train 2: Andheri Slow Local
+                    _buildNextTrainItem(
+                      platform: 'PF 4',
+                      platformColor: const Color(0xFF381219),
+                      title: 'Andheri Slow Local',
+                      carTag: '12-Car',
+                      subtext: 'All stations to Andheri',
+                      minsRemaining: '11 mins',
+                      scheduledTime: '09:52 AM',
+                      isGreenTime: false,
+                    ),
+
+                    const SizedBox(height: 10),
+
+                    // Train 3: Borivali AC EMU
+                    _buildNextTrainItem(
+                      platform: 'PF 1',
+                      platformColor: Colors.blue.shade800,
+                      title: 'Churchgate AC EMU',
+                      carTag: 'AC EMU',
+                      subtext: 'Fast Local: Borivali, Bandra, Dadar, Churchgate',
+                      minsRemaining: '18 mins',
+                      scheduledTime: '09:59 AM',
+                      isGreenTime: false,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFrequentChip(String label, String stationId) {
+    final isSelected = _stationState.destinationStation.id.toLowerCase() == stationId.toLowerCase() ||
+        _stationState.destinationStation.name.toLowerCase().contains(stationId.toLowerCase());
+
+    return Padding(
+      padding: const EdgeInsets.only(right: 6),
+      child: GestureDetector(
+        onTap: () {
+          final found = _stationState.stations.firstWhere(
+            (s) => s.id.toLowerCase() == stationId || s.name.toLowerCase().contains(stationId),
+            orElse: () => _stationState.destinationStation,
+          );
+          _stationState.setDestinationStation(found);
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          decoration: BoxDecoration(
+            color: isSelected ? const Color(0xFFFFF0E6) : Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: isSelected ? const Color(0xFFFF5500) : LocoColors.border,
+            ),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 11.5,
+              fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+              color: isSelected ? const Color(0xFFFF5500) : LocoColors.textSecondary,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAiActionChip(String label, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.12),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: Colors.white.withOpacity(0.08)),
+        ),
+        child: Text(
+          label,
+          style: const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, color: Colors.white),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNextTrainItem({
+    required String platform,
+    required Color platformColor,
+    required String title,
+    required String carTag,
+    required String subtext,
+    required String minsRemaining,
+    required String scheduledTime,
+    required bool isGreenTime,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: LocoColors.canvas,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: LocoColors.borderLight),
+      ),
+      child: Row(
+        children: [
+          // Platform Circle Badge
+          Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: platformColor,
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: Text(
+                platform,
+                style: const TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          // Title & stops
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Flexible(
+                      child: Text(
+                        title,
+                        style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w800, color: LocoColors.textPrimary),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(color: LocoColors.border),
+                      ),
+                      child: Text(
+                        carTag,
+                        style: const TextStyle(fontSize: 9.5, fontWeight: FontWeight.w700, color: LocoColors.textSecondary),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtext,
+                  style: const TextStyle(fontSize: 11, color: LocoColors.textMuted),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+          // Time remaining
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                minsRemaining,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w800,
+                  color: isGreenTime ? const Color(0xFF10B981) : LocoColors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: 1),
+              Text(
+                scheduledTime,
+                style: const TextStyle(fontSize: 10.5, color: LocoColors.textMuted),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

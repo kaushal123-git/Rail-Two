@@ -1,49 +1,38 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'screens/home_screen.dart';
-import 'screens/signin_screen.dart';
-import 'screens/login_screen.dart';
+import 'core/theme/loco_theme.dart';
+import 'screens/splash_screen.dart';
+import 'services/gemini_rail_service.dart';
+import 'services/station_state_service.dart';
+import 'simulation/train_simulation_engine.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  final prefs = await SharedPreferences.getInstance();
-  final isRegistered = prefs.getBool('isRegistered') ?? false;
-  final hasMpin = prefs.getString('mpin') != null;
 
-  Widget initialScreen = const SignInScreen();
-  if (isRegistered && hasMpin) {
-    initialScreen = const LoginScreen();
-  }
+  // Pre-warm the deterministic train simulation engine
+  TrainSimulationEngine().startSimulation();
 
-  runApp(RailwayFinderApp(initialScreen: initialScreen));
+  // Initialize unified station state & AI preferences
+  await StationStateService().initialize();
+  await GeminiRailService().initialize();
+
+  runApp(const LocoApp());
 }
 
-class RailwayFinderApp extends StatelessWidget {
+class LocoApp extends StatelessWidget {
   final Widget initialScreen;
-  
-  const RailwayFinderApp({super.key, required this.initialScreen});
+
+  const LocoApp({
+    super.key,
+    this.initialScreen = const SplashScreen(),
+  });
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Rail App',
+      title: 'LOCO',
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.light,
-      theme: ThemeData(
-        brightness: Brightness.light,
-        scaffoldBackgroundColor: const Color(0xFFF7F8FA),
-        primaryColor: const Color(0xFF0066FF),
-        colorScheme: const ColorScheme.light(
-          primary: Color(0xFF0066FF),
-          secondary: Color(0xFF1A2A4E),
-        ),
-        textTheme: const TextTheme(
-          bodyLarge: TextStyle(color: Color(0xFF1E293B)),
-          bodyMedium: TextStyle(color: Color(0xFF475569)),
-        ),
-        useMaterial3: true,
-      ),
+      theme: LocoTheme.lightTheme,
       home: initialScreen,
     );
   }

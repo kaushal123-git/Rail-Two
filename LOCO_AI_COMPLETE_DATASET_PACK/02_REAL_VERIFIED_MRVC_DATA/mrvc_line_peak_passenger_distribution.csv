@@ -1,0 +1,31 @@
+corridor,direction,time,slow_or_main_passengers,fast_or_transharbour_passengers,total_passengers,slow_or_main_trains,fast_or_transharbour_trains,total_trains
+Western,Up,7-8,49131,51428,100559,16,14,30
+Western,Up,8-9,143312,128785,272097,37,29,66
+Western,Up,9-10,147109,152209,299318,35,34,69
+Western,Up,10-11,117087,125015,242102,34,30,64
+Western,Up,After 11,92881,117215,210095,24,21,45
+Western,Down,16-17,44897,37961,82858,12,9,21
+Western,Down,17-18,125805,77588,203393,31,21,52
+Western,Down,18-19,151478,123384,274862,34,28,62
+Western,Down,19-20,117460,114953,232413,29,32,61
+Western,Down,After 20,123171,101201,224372,27,24,51
+Central,Up,7-8,36358,25295,61652,14,11,25
+Central,Up,8-9,97673,91610,189282,22,25,47
+Central,Up,9-10,121259,92587,213846,30,26,56
+Central,Up,10-11,110638,47626,158264,34,17,51
+Central,Up,After 11,103267,34594,137860,20,7,27
+Central,Down,16-17,45395,13703,59098,15,4,19
+Central,Down,17-18,106936,41567,148503,27,13,40
+Central,Down,18-19,103558,82631,186189,27,24,51
+Central,Down,19-20,99378,87915,187293,30,27,57
+Central,Down,After 20,115182,65482,180663,21,17,38
+Virar-Dahanu,Up,7-8,1933,,1933,7,,7
+Virar-Dahanu,Up,8-9,3179,,3179,6,,6
+Virar-Dahanu,Up,9-10,4655,,4655,12,,12
+Virar-Dahanu,Up,10-11,4073,,4073,6,,6
+Virar-Dahanu,Up,After 11,3460,,3460,8,,8
+Virar-Dahanu,Down,16-17,975,,975,3,,3
+Virar-Dahanu,Down,17-18,3678,,3678,10,,10
+Virar-Dahanu,Down,18-19,7578,,7578,11,,11
+Virar-Dahanu,Down,19-20,2860,,2860,5,,5
+Virar-Dahanu,Down,After 20,4811,,4811,10,,10

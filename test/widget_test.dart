@@ -1,20 +1,27 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:railway_station_finder/main.dart';
+import 'package:railway_station_finder/screens/main_navigation_shell.dart';
+import 'package:railway_station_finder/simulation/train_simulation_engine.dart';
 
 void main() {
-  testWidgets('App builds and displays main header', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const RailwayFinderApp());
+  tearDown(() {
+    TrainSimulationEngine().stopSimulation();
+  });
 
-    // Verify that our app header/title is displayed.
-    expect(find.text('RAIL S2 FINDER'), findsOneWidget);
+  testWidgets('LocoApp builds and mounts MainNavigationShell with Home, My Tickets, LOCOpilot, Live Routes, and Profile', (WidgetTester tester) async {
+    await tester.pumpWidget(const LocoApp(initialScreen: MainNavigationShell()));
+    await tester.pump();
+
+    // Verify navigation tabs matching UI/Home.png
+    expect(find.text('Home'), findsWidgets);
+    expect(find.text('My Tickets'), findsOneWidget);
+    expect(find.text('LOCOpilot'), findsOneWidget);
+    expect(find.text('Live Routes'), findsWidgets);
+    expect(find.text('Profile'), findsOneWidget);
+
+    // Teardown widget tree so periodic simulation timers are cleanly disposed
+    TrainSimulationEngine().stopSimulation();
+    await tester.pumpWidget(const SizedBox());
   });
 }

@@ -1,0 +1,64 @@
+{
+  "actions": [
+    {
+      "action": "PLAN_ROUTE",
+      "intent": "route",
+      "deeplink": "loco://route?from={origin}&to={destination}",
+      "requires_auth": false
+    },
+    {
+      "action": "GET_TRAIN_STATUS",
+      "intent": "train_status",
+      "deeplink": "loco://train/{train_id}",
+      "requires_auth": false
+    },
+    {
+      "action": "GET_PLATFORM",
+      "intent": "platform",
+      "deeplink": "loco://platform/{station_id}",
+      "requires_auth": false
+    },
+    {
+      "action": "GET_DELAY",
+      "intent": "delay",
+      "deeplink": "loco://delay/{train_id}",
+      "requires_auth": false
+    },
+    {
+      "action": "GET_CROWD",
+      "intent": "crowd",
+      "deeplink": "loco://crowd/{train_id}",
+      "requires_auth": false
+    },
+    {
+      "action": "GET_EXIT_NAVIGATION",
+      "intent": "exit",
+      "deeplink": "loco://station/{station_id}/exits",
+      "requires_auth": false
+    },
+    {
+      "action": "OPEN_TICKETING",
+      "intent": "ticket",
+      "deeplink": "loco://ticket?from={origin}&to={destination}",
+      "requires_auth": true
+    },
+    {
+      "action": "ACTIVATE_GUARDIAN",
+      "intent": "guardian",
+      "deeplink": "loco://guardian/activate",
+      "requires_auth": true
+    },
+    {
+      "action": "OPEN_EMERGENCY_HELP",
+      "intent": "safety",
+      "deeplink": "loco://emergency",
+      "requires_auth": false
+    },
+    {
+      "action": "GET_NEARBY_POI",
+      "intent": "poi",
+      "deeplink": "loco://poi/{station_id}",
+      "requires_auth": false
+    }
+  ]
+}

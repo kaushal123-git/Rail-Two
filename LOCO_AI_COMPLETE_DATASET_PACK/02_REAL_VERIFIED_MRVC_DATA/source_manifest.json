@@ -1,0 +1,27 @@
+{
+  "status": "REAL / SOURCE-EXTRACTED DATA ONLY",
+  "created": "2026-10-04",
+  "primary_source": {
+    "title": "Mumbai Sub-urban Rail Passenger Surveys and Analysis — Executive Summary",
+    "publisher": "Mumbai Railway Vikas Corporation Ltd. (MRVC) / Wilbur Smith Associates",
+    "url": "https://mrvc.indianrailways.gov.in/uploads/ExecutiveSummarywilber%20FINAL.pdf",
+    "survey_period": "2011-2013 as specified in the report",
+    "notes": "Values in CSVs are transcribed from the report's published tables. They are historical observations/model forecasts, not current live data."
+  },
+  "secondary_source": {
+    "title": "Mumbai Suburban Network 2025",
+    "publisher": "Brihanmumbai Municipal Corporation (BMC), via OpenCity",
+    "url": "https://data.opencity.in/dataset/mumbai-suburban-network-2025",
+    "format": "KML",
+    "license": "Public Domain as shown on source page",
+    "notes": "The source page contains downloadable Suburban Line and Suburban Line Stations KML. The binary KML could not be directly downloaded in this runtime, so it is NOT falsely included in this ZIP."
+  },
+  "included_files": {
+    "mrvc_station_entry_exit_14hr.csv": "Observed station entry/exit counts for selected stations.",
+    "mrvc_station_hourly_entry_exit.csv": "Observed hourly station entry/exit counts.",
+    "mrvc_ticket_counter_queue_observations.csv": "Observed ticket-counter queue measurements.",
+    "mrvc_passenger_od_forecast_lakhs.csv": "MRVC modelled daily passenger-trip forecasts by corridor.",
+    "mrvc_peak_direction_train_passengers.csv": "Observed/expanded peak-direction passenger totals by slow/fast services.",
+    "mrvc_line_peak_passenger_distribution.csv": "Line-specific peak-period passenger/service distributions."
+  }
+}

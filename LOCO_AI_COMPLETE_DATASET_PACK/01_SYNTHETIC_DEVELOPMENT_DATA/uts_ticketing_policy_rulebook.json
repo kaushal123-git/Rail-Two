@@ -1,0 +1,28 @@
+{
+  "dataset_type": "rule_reference",
+  "source_notes": [
+    "Indian Railways Passenger Reservation Enquiry",
+    "UTS on Mobile help documentation"
+  ],
+  "references": [
+    "https://www.indianrail.gov.in/",
+    "https://utsonmobile.indianrail.gov.in/"
+  ],
+  "rules": [
+    {
+      "topic": "season_ticket",
+      "rule": "UTS supports single-route and multi-route season tickets; multi-route availability includes Mumbai and Kolkata.",
+      "source": "UTS on Mobile help documentation"
+    },
+    {
+      "topic": "paperless_season_ticket",
+      "rule": "Paperless season ticket validity rules depend on current/previous validity period; verify current UTS terms before implementation.",
+      "source": "UTS on Mobile help documentation"
+    },
+    {
+      "topic": "ticket_rules",
+      "rule": "Ticketing and refund conditions are governed by current Railway rules and may change.",
+      "source": "Indian Railways official rules"
+    }
+  ]
+}

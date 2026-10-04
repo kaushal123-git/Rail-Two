@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import '../core/theme/loco_theme.dart';
 import '../models/station.dart';
 import '../services/s2_service.dart';
+import '../widgets/station_details_sheet.dart';
 
 class StationsListScreen extends StatefulWidget {
   final Position? userPosition;
@@ -22,10 +24,10 @@ class StationsListScreen extends StatefulWidget {
 class _StationsListScreenState extends State<StationsListScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
-  
-  // Set of default station IDs from default_stations.json
+
+  // Default station IDs
   final Set<String> _defaultStationIds = {
-    'ndls', 'csmt', 'hwh', 'mas', 'sbc', 'sc', 'pune', 'adi'
+    'csmt', 'churchgate', 'dadar', 'andheri', 'bandra', 'borivali', 'thane', 'kalyan', 'kurla', 'panvel'
   };
 
   @override
@@ -50,18 +52,17 @@ class _StationsListScreenState extends State<StationsListScreen> {
       processed.add(MapEntry(station, distance));
     }
 
-    // Sort by distance if available, otherwise by name
     if (widget.userPosition != null) {
       processed.sort((a, b) => (a.value ?? double.infinity).compareTo(b.value ?? double.infinity));
     } else {
       processed.sort((a, b) => a.key.name.compareTo(b.key.name));
     }
 
-    // Apply search filter
     if (_searchQuery.isNotEmpty) {
-      processed = processed.where((entry) => 
+      processed = processed.where((entry) =>
         entry.key.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-        entry.key.s2CellToken.toLowerCase().contains(_searchQuery.toLowerCase())
+        entry.key.s2CellToken.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+        entry.key.line.toLowerCase().contains(_searchQuery.toLowerCase())
       ).toList();
     }
 
@@ -79,18 +80,39 @@ class _StationsListScreenState extends State<StationsListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final sortedStations = _getProcessedStations();
 
     return Scaffold(
+      backgroundColor: LocoColors.canvas,
       appBar: AppBar(
-        title: const Text('ALL RAILWAY STATIONS'),
+        title: const Text(
+          'STATIONS & S2 NODES',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, letterSpacing: 0.5),
+        ),
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: LocoColors.orangeSurface,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              '${sortedStations.length} Stations',
+              style: const TextStyle(
+                color: LocoColors.orange,
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
+            ),
+          ),
+        ],
       ),
       body: Column(
         children: [
           // Search bar
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
             child: TextField(
               controller: _searchController,
               onChanged: (val) {
@@ -99,11 +121,12 @@ class _StationsListScreenState extends State<StationsListScreen> {
                 });
               },
               decoration: InputDecoration(
-                hintText: 'Search stations or S2 tokens...',
-                prefixIcon: const Icon(Icons.search, color: Colors.white54),
+                hintText: 'Search Mumbai stations or S2 tokens...',
+                hintStyle: const TextStyle(color: LocoColors.textMuted, fontSize: 14),
+                prefixIcon: const Icon(Icons.search_rounded, color: LocoColors.orange),
                 suffixIcon: _searchQuery.isNotEmpty
                     ? IconButton(
-                        icon: const Icon(Icons.clear, color: Colors.white54),
+                        icon: const Icon(Icons.clear, color: LocoColors.textMuted),
                         onPressed: () {
                           _searchController.clear();
                           setState(() {
@@ -113,36 +136,36 @@ class _StationsListScreenState extends State<StationsListScreen> {
                       )
                     : null,
                 filled: true,
-                fillColor: theme.cardTheme.color,
-                contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                fillColor: Colors.white,
+                contentPadding: const EdgeInsets.symmetric(vertical: 14),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide.none,
+                  borderSide: const BorderSide(color: LocoColors.border),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.05), width: 1),
+                  borderSide: const BorderSide(color: LocoColors.border),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide(color: theme.colorScheme.primary.withValues(alpha: 0.5), width: 1),
+                  borderSide: const BorderSide(color: LocoColors.orange, width: 1.5),
                 ),
               ),
             ),
           ),
-          
-          // Sorted list of stations
+
+          // List
           Expanded(
             child: sortedStations.isEmpty
                 ? Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.search_off_rounded, size: 64, color: Colors.white24),
+                        const Icon(Icons.search_off_rounded, size: 64, color: LocoColors.textMuted),
                         const SizedBox(height: 16),
-                        Text(
-                          'No stations found',
-                          style: theme.textTheme.bodyLarge?.copyWith(color: Colors.white38),
+                        const Text(
+                          'No stations match your search',
+                          style: TextStyle(color: LocoColors.textSecondary, fontSize: 15),
                         ),
                       ],
                     ),
@@ -157,125 +180,164 @@ class _StationsListScreenState extends State<StationsListScreen> {
                       final isNearest = index == 0 && widget.userPosition != null && _searchQuery.isEmpty;
                       final isCustom = !_defaultStationIds.contains(station.id);
 
+                      final lineColor = station.line == 'Western'
+                          ? LocoColors.westernLine
+                          : (station.line == 'Central' ? LocoColors.centralLine : LocoColors.harbourLine);
+
                       return Padding(
-                        padding: const EdgeInsets.only(bottom: 12.0),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 300),
-                          decoration: BoxDecoration(
-                            color: isNearest 
-                                ? theme.colorScheme.primary.withValues(alpha: 0.15) 
-                                : theme.cardTheme.color,
-                            borderRadius: BorderRadius.circular(18),
-                            border: Border.all(
-                              color: isNearest
-                                  ? theme.colorScheme.secondary.withValues(alpha: 0.5)
-                                  : Colors.white.withValues(alpha: 0.05),
-                              width: isNearest ? 1.5 : 1,
+                        padding: const EdgeInsets.only(bottom: 10.0),
+                        child: InkWell(
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              backgroundColor: Colors.transparent,
+                              builder: (ctx) => StationDetailsSheet(station: station),
+                            );
+                          },
+                          borderRadius: BorderRadius.circular(16),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            decoration: BoxDecoration(
+                              color: isNearest ? LocoColors.orangeSurface : Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: isNearest ? LocoColors.orange : LocoColors.border,
+                                width: isNearest ? 1.5 : 1,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.02),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
                             ),
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(18),
-                            child: ListTile(
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                              leading: Container(
-                                width: 44,
-                                height: 44,
-                                decoration: BoxDecoration(
-                                  color: isNearest 
-                                      ? theme.colorScheme.secondary.withValues(alpha: 0.2)
-                                      : Colors.white.withValues(alpha: 0.05),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(
-                                  Icons.train_outlined,
-                                  color: isNearest ? theme.colorScheme.secondary : Colors.white70,
-                                ),
-                              ),
-                              title: Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      station.name,
-                                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                                    ),
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 44,
+                                  height: 44,
+                                  decoration: BoxDecoration(
+                                    color: isNearest
+                                        ? LocoColors.orange
+                                        : lineColor.withValues(alpha: 0.12),
+                                    shape: BoxShape.circle,
                                   ),
-                                  if (isNearest)
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                      decoration: BoxDecoration(
-                                        color: theme.colorScheme.secondary.withValues(alpha: 0.2),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Text(
-                                        'NEAREST',
-                                        style: TextStyle(
-                                          fontSize: 9,
-                                          fontWeight: FontWeight.bold,
-                                          color: theme.colorScheme.secondary,
-                                        ),
-                                      ),
-                                    ),
-                                ],
-                              ),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const SizedBox(height: 6),
-                                  Row(
+                                  child: Icon(
+                                    Icons.train_rounded,
+                                    color: isNearest ? Colors.white : lineColor,
+                                    size: 22,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                        decoration: BoxDecoration(
-                                          color: Colors.black.withValues(alpha: 0.2),
-                                          borderRadius: BorderRadius.circular(6),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            const Icon(Icons.grid_3x3, size: 10, color: Colors.tealAccent),
-                                            const SizedBox(width: 4),
-                                            Text(
-                                              station.s2CellToken,
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              station.name,
                                               style: const TextStyle(
-                                                fontSize: 11,
-                                                fontFamily: 'monospace',
-                                                color: Colors.tealAccent,
-                                                fontWeight: FontWeight.bold,
+                                                fontWeight: FontWeight.w800,
+                                                fontSize: 15,
+                                                color: LocoColors.textPrimary,
                                               ),
                                             ),
-                                          ],
-                                        ),
+                                          ),
+                                          if (isNearest)
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                              decoration: BoxDecoration(
+                                                color: LocoColors.orange,
+                                                borderRadius: BorderRadius.circular(8),
+                                              ),
+                                              child: const Text(
+                                                'NEAREST',
+                                                style: TextStyle(
+                                                  fontSize: 9,
+                                                  fontWeight: FontWeight.w900,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                        ],
                                       ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        'Lat: ${station.latitude.toStringAsFixed(4)}, Lng: ${station.longitude.toStringAsFixed(4)}',
-                                        style: const TextStyle(fontSize: 11, color: Colors.white38),
+                                      const SizedBox(height: 6),
+                                      Row(
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                            decoration: BoxDecoration(
+                                              color: lineColor.withValues(alpha: 0.12),
+                                              borderRadius: BorderRadius.circular(4),
+                                            ),
+                                            child: Text(
+                                              station.line.toUpperCase(),
+                                              style: TextStyle(
+                                                fontSize: 9,
+                                                fontWeight: FontWeight.w800,
+                                                color: lineColor,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 6),
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                            decoration: BoxDecoration(
+                                              color: LocoColors.canvas,
+                                              borderRadius: BorderRadius.circular(4),
+                                              border: Border.all(color: LocoColors.border),
+                                            ),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                const Icon(Icons.grid_3x3, size: 9, color: LocoColors.orange),
+                                                const SizedBox(width: 2),
+                                                Text(
+                                                  station.s2CellToken,
+                                                  style: const TextStyle(
+                                                    fontSize: 10,
+                                                    fontFamily: 'monospace',
+                                                    color: LocoColors.textSecondary,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
-                                ],
-                              ),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  if (distance != null)
-                                    Text(
-                                      _formatDistance(distance),
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w900,
-                                        color: isNearest ? theme.colorScheme.secondary : Colors.white70,
-                                        fontSize: 14,
+                                ),
+                                const SizedBox(width: 8),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    if (distance != null)
+                                      Text(
+                                        _formatDistance(distance),
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w900,
+                                          color: isNearest ? LocoColors.orange : LocoColors.textPrimary,
+                                          fontSize: 14,
+                                        ),
                                       ),
-                                    ),
-                                  if (isCustom) ...[
-                                    const SizedBox(width: 8),
-                                    IconButton(
-                                      icon: const Icon(Icons.delete_outline, color: Colors.redAccent, size: 20),
-                                      onPressed: () => _confirmDelete(context, station),
-                                      tooltip: 'Delete custom station',
-                                    ),
-                                  ]
-                                ],
-                              ),
+                                    if (isCustom)
+                                      IconButton(
+                                        padding: EdgeInsets.zero,
+                                        constraints: const BoxConstraints(),
+                                        icon: const Icon(Icons.delete_outline, color: LocoColors.error, size: 20),
+                                        onPressed: () => _confirmDelete(context, station),
+                                        tooltip: 'Delete custom station',
+                                      ),
+                                  ],
+                                ),
+                              ],
                             ),
                           ),
                         ),
@@ -293,19 +355,19 @@ class _StationsListScreenState extends State<StationsListScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Delete Station?'),
-        content: Text('Are you sure you want to delete "${station.name}" from storage?'),
+        content: Text('Are you sure you want to delete "${station.name}" from local storage?'),
         actions: [
           TextButton(
             child: const Text('Cancel'),
             onPressed: () => Navigator.pop(ctx),
           ),
           TextButton(
-            child: const Text('Delete', style: TextStyle(color: Colors.redAccent)),
+            child: const Text('Delete', style: TextStyle(color: LocoColors.error)),
             onPressed: () {
               widget.onDeleteStation(station.id);
               Navigator.pop(ctx);
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Station "${station.name}" removed from JSON.')),
+                SnackBar(content: Text('Station "${station.name}" removed.')),
               );
             },
           ),

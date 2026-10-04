@@ -1,0 +1,3006 @@
+{
+  "dataset_type": "synthetic_poi_seed",
+  "warning": "POIs are placeholders. Replace with verified OSM/official/local-business data before deployment.",
+  "pois": [
+    {
+      "poi_id": "POI-00001",
+      "station": "Churchgate",
+      "category": "Cafe",
+      "name": "Cafe near Churchgate",
+      "latitude": 18.942092335242954,
+      "longitude": 72.82097839062803,
+      "exit": "E2",
+      "distance_m": 67
+    },
+    {
+      "poi_id": "POI-00002",
+      "station": "Churchgate",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Churchgate",
+      "latitude": 18.93831757948076,
+      "longitude": 72.81821509309368,
+      "exit": "E2",
+      "distance_m": 258
+    },
+    {
+      "poi_id": "POI-00003",
+      "station": "Churchgate",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Churchgate",
+      "latitude": 18.942869668147583,
+      "longitude": 72.81846906486811,
+      "exit": "E1",
+      "distance_m": 139
+    },
+    {
+      "poi_id": "POI-00004",
+      "station": "Churchgate",
+      "category": "Food Stall",
+      "name": "Food Stall near Churchgate",
+      "latitude": 18.93899485091366,
+      "longitude": 72.82168285205599,
+      "exit": "E1",
+      "distance_m": 74
+    },
+    {
+      "poi_id": "POI-00005",
+      "station": "Marine Lines",
+      "category": "Cafe",
+      "name": "Cafe near Marine Lines",
+      "latitude": 18.94418478272397,
+      "longitude": 72.82644659287018,
+      "exit": "E1",
+      "distance_m": 316
+    },
+    {
+      "poi_id": "POI-00006",
+      "station": "Marine Lines",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Marine Lines",
+      "latitude": 18.949416580373924,
+      "longitude": 72.823864035601,
+      "exit": "E2",
+      "distance_m": 214
+    },
+    {
+      "poi_id": "POI-00007",
+      "station": "Marine Lines",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Marine Lines",
+      "latitude": 18.949481243944046,
+      "longitude": 72.82681125020204,
+      "exit": "E2",
+      "distance_m": 627
+    },
+    {
+      "poi_id": "POI-00008",
+      "station": "Marine Lines",
+      "category": "Food Stall",
+      "name": "Food Stall near Marine Lines",
+      "latitude": 18.948927849930886,
+      "longitude": 72.82594725585948,
+      "exit": "E2",
+      "distance_m": 178
+    },
+    {
+      "poi_id": "POI-00009",
+      "station": "Charni Road",
+      "category": "Cafe",
+      "name": "Cafe near Charni Road",
+      "latitude": 18.951804929645512,
+      "longitude": 72.82570297664212,
+      "exit": "E1",
+      "distance_m": 633
+    },
+    {
+      "poi_id": "POI-00010",
+      "station": "Charni Road",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Charni Road",
+      "latitude": 18.953140914091655,
+      "longitude": 72.8266233810344,
+      "exit": "E1",
+      "distance_m": 55
+    },
+    {
+      "poi_id": "POI-00011",
+      "station": "Charni Road",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Charni Road",
+      "latitude": 18.951830028649812,
+      "longitude": 72.82905155653772,
+      "exit": "E1",
+      "distance_m": 493
+    },
+    {
+      "poi_id": "POI-00012",
+      "station": "Charni Road",
+      "category": "Food Stall",
+      "name": "Food Stall near Charni Road",
+      "latitude": 18.951832225886076,
+      "longitude": 72.82818068144472,
+      "exit": "E1",
+      "distance_m": 144
+    },
+    {
+      "poi_id": "POI-00013",
+      "station": "Grant Road",
+      "category": "Cafe",
+      "name": "Cafe near Grant Road",
+      "latitude": 18.960168822683958,
+      "longitude": 72.83446228667171,
+      "exit": "E2",
+      "distance_m": 267
+    },
+    {
+      "poi_id": "POI-00014",
+      "station": "Grant Road",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Grant Road",
+      "latitude": 18.959197457327114,
+      "longitude": 72.83324389953746,
+      "exit": "E2",
+      "distance_m": 206
+    },
+    {
+      "poi_id": "POI-00015",
+      "station": "Grant Road",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Grant Road",
+      "latitude": 18.961839787463223,
+      "longitude": 72.83354009753667,
+      "exit": "E1",
+      "distance_m": 354
+    },
+    {
+      "poi_id": "POI-00016",
+      "station": "Grant Road",
+      "category": "Food Stall",
+      "name": "Food Stall near Grant Road",
+      "latitude": 18.95667477688053,
+      "longitude": 72.83266517691139,
+      "exit": "E2",
+      "distance_m": 170
+    },
+    {
+      "poi_id": "POI-00017",
+      "station": "Mumbai Central",
+      "category": "Cafe",
+      "name": "Cafe near Mumbai Central",
+      "latitude": 18.964627598303313,
+      "longitude": 72.83708507889402,
+      "exit": "E1",
+      "distance_m": 343
+    },
+    {
+      "poi_id": "POI-00018",
+      "station": "Mumbai Central",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Mumbai Central",
+      "latitude": 18.965131987192414,
+      "longitude": 72.83877388771599,
+      "exit": "E1",
+      "distance_m": 290
+    },
+    {
+      "poi_id": "POI-00019",
+      "station": "Mumbai Central",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Mumbai Central",
+      "latitude": 18.96412710119634,
+      "longitude": 72.83893583212827,
+      "exit": "E1",
+      "distance_m": 305
+    },
+    {
+      "poi_id": "POI-00020",
+      "station": "Mumbai Central",
+      "category": "Food Stall",
+      "name": "Food Stall near Mumbai Central",
+      "latitude": 18.96692473934729,
+      "longitude": 72.83544584570174,
+      "exit": "E2",
+      "distance_m": 699
+    },
+    {
+      "poi_id": "POI-00021",
+      "station": "Mahalaxmi",
+      "category": "Cafe",
+      "name": "Cafe near Mahalaxmi",
+      "latitude": 18.9730448852042,
+      "longitude": 72.84130765552752,
+      "exit": "E2",
+      "distance_m": 481
+    },
+    {
+      "poi_id": "POI-00022",
+      "station": "Mahalaxmi",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Mahalaxmi",
+      "latitude": 18.97142386433074,
+      "longitude": 72.83905164264533,
+      "exit": "E2",
+      "distance_m": 377
+    },
+    {
+      "poi_id": "POI-00023",
+      "station": "Mahalaxmi",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Mahalaxmi",
+      "latitude": 18.974308311295673,
+      "longitude": 72.83927004768445,
+      "exit": "E2",
+      "distance_m": 52
+    },
+    {
+      "poi_id": "POI-00024",
+      "station": "Mahalaxmi",
+      "category": "Food Stall",
+      "name": "Food Stall near Mahalaxmi",
+      "latitude": 18.97449655689706,
+      "longitude": 72.83813328582518,
+      "exit": "E2",
+      "distance_m": 308
+    },
+    {
+      "poi_id": "POI-00025",
+      "station": "Lower Parel",
+      "category": "Cafe",
+      "name": "Cafe near Lower Parel",
+      "latitude": 18.979898094159207,
+      "longitude": 72.84115002269196,
+      "exit": "E2",
+      "distance_m": 58
+    },
+    {
+      "poi_id": "POI-00026",
+      "station": "Lower Parel",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Lower Parel",
+      "latitude": 18.976123511135736,
+      "longitude": 72.84695223769005,
+      "exit": "E1",
+      "distance_m": 395
+    },
+    {
+      "poi_id": "POI-00027",
+      "station": "Lower Parel",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Lower Parel",
+      "latitude": 18.979345103148972,
+      "longitude": 72.84658318382044,
+      "exit": "E2",
+      "distance_m": 333
+    },
+    {
+      "poi_id": "POI-00028",
+      "station": "Lower Parel",
+      "category": "Food Stall",
+      "name": "Food Stall near Lower Parel",
+      "latitude": 18.98188515127613,
+      "longitude": 72.84577438709437,
+      "exit": "E2",
+      "distance_m": 100
+    },
+    {
+      "poi_id": "POI-00029",
+      "station": "Prabhadevi",
+      "category": "Cafe",
+      "name": "Cafe near Prabhadevi",
+      "latitude": 18.983472071397582,
+      "longitude": 72.84504403478284,
+      "exit": "E1",
+      "distance_m": 407
+    },
+    {
+      "poi_id": "POI-00030",
+      "station": "Prabhadevi",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Prabhadevi",
+      "latitude": 18.985290748780344,
+      "longitude": 72.84646782531982,
+      "exit": "E2",
+      "distance_m": 598
+    },
+    {
+      "poi_id": "POI-00031",
+      "station": "Prabhadevi",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Prabhadevi",
+      "latitude": 18.988251163064174,
+      "longitude": 72.84626311747559,
+      "exit": "E2",
+      "distance_m": 116
+    },
+    {
+      "poi_id": "POI-00032",
+      "station": "Prabhadevi",
+      "category": "Food Stall",
+      "name": "Food Stall near Prabhadevi",
+      "latitude": 18.983613435962162,
+      "longitude": 72.84878656201562,
+      "exit": "E1",
+      "distance_m": 562
+    },
+    {
+      "poi_id": "POI-00033",
+      "station": "Dadar",
+      "category": "Cafe",
+      "name": "Cafe near Dadar",
+      "latitude": 18.992778045367118,
+      "longitude": 72.8507550700465,
+      "exit": "E2",
+      "distance_m": 247
+    },
+    {
+      "poi_id": "POI-00034",
+      "station": "Dadar",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Dadar",
+      "latitude": 18.98904301938926,
+      "longitude": 72.84962091762294,
+      "exit": "E1",
+      "distance_m": 190
+    },
+    {
+      "poi_id": "POI-00035",
+      "station": "Dadar",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Dadar",
+      "latitude": 18.990966456207666,
+      "longitude": 72.8531997516404,
+      "exit": "E1",
+      "distance_m": 642
+    },
+    {
+      "poi_id": "POI-00036",
+      "station": "Dadar",
+      "category": "Food Stall",
+      "name": "Food Stall near Dadar",
+      "latitude": 18.991342292413552,
+      "longitude": 72.85169856819529,
+      "exit": "E1",
+      "distance_m": 604
+    },
+    {
+      "poi_id": "POI-00037",
+      "station": "Matunga Road",
+      "category": "Cafe",
+      "name": "Cafe near Matunga Road",
+      "latitude": 18.99818583724946,
+      "longitude": 72.85885973937738,
+      "exit": "E1",
+      "distance_m": 334
+    },
+    {
+      "poi_id": "POI-00038",
+      "station": "Matunga Road",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Matunga Road",
+      "latitude": 18.995934205686897,
+      "longitude": 72.85569448735173,
+      "exit": "E1",
+      "distance_m": 39
+    },
+    {
+      "poi_id": "POI-00039",
+      "station": "Matunga Road",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Matunga Road",
+      "latitude": 18.997620481001135,
+      "longitude": 72.85452833886696,
+      "exit": "E2",
+      "distance_m": 403
+    },
+    {
+      "poi_id": "POI-00040",
+      "station": "Matunga Road",
+      "category": "Food Stall",
+      "name": "Food Stall near Matunga Road",
+      "latitude": 18.998156310478436,
+      "longitude": 72.85463944381712,
+      "exit": "E2",
+      "distance_m": 417
+    },
+    {
+      "poi_id": "POI-00041",
+      "station": "Mahim",
+      "category": "Cafe",
+      "name": "Cafe near Mahim",
+      "latitude": 19.002863767137196,
+      "longitude": 72.85964342704875,
+      "exit": "E1",
+      "distance_m": 95
+    },
+    {
+      "poi_id": "POI-00042",
+      "station": "Mahim",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Mahim",
+      "latitude": 19.002813490109208,
+      "longitude": 72.85868913838479,
+      "exit": "E1",
+      "distance_m": 264
+    },
+    {
+      "poi_id": "POI-00043",
+      "station": "Mahim",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Mahim",
+      "latitude": 19.006890537488317,
+      "longitude": 72.85809680535182,
+      "exit": "E2",
+      "distance_m": 281
+    },
+    {
+      "poi_id": "POI-00044",
+      "station": "Mahim",
+      "category": "Food Stall",
+      "name": "Food Stall near Mahim",
+      "latitude": 19.004673430602352,
+      "longitude": 72.86294320954065,
+      "exit": "E1",
+      "distance_m": 608
+    },
+    {
+      "poi_id": "POI-00045",
+      "station": "Bandra",
+      "category": "Cafe",
+      "name": "Cafe near Bandra",
+      "latitude": 19.013646152844245,
+      "longitude": 72.86420557126556,
+      "exit": "E1",
+      "distance_m": 284
+    },
+    {
+      "poi_id": "POI-00046",
+      "station": "Bandra",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Bandra",
+      "latitude": 19.014164305065833,
+      "longitude": 72.86634730269145,
+      "exit": "E1",
+      "distance_m": 277
+    },
+    {
+      "poi_id": "POI-00047",
+      "station": "Bandra",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Bandra",
+      "latitude": 19.00996427969707,
+      "longitude": 72.86322923669829,
+      "exit": "E2",
+      "distance_m": 669
+    },
+    {
+      "poi_id": "POI-00048",
+      "station": "Bandra",
+      "category": "Food Stall",
+      "name": "Food Stall near Bandra",
+      "latitude": 19.012160066723492,
+      "longitude": 72.862107099073,
+      "exit": "E2",
+      "distance_m": 504
+    },
+    {
+      "poi_id": "POI-00049",
+      "station": "Khar Road",
+      "category": "Cafe",
+      "name": "Cafe near Khar Road",
+      "latitude": 19.019248733043423,
+      "longitude": 72.86520924860763,
+      "exit": "E1",
+      "distance_m": 230
+    },
+    {
+      "poi_id": "POI-00050",
+      "station": "Khar Road",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Khar Road",
+      "latitude": 19.018829500575507,
+      "longitude": 72.8703333816217,
+      "exit": "E2",
+      "distance_m": 250
+    },
+    {
+      "poi_id": "POI-00051",
+      "station": "Khar Road",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Khar Road",
+      "latitude": 19.01903623517291,
+      "longitude": 72.86722160562978,
+      "exit": "E1",
+      "distance_m": 362
+    },
+    {
+      "poi_id": "POI-00052",
+      "station": "Khar Road",
+      "category": "Food Stall",
+      "name": "Food Stall near Khar Road",
+      "latitude": 19.01632240088984,
+      "longitude": 72.86798197128272,
+      "exit": "E1",
+      "distance_m": 677
+    },
+    {
+      "poi_id": "POI-00053",
+      "station": "Santacruz",
+      "category": "Cafe",
+      "name": "Cafe near Santacruz",
+      "latitude": 19.025193305223617,
+      "longitude": 72.8716248239435,
+      "exit": "E2",
+      "distance_m": 109
+    },
+    {
+      "poi_id": "POI-00054",
+      "station": "Santacruz",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Santacruz",
+      "latitude": 19.023134814649104,
+      "longitude": 72.8698063756492,
+      "exit": "E1",
+      "distance_m": 524
+    },
+    {
+      "poi_id": "POI-00055",
+      "station": "Santacruz",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Santacruz",
+      "latitude": 19.026180406185382,
+      "longitude": 72.87065441404626,
+      "exit": "E2",
+      "distance_m": 408
+    },
+    {
+      "poi_id": "POI-00056",
+      "station": "Santacruz",
+      "category": "Food Stall",
+      "name": "Food Stall near Santacruz",
+      "latitude": 19.02210552827375,
+      "longitude": 72.8696206727697,
+      "exit": "E1",
+      "distance_m": 571
+    },
+    {
+      "poi_id": "POI-00057",
+      "station": "Vile Parle",
+      "category": "Cafe",
+      "name": "Cafe near Vile Parle",
+      "latitude": 19.03377062809121,
+      "longitude": 72.87880394917225,
+      "exit": "E2",
+      "distance_m": 419
+    },
+    {
+      "poi_id": "POI-00058",
+      "station": "Vile Parle",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Vile Parle",
+      "latitude": 19.02844216121124,
+      "longitude": 72.87793101771514,
+      "exit": "E1",
+      "distance_m": 398
+    },
+    {
+      "poi_id": "POI-00059",
+      "station": "Vile Parle",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Vile Parle",
+      "latitude": 19.03214788436186,
+      "longitude": 72.8782066327354,
+      "exit": "E2",
+      "distance_m": 396
+    },
+    {
+      "poi_id": "POI-00060",
+      "station": "Vile Parle",
+      "category": "Food Stall",
+      "name": "Food Stall near Vile Parle",
+      "latitude": 19.030960044156828,
+      "longitude": 72.87579611526395,
+      "exit": "E2",
+      "distance_m": 55
+    },
+    {
+      "poi_id": "POI-00061",
+      "station": "Andheri",
+      "category": "Cafe",
+      "name": "Cafe near Andheri",
+      "latitude": 19.04021231905365,
+      "longitude": 72.88077807368013,
+      "exit": "E2",
+      "distance_m": 389
+    },
+    {
+      "poi_id": "POI-00062",
+      "station": "Andheri",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Andheri",
+      "latitude": 19.03851052840536,
+      "longitude": 72.88183265827368,
+      "exit": "E1",
+      "distance_m": 93
+    },
+    {
+      "poi_id": "POI-00063",
+      "station": "Andheri",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Andheri",
+      "latitude": 19.034961912294346,
+      "longitude": 72.87744042156055,
+      "exit": "E1",
+      "distance_m": 615
+    },
+    {
+      "poi_id": "POI-00064",
+      "station": "Andheri",
+      "category": "Food Stall",
+      "name": "Food Stall near Andheri",
+      "latitude": 19.036507899292342,
+      "longitude": 72.87717400604615,
+      "exit": "E1",
+      "distance_m": 584
+    },
+    {
+      "poi_id": "POI-00065",
+      "station": "Jogeshwari",
+      "category": "Cafe",
+      "name": "Cafe near Jogeshwari",
+      "latitude": 19.043013286155233,
+      "longitude": 72.88435374062944,
+      "exit": "E1",
+      "distance_m": 74
+    },
+    {
+      "poi_id": "POI-00066",
+      "station": "Jogeshwari",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Jogeshwari",
+      "latitude": 19.04420893045468,
+      "longitude": 72.88160707786732,
+      "exit": "E2",
+      "distance_m": 619
+    },
+    {
+      "poi_id": "POI-00067",
+      "station": "Jogeshwari",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Jogeshwari",
+      "latitude": 19.041420656234823,
+      "longitude": 72.88124066431102,
+      "exit": "E2",
+      "distance_m": 535
+    },
+    {
+      "poi_id": "POI-00068",
+      "station": "Jogeshwari",
+      "category": "Food Stall",
+      "name": "Food Stall near Jogeshwari",
+      "latitude": 19.044526083417257,
+      "longitude": 72.88431833913603,
+      "exit": "E1",
+      "distance_m": 603
+    },
+    {
+      "poi_id": "POI-00069",
+      "station": "Ram Mandir",
+      "category": "Cafe",
+      "name": "Cafe near Ram Mandir",
+      "latitude": 19.053475030891594,
+      "longitude": 72.88678322143868,
+      "exit": "E2",
+      "distance_m": 279
+    },
+    {
+      "poi_id": "POI-00070",
+      "station": "Ram Mandir",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Ram Mandir",
+      "latitude": 19.049149163252217,
+      "longitude": 72.88879025520255,
+      "exit": "E1",
+      "distance_m": 485
+    },
+    {
+      "poi_id": "POI-00071",
+      "station": "Ram Mandir",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Ram Mandir",
+      "latitude": 19.048503938663238,
+      "longitude": 72.89078354513128,
+      "exit": "E1",
+      "distance_m": 92
+    },
+    {
+      "poi_id": "POI-00072",
+      "station": "Ram Mandir",
+      "category": "Food Stall",
+      "name": "Food Stall near Ram Mandir",
+      "latitude": 19.047720145370356,
+      "longitude": 72.88626093215142,
+      "exit": "E1",
+      "distance_m": 459
+    },
+    {
+      "poi_id": "POI-00073",
+      "station": "Goregaon",
+      "category": "Cafe",
+      "name": "Cafe near Goregaon",
+      "latitude": 19.055289408872873,
+      "longitude": 72.89234707553871,
+      "exit": "E1",
+      "distance_m": 469
+    },
+    {
+      "poi_id": "POI-00074",
+      "station": "Goregaon",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Goregaon",
+      "latitude": 19.054308169550648,
+      "longitude": 72.8899241598612,
+      "exit": "E2",
+      "distance_m": 308
+    },
+    {
+      "poi_id": "POI-00075",
+      "station": "Goregaon",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Goregaon",
+      "latitude": 19.057997286490533,
+      "longitude": 72.89319658917793,
+      "exit": "E1",
+      "distance_m": 514
+    },
+    {
+      "poi_id": "POI-00076",
+      "station": "Goregaon",
+      "category": "Food Stall",
+      "name": "Food Stall near Goregaon",
+      "latitude": 19.05732116081843,
+      "longitude": 72.89489113417264,
+      "exit": "E1",
+      "distance_m": 509
+    },
+    {
+      "poi_id": "POI-00077",
+      "station": "Malad",
+      "category": "Cafe",
+      "name": "Cafe near Malad",
+      "latitude": 19.06314943237325,
+      "longitude": 72.89343770570345,
+      "exit": "E1",
+      "distance_m": 394
+    },
+    {
+      "poi_id": "POI-00078",
+      "station": "Malad",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Malad",
+      "latitude": 19.064670711145972,
+      "longitude": 72.89803649820347,
+      "exit": "E1",
+      "distance_m": 599
+    },
+    {
+      "poi_id": "POI-00079",
+      "station": "Malad",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Malad",
+      "latitude": 19.065153335954136,
+      "longitude": 72.89401379495952,
+      "exit": "E2",
+      "distance_m": 122
+    },
+    {
+      "poi_id": "POI-00080",
+      "station": "Malad",
+      "category": "Food Stall",
+      "name": "Food Stall near Malad",
+      "latitude": 19.061413771126333,
+      "longitude": 72.89422801393502,
+      "exit": "E1",
+      "distance_m": 78
+    },
+    {
+      "poi_id": "POI-00081",
+      "station": "Kandivali",
+      "category": "Cafe",
+      "name": "Cafe near Kandivali",
+      "latitude": 19.070046353410874,
+      "longitude": 72.89834934526482,
+      "exit": "E1",
+      "distance_m": 249
+    },
+    {
+      "poi_id": "POI-00082",
+      "station": "Kandivali",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Kandivali",
+      "latitude": 19.07259161571947,
+      "longitude": 72.8995919285034,
+      "exit": "E1",
+      "distance_m": 448
+    },
+    {
+      "poi_id": "POI-00083",
+      "station": "Kandivali",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Kandivali",
+      "latitude": 19.072218295540722,
+      "longitude": 72.8978507782483,
+      "exit": "E1",
+      "distance_m": 64
+    },
+    {
+      "poi_id": "POI-00084",
+      "station": "Kandivali",
+      "category": "Food Stall",
+      "name": "Food Stall near Kandivali",
+      "latitude": 19.071542615593817,
+      "longitude": 72.89763257221077,
+      "exit": "E2",
+      "distance_m": 315
+    },
+    {
+      "poi_id": "POI-00085",
+      "station": "Borivali",
+      "category": "Cafe",
+      "name": "Cafe near Borivali",
+      "latitude": 19.078359419904764,
+      "longitude": 72.90317381442861,
+      "exit": "E1",
+      "distance_m": 318
+    },
+    {
+      "poi_id": "POI-00086",
+      "station": "Borivali",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Borivali",
+      "latitude": 19.077646179941084,
+      "longitude": 72.90683266929449,
+      "exit": "E1",
+      "distance_m": 592
+    },
+    {
+      "poi_id": "POI-00087",
+      "station": "Borivali",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Borivali",
+      "latitude": 19.074703127463152,
+      "longitude": 72.90233423929894,
+      "exit": "E1",
+      "distance_m": 439
+    },
+    {
+      "poi_id": "POI-00088",
+      "station": "Borivali",
+      "category": "Food Stall",
+      "name": "Food Stall near Borivali",
+      "latitude": 19.07635411898309,
+      "longitude": 72.90124060275163,
+      "exit": "E2",
+      "distance_m": 196
+    },
+    {
+      "poi_id": "POI-00089",
+      "station": "Dahisar",
+      "category": "Cafe",
+      "name": "Cafe near Dahisar",
+      "latitude": 19.084404174237044,
+      "longitude": 72.90937725132038,
+      "exit": "E1",
+      "distance_m": 638
+    },
+    {
+      "poi_id": "POI-00090",
+      "station": "Dahisar",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Dahisar",
+      "latitude": 19.084089370366037,
+      "longitude": 72.90707913151955,
+      "exit": "E2",
+      "distance_m": 49
+    },
+    {
+      "poi_id": "POI-00091",
+      "station": "Dahisar",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Dahisar",
+      "latitude": 19.082049273720536,
+      "longitude": 72.9101182165363,
+      "exit": "E2",
+      "distance_m": 679
+    },
+    {
+      "poi_id": "POI-00092",
+      "station": "Dahisar",
+      "category": "Food Stall",
+      "name": "Food Stall near Dahisar",
+      "latitude": 19.081874073252518,
+      "longitude": 72.90836875428104,
+      "exit": "E2",
+      "distance_m": 539
+    },
+    {
+      "poi_id": "POI-00093",
+      "station": "Mira Road",
+      "category": "Cafe",
+      "name": "Cafe near Mira Road",
+      "latitude": 19.091472483177327,
+      "longitude": 72.911659895537,
+      "exit": "E1",
+      "distance_m": 48
+    },
+    {
+      "poi_id": "POI-00094",
+      "station": "Mira Road",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Mira Road",
+      "latitude": 19.08672185315833,
+      "longitude": 72.91166796815428,
+      "exit": "E2",
+      "distance_m": 601
+    },
+    {
+      "poi_id": "POI-00095",
+      "station": "Mira Road",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Mira Road",
+      "latitude": 19.09013258954299,
+      "longitude": 72.91454599827888,
+      "exit": "E2",
+      "distance_m": 538
+    },
+    {
+      "poi_id": "POI-00096",
+      "station": "Mira Road",
+      "category": "Food Stall",
+      "name": "Food Stall near Mira Road",
+      "latitude": 19.089770798777927,
+      "longitude": 72.91497031411369,
+      "exit": "E1",
+      "distance_m": 474
+    },
+    {
+      "poi_id": "POI-00097",
+      "station": "Bhayandar",
+      "category": "Cafe",
+      "name": "Cafe near Bhayandar",
+      "latitude": 19.094686584500337,
+      "longitude": 72.91329744384254,
+      "exit": "E2",
+      "distance_m": 584
+    },
+    {
+      "poi_id": "POI-00098",
+      "station": "Bhayandar",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Bhayandar",
+      "latitude": 19.094158706281004,
+      "longitude": 72.91605848900618,
+      "exit": "E2",
+      "distance_m": 418
+    },
+    {
+      "poi_id": "POI-00099",
+      "station": "Bhayandar",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Bhayandar",
+      "latitude": 19.094993931033862,
+      "longitude": 72.91686711102997,
+      "exit": "E2",
+      "distance_m": 439
+    },
+    {
+      "poi_id": "POI-00100",
+      "station": "Bhayandar",
+      "category": "Food Stall",
+      "name": "Food Stall near Bhayandar",
+      "latitude": 19.094291834699348,
+      "longitude": 72.91567847243685,
+      "exit": "E2",
+      "distance_m": 162
+    },
+    {
+      "poi_id": "POI-00101",
+      "station": "Naigaon",
+      "category": "Cafe",
+      "name": "Cafe near Naigaon",
+      "latitude": 19.102293135602334,
+      "longitude": 72.92168093732099,
+      "exit": "E2",
+      "distance_m": 680
+    },
+    {
+      "poi_id": "POI-00102",
+      "station": "Naigaon",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Naigaon",
+      "latitude": 19.100799573903075,
+      "longitude": 72.92176116472307,
+      "exit": "E1",
+      "distance_m": 663
+    },
+    {
+      "poi_id": "POI-00103",
+      "station": "Naigaon",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Naigaon",
+      "latitude": 19.10014273349317,
+      "longitude": 72.921582561621,
+      "exit": "E1",
+      "distance_m": 259
+    },
+    {
+      "poi_id": "POI-00104",
+      "station": "Naigaon",
+      "category": "Food Stall",
+      "name": "Food Stall near Naigaon",
+      "latitude": 19.100997474993402,
+      "longitude": 72.91927579908469,
+      "exit": "E1",
+      "distance_m": 489
+    },
+    {
+      "poi_id": "POI-00105",
+      "station": "Vasai Road",
+      "category": "Cafe",
+      "name": "Cafe near Vasai Road",
+      "latitude": 19.109412190757276,
+      "longitude": 72.92589671636607,
+      "exit": "E2",
+      "distance_m": 320
+    },
+    {
+      "poi_id": "POI-00106",
+      "station": "Vasai Road",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Vasai Road",
+      "latitude": 19.111770058307236,
+      "longitude": 72.92693385966432,
+      "exit": "E1",
+      "distance_m": 192
+    },
+    {
+      "poi_id": "POI-00107",
+      "station": "Vasai Road",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Vasai Road",
+      "latitude": 19.111922382636582,
+      "longitude": 72.92198531199108,
+      "exit": "E2",
+      "distance_m": 306
+    },
+    {
+      "poi_id": "POI-00108",
+      "station": "Vasai Road",
+      "category": "Food Stall",
+      "name": "Food Stall near Vasai Road",
+      "latitude": 19.1078077611495,
+      "longitude": 72.92641307289018,
+      "exit": "E1",
+      "distance_m": 663
+    },
+    {
+      "poi_id": "POI-00109",
+      "station": "Nalasopara",
+      "category": "Cafe",
+      "name": "Cafe near Nalasopara",
+      "latitude": 19.114915651792547,
+      "longitude": 72.92894079903641,
+      "exit": "E1",
+      "distance_m": 418
+    },
+    {
+      "poi_id": "POI-00110",
+      "station": "Nalasopara",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Nalasopara",
+      "latitude": 19.114967149968383,
+      "longitude": 72.92561578809921,
+      "exit": "E2",
+      "distance_m": 426
+    },
+    {
+      "poi_id": "POI-00111",
+      "station": "Nalasopara",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Nalasopara",
+      "latitude": 19.117717150028145,
+      "longitude": 72.9273587603657,
+      "exit": "E1",
+      "distance_m": 33
+    },
+    {
+      "poi_id": "POI-00112",
+      "station": "Nalasopara",
+      "category": "Food Stall",
+      "name": "Food Stall near Nalasopara",
+      "latitude": 19.113591878375647,
+      "longitude": 72.92672828119943,
+      "exit": "E1",
+      "distance_m": 351
+    },
+    {
+      "poi_id": "POI-00113",
+      "station": "Virar",
+      "category": "Cafe",
+      "name": "Cafe near Virar",
+      "latitude": 19.123569272817527,
+      "longitude": 72.93272421295468,
+      "exit": "E2",
+      "distance_m": 306
+    },
+    {
+      "poi_id": "POI-00114",
+      "station": "Virar",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Virar",
+      "latitude": 19.122535346050526,
+      "longitude": 72.93174994881554,
+      "exit": "E2",
+      "distance_m": 577
+    },
+    {
+      "poi_id": "POI-00115",
+      "station": "Virar",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Virar",
+      "latitude": 19.122968252903906,
+      "longitude": 72.9337291097035,
+      "exit": "E2",
+      "distance_m": 139
+    },
+    {
+      "poi_id": "POI-00116",
+      "station": "Virar",
+      "category": "Food Stall",
+      "name": "Food Stall near Virar",
+      "latitude": 19.12434729399047,
+      "longitude": 72.93408920614728,
+      "exit": "E2",
+      "distance_m": 410
+    },
+    {
+      "poi_id": "POI-00117",
+      "station": "CSMT",
+      "category": "Cafe",
+      "name": "Cafe near CSMT",
+      "latitude": 18.946485708403017,
+      "longitude": 72.83543370915939,
+      "exit": "E2",
+      "distance_m": 552
+    },
+    {
+      "poi_id": "POI-00118",
+      "station": "CSMT",
+      "category": "Auto Stand",
+      "name": "Auto Stand near CSMT",
+      "latitude": 18.94417547458283,
+      "longitude": 72.83455620403466,
+      "exit": "E1",
+      "distance_m": 49
+    },
+    {
+      "poi_id": "POI-00119",
+      "station": "CSMT",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near CSMT",
+      "latitude": 18.945564654385667,
+      "longitude": 72.83504092337951,
+      "exit": "E1",
+      "distance_m": 593
+    },
+    {
+      "poi_id": "POI-00120",
+      "station": "CSMT",
+      "category": "Food Stall",
+      "name": "Food Stall near CSMT",
+      "latitude": 18.942488928585927,
+      "longitude": 72.83391521923477,
+      "exit": "E2",
+      "distance_m": 330
+    },
+    {
+      "poi_id": "POI-00121",
+      "station": "Byculla",
+      "category": "Cafe",
+      "name": "Cafe near Byculla",
+      "latitude": 18.948853971651893,
+      "longitude": 72.83720761906572,
+      "exit": "E2",
+      "distance_m": 696
+    },
+    {
+      "poi_id": "POI-00122",
+      "station": "Byculla",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Byculla",
+      "latitude": 18.950801384404976,
+      "longitude": 72.83698154797081,
+      "exit": "E2",
+      "distance_m": 688
+    },
+    {
+      "poi_id": "POI-00123",
+      "station": "Byculla",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Byculla",
+      "latitude": 18.94878534387943,
+      "longitude": 72.83811610701841,
+      "exit": "E2",
+      "distance_m": 356
+    },
+    {
+      "poi_id": "POI-00124",
+      "station": "Byculla",
+      "category": "Food Stall",
+      "name": "Food Stall near Byculla",
+      "latitude": 18.949043174295085,
+      "longitude": 72.84052070279812,
+      "exit": "E2",
+      "distance_m": 495
+    },
+    {
+      "poi_id": "POI-00125",
+      "station": "Chinchpokli",
+      "category": "Cafe",
+      "name": "Cafe near Chinchpokli",
+      "latitude": 18.95582915981052,
+      "longitude": 72.84383724929478,
+      "exit": "E1",
+      "distance_m": 604
+    },
+    {
+      "poi_id": "POI-00126",
+      "station": "Chinchpokli",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Chinchpokli",
+      "latitude": 18.95560140617394,
+      "longitude": 72.8459079315678,
+      "exit": "E2",
+      "distance_m": 665
+    },
+    {
+      "poi_id": "POI-00127",
+      "station": "Chinchpokli",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Chinchpokli",
+      "latitude": 18.96004224759725,
+      "longitude": 72.8402746064063,
+      "exit": "E1",
+      "distance_m": 423
+    },
+    {
+      "poi_id": "POI-00128",
+      "station": "Chinchpokli",
+      "category": "Food Stall",
+      "name": "Food Stall near Chinchpokli",
+      "latitude": 18.95768646845577,
+      "longitude": 72.84530446978285,
+      "exit": "E2",
+      "distance_m": 499
+    },
+    {
+      "poi_id": "POI-00129",
+      "station": "Currey Road",
+      "category": "Cafe",
+      "name": "Cafe near Currey Road",
+      "latitude": 18.964810968864015,
+      "longitude": 72.84879332096577,
+      "exit": "E1",
+      "distance_m": 640
+    },
+    {
+      "poi_id": "POI-00130",
+      "station": "Currey Road",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Currey Road",
+      "latitude": 18.964482069360766,
+      "longitude": 72.84673259957408,
+      "exit": "E1",
+      "distance_m": 154
+    },
+    {
+      "poi_id": "POI-00131",
+      "station": "Currey Road",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Currey Road",
+      "latitude": 18.963327704588266,
+      "longitude": 72.84455561710101,
+      "exit": "E2",
+      "distance_m": 530
+    },
+    {
+      "poi_id": "POI-00132",
+      "station": "Currey Road",
+      "category": "Food Stall",
+      "name": "Food Stall near Currey Road",
+      "latitude": 18.967075395002276,
+      "longitude": 72.84895756186205,
+      "exit": "E2",
+      "distance_m": 466
+    },
+    {
+      "poi_id": "POI-00133",
+      "station": "Parel",
+      "category": "Cafe",
+      "name": "Cafe near Parel",
+      "latitude": 18.96824225632806,
+      "longitude": 72.85202531493572,
+      "exit": "E1",
+      "distance_m": 188
+    },
+    {
+      "poi_id": "POI-00134",
+      "station": "Parel",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Parel",
+      "latitude": 18.973057086097285,
+      "longitude": 72.85037780944675,
+      "exit": "E2",
+      "distance_m": 94
+    },
+    {
+      "poi_id": "POI-00135",
+      "station": "Parel",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Parel",
+      "latitude": 18.969891203513107,
+      "longitude": 72.85338130857674,
+      "exit": "E1",
+      "distance_m": 214
+    },
+    {
+      "poi_id": "POI-00136",
+      "station": "Parel",
+      "category": "Food Stall",
+      "name": "Food Stall near Parel",
+      "latitude": 18.969509290172766,
+      "longitude": 72.85205312225729,
+      "exit": "E1",
+      "distance_m": 389
+    },
+    {
+      "poi_id": "POI-00137",
+      "station": "Matunga",
+      "category": "Cafe",
+      "name": "Cafe near Matunga",
+      "latitude": 18.98228807532986,
+      "longitude": 72.85690385881509,
+      "exit": "E1",
+      "distance_m": 637
+    },
+    {
+      "poi_id": "POI-00138",
+      "station": "Matunga",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Matunga",
+      "latitude": 18.985726206394535,
+      "longitude": 72.85748955630768,
+      "exit": "E2",
+      "distance_m": 470
+    },
+    {
+      "poi_id": "POI-00139",
+      "station": "Matunga",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Matunga",
+      "latitude": 18.984606545003217,
+      "longitude": 72.85817480568488,
+      "exit": "E1",
+      "distance_m": 416
+    },
+    {
+      "poi_id": "POI-00140",
+      "station": "Matunga",
+      "category": "Food Stall",
+      "name": "Food Stall near Matunga",
+      "latitude": 18.981923822403505,
+      "longitude": 72.8584803878821,
+      "exit": "E2",
+      "distance_m": 408
+    },
+    {
+      "poi_id": "POI-00141",
+      "station": "Sion",
+      "category": "Cafe",
+      "name": "Cafe near Sion",
+      "latitude": 18.98918871501931,
+      "longitude": 72.86552265558117,
+      "exit": "E1",
+      "distance_m": 141
+    },
+    {
+      "poi_id": "POI-00142",
+      "station": "Sion",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Sion",
+      "latitude": 18.99222291739188,
+      "longitude": 72.86064769216533,
+      "exit": "E1",
+      "distance_m": 514
+    },
+    {
+      "poi_id": "POI-00143",
+      "station": "Sion",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Sion",
+      "latitude": 18.990690928842206,
+      "longitude": 72.86075302757352,
+      "exit": "E1",
+      "distance_m": 139
+    },
+    {
+      "poi_id": "POI-00144",
+      "station": "Sion",
+      "category": "Food Stall",
+      "name": "Food Stall near Sion",
+      "latitude": 18.993320366582747,
+      "longitude": 72.86252244972914,
+      "exit": "E1",
+      "distance_m": 632
+    },
+    {
+      "poi_id": "POI-00145",
+      "station": "Kurla",
+      "category": "Cafe",
+      "name": "Cafe near Kurla",
+      "latitude": 18.997559545834385,
+      "longitude": 72.86419554007334,
+      "exit": "E2",
+      "distance_m": 395
+    },
+    {
+      "poi_id": "POI-00146",
+      "station": "Kurla",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Kurla",
+      "latitude": 18.994835954975965,
+      "longitude": 72.86678637053184,
+      "exit": "E2",
+      "distance_m": 51
+    },
+    {
+      "poi_id": "POI-00147",
+      "station": "Kurla",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Kurla",
+      "latitude": 18.996883842592947,
+      "longitude": 72.86790293030755,
+      "exit": "E1",
+      "distance_m": 661
+    },
+    {
+      "poi_id": "POI-00148",
+      "station": "Kurla",
+      "category": "Food Stall",
+      "name": "Food Stall near Kurla",
+      "latitude": 18.99667564563413,
+      "longitude": 72.86898840420696,
+      "exit": "E2",
+      "distance_m": 586
+    },
+    {
+      "poi_id": "POI-00149",
+      "station": "Vidyavihar",
+      "category": "Cafe",
+      "name": "Cafe near Vidyavihar",
+      "latitude": 19.004924746314256,
+      "longitude": 72.87085663562002,
+      "exit": "E1",
+      "distance_m": 169
+    },
+    {
+      "poi_id": "POI-00150",
+      "station": "Vidyavihar",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Vidyavihar",
+      "latitude": 19.00440737762166,
+      "longitude": 72.8690431906125,
+      "exit": "E2",
+      "distance_m": 392
+    },
+    {
+      "poi_id": "POI-00151",
+      "station": "Vidyavihar",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Vidyavihar",
+      "latitude": 19.00200108236041,
+      "longitude": 72.86890383446149,
+      "exit": "E1",
+      "distance_m": 53
+    },
+    {
+      "poi_id": "POI-00152",
+      "station": "Vidyavihar",
+      "category": "Food Stall",
+      "name": "Food Stall near Vidyavihar",
+      "latitude": 19.002724624755768,
+      "longitude": 72.87081125435097,
+      "exit": "E1",
+      "distance_m": 561
+    },
+    {
+      "poi_id": "POI-00153",
+      "station": "Ghatkopar",
+      "category": "Cafe",
+      "name": "Cafe near Ghatkopar",
+      "latitude": 19.012727964511935,
+      "longitude": 72.87588258814347,
+      "exit": "E2",
+      "distance_m": 241
+    },
+    {
+      "poi_id": "POI-00154",
+      "station": "Ghatkopar",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Ghatkopar",
+      "latitude": 19.00723505665335,
+      "longitude": 72.87222373808676,
+      "exit": "E2",
+      "distance_m": 583
+    },
+    {
+      "poi_id": "POI-00155",
+      "station": "Ghatkopar",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Ghatkopar",
+      "latitude": 19.008222411732344,
+      "longitude": 72.87239210782072,
+      "exit": "E1",
+      "distance_m": 75
+    },
+    {
+      "poi_id": "POI-00156",
+      "station": "Ghatkopar",
+      "category": "Food Stall",
+      "name": "Food Stall near Ghatkopar",
+      "latitude": 19.007131554151762,
+      "longitude": 72.87436016394449,
+      "exit": "E2",
+      "distance_m": 524
+    },
+    {
+      "poi_id": "POI-00157",
+      "station": "Vikhroli",
+      "category": "Cafe",
+      "name": "Cafe near Vikhroli",
+      "latitude": 19.01677708231497,
+      "longitude": 72.87946380894596,
+      "exit": "E1",
+      "distance_m": 316
+    },
+    {
+      "poi_id": "POI-00158",
+      "station": "Vikhroli",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Vikhroli",
+      "latitude": 19.014080615807686,
+      "longitude": 72.87789580739172,
+      "exit": "E2",
+      "distance_m": 165
+    },
+    {
+      "poi_id": "POI-00159",
+      "station": "Vikhroli",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Vikhroli",
+      "latitude": 19.01724330219221,
+      "longitude": 72.8775889005649,
+      "exit": "E1",
+      "distance_m": 181
+    },
+    {
+      "poi_id": "POI-00160",
+      "station": "Vikhroli",
+      "category": "Food Stall",
+      "name": "Food Stall near Vikhroli",
+      "latitude": 19.01395584389676,
+      "longitude": 72.88183688023908,
+      "exit": "E2",
+      "distance_m": 459
+    },
+    {
+      "poi_id": "POI-00161",
+      "station": "Kanjurmarg",
+      "category": "Cafe",
+      "name": "Cafe near Kanjurmarg",
+      "latitude": 19.02541995654883,
+      "longitude": 72.88322245866712,
+      "exit": "E1",
+      "distance_m": 525
+    },
+    {
+      "poi_id": "POI-00162",
+      "station": "Kanjurmarg",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Kanjurmarg",
+      "latitude": 19.021271043243313,
+      "longitude": 72.8837844860498,
+      "exit": "E2",
+      "distance_m": 285
+    },
+    {
+      "poi_id": "POI-00163",
+      "station": "Kanjurmarg",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Kanjurmarg",
+      "latitude": 19.024415766738706,
+      "longitude": 72.88371191816769,
+      "exit": "E1",
+      "distance_m": 489
+    },
+    {
+      "poi_id": "POI-00164",
+      "station": "Kanjurmarg",
+      "category": "Food Stall",
+      "name": "Food Stall near Kanjurmarg",
+      "latitude": 19.025626576559166,
+      "longitude": 72.88591744748432,
+      "exit": "E1",
+      "distance_m": 318
+    },
+    {
+      "poi_id": "POI-00165",
+      "station": "Bhandup",
+      "category": "Cafe",
+      "name": "Cafe near Bhandup",
+      "latitude": 19.02985690900639,
+      "longitude": 72.88871276326908,
+      "exit": "E2",
+      "distance_m": 524
+    },
+    {
+      "poi_id": "POI-00166",
+      "station": "Bhandup",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Bhandup",
+      "latitude": 19.028490935513478,
+      "longitude": 72.88584498259351,
+      "exit": "E1",
+      "distance_m": 684
+    },
+    {
+      "poi_id": "POI-00167",
+      "station": "Bhandup",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Bhandup",
+      "latitude": 19.026838321315207,
+      "longitude": 72.8880243521001,
+      "exit": "E2",
+      "distance_m": 292
+    },
+    {
+      "poi_id": "POI-00168",
+      "station": "Bhandup",
+      "category": "Food Stall",
+      "name": "Food Stall near Bhandup",
+      "latitude": 19.030046109404758,
+      "longitude": 72.88531715941912,
+      "exit": "E2",
+      "distance_m": 488
+    },
+    {
+      "poi_id": "POI-00169",
+      "station": "Nahur",
+      "category": "Cafe",
+      "name": "Cafe near Nahur",
+      "latitude": 19.037775784845582,
+      "longitude": 72.88893497114593,
+      "exit": "E1",
+      "distance_m": 547
+    },
+    {
+      "poi_id": "POI-00170",
+      "station": "Nahur",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Nahur",
+      "latitude": 19.035243400351774,
+      "longitude": 72.88914485329704,
+      "exit": "E1",
+      "distance_m": 419
+    },
+    {
+      "poi_id": "POI-00171",
+      "station": "Nahur",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Nahur",
+      "latitude": 19.03536439477471,
+      "longitude": 72.89308905021913,
+      "exit": "E1",
+      "distance_m": 328
+    },
+    {
+      "poi_id": "POI-00172",
+      "station": "Nahur",
+      "category": "Food Stall",
+      "name": "Food Stall near Nahur",
+      "latitude": 19.038415101642723,
+      "longitude": 72.89386272048792,
+      "exit": "E2",
+      "distance_m": 582
+    },
+    {
+      "poi_id": "POI-00173",
+      "station": "Mulund",
+      "category": "Cafe",
+      "name": "Cafe near Mulund",
+      "latitude": 19.041244327801497,
+      "longitude": 72.89461476016312,
+      "exit": "E1",
+      "distance_m": 678
+    },
+    {
+      "poi_id": "POI-00174",
+      "station": "Mulund",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Mulund",
+      "latitude": 19.040144440277505,
+      "longitude": 72.89467000915734,
+      "exit": "E2",
+      "distance_m": 121
+    },
+    {
+      "poi_id": "POI-00175",
+      "station": "Mulund",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Mulund",
+      "latitude": 19.041944357834073,
+      "longitude": 72.89342021268855,
+      "exit": "E1",
+      "distance_m": 317
+    },
+    {
+      "poi_id": "POI-00176",
+      "station": "Mulund",
+      "category": "Food Stall",
+      "name": "Food Stall near Mulund",
+      "latitude": 19.04256325980914,
+      "longitude": 72.89293097695283,
+      "exit": "E1",
+      "distance_m": 246
+    },
+    {
+      "poi_id": "POI-00177",
+      "station": "Thane",
+      "category": "Cafe",
+      "name": "Cafe near Thane",
+      "latitude": 19.05013387779301,
+      "longitude": 72.8970969597419,
+      "exit": "E1",
+      "distance_m": 535
+    },
+    {
+      "poi_id": "POI-00178",
+      "station": "Thane",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Thane",
+      "latitude": 19.046881346340527,
+      "longitude": 72.90035496284892,
+      "exit": "E2",
+      "distance_m": 521
+    },
+    {
+      "poi_id": "POI-00179",
+      "station": "Thane",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Thane",
+      "latitude": 19.048018069885618,
+      "longitude": 72.8970882057432,
+      "exit": "E1",
+      "distance_m": 350
+    },
+    {
+      "poi_id": "POI-00180",
+      "station": "Thane",
+      "category": "Food Stall",
+      "name": "Food Stall near Thane",
+      "latitude": 19.047900194226003,
+      "longitude": 72.89918705838426,
+      "exit": "E1",
+      "distance_m": 354
+    },
+    {
+      "poi_id": "POI-00181",
+      "station": "Kalwa",
+      "category": "Cafe",
+      "name": "Cafe near Kalwa",
+      "latitude": 19.05781385556388,
+      "longitude": 72.90579954900622,
+      "exit": "E1",
+      "distance_m": 612
+    },
+    {
+      "poi_id": "POI-00182",
+      "station": "Kalwa",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Kalwa",
+      "latitude": 19.053789160983445,
+      "longitude": 72.90523278987308,
+      "exit": "E1",
+      "distance_m": 128
+    },
+    {
+      "poi_id": "POI-00183",
+      "station": "Kalwa",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Kalwa",
+      "latitude": 19.055431521263703,
+      "longitude": 72.90229811429393,
+      "exit": "E2",
+      "distance_m": 128
+    },
+    {
+      "poi_id": "POI-00184",
+      "station": "Kalwa",
+      "category": "Food Stall",
+      "name": "Food Stall near Kalwa",
+      "latitude": 19.057629917560483,
+      "longitude": 72.90209552008639,
+      "exit": "E1",
+      "distance_m": 590
+    },
+    {
+      "poi_id": "POI-00185",
+      "station": "Mumbra",
+      "category": "Cafe",
+      "name": "Cafe near Mumbra",
+      "latitude": 19.061144280519976,
+      "longitude": 72.90773918822335,
+      "exit": "E1",
+      "distance_m": 173
+    },
+    {
+      "poi_id": "POI-00186",
+      "station": "Mumbra",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Mumbra",
+      "latitude": 19.064572817347166,
+      "longitude": 72.90573904046754,
+      "exit": "E2",
+      "distance_m": 473
+    },
+    {
+      "poi_id": "POI-00187",
+      "station": "Mumbra",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Mumbra",
+      "latitude": 19.062361878226472,
+      "longitude": 72.90431856107806,
+      "exit": "E1",
+      "distance_m": 141
+    },
+    {
+      "poi_id": "POI-00188",
+      "station": "Mumbra",
+      "category": "Food Stall",
+      "name": "Food Stall near Mumbra",
+      "latitude": 19.061037358443752,
+      "longitude": 72.90639792316719,
+      "exit": "E1",
+      "distance_m": 303
+    },
+    {
+      "poi_id": "POI-00189",
+      "station": "Diva",
+      "category": "Cafe",
+      "name": "Cafe near Diva",
+      "latitude": 19.06677113392033,
+      "longitude": 72.91077025650523,
+      "exit": "E1",
+      "distance_m": 344
+    },
+    {
+      "poi_id": "POI-00190",
+      "station": "Diva",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Diva",
+      "latitude": 19.06679670051542,
+      "longitude": 72.91392053511409,
+      "exit": "E1",
+      "distance_m": 44
+    },
+    {
+      "poi_id": "POI-00191",
+      "station": "Diva",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Diva",
+      "latitude": 19.069812640829515,
+      "longitude": 72.91287247350641,
+      "exit": "E2",
+      "distance_m": 237
+    },
+    {
+      "poi_id": "POI-00192",
+      "station": "Diva",
+      "category": "Food Stall",
+      "name": "Food Stall near Diva",
+      "latitude": 19.067412963831533,
+      "longitude": 72.90999950734353,
+      "exit": "E1",
+      "distance_m": 121
+    },
+    {
+      "poi_id": "POI-00193",
+      "station": "Kopar",
+      "category": "Cafe",
+      "name": "Cafe near Kopar",
+      "latitude": 19.077431598471946,
+      "longitude": 72.91273550344233,
+      "exit": "E1",
+      "distance_m": 86
+    },
+    {
+      "poi_id": "POI-00194",
+      "station": "Kopar",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Kopar",
+      "latitude": 19.074754706821384,
+      "longitude": 72.91223105707846,
+      "exit": "E2",
+      "distance_m": 519
+    },
+    {
+      "poi_id": "POI-00195",
+      "station": "Kopar",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Kopar",
+      "latitude": 19.07741901867361,
+      "longitude": 72.91777308928137,
+      "exit": "E2",
+      "distance_m": 413
+    },
+    {
+      "poi_id": "POI-00196",
+      "station": "Kopar",
+      "category": "Food Stall",
+      "name": "Food Stall near Kopar",
+      "latitude": 19.073148705820113,
+      "longitude": 72.91328993845586,
+      "exit": "E2",
+      "distance_m": 459
+    },
+    {
+      "poi_id": "POI-00197",
+      "station": "Dombivli",
+      "category": "Cafe",
+      "name": "Cafe near Dombivli",
+      "latitude": 19.08068928745916,
+      "longitude": 72.91717098543818,
+      "exit": "E1",
+      "distance_m": 632
+    },
+    {
+      "poi_id": "POI-00198",
+      "station": "Dombivli",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Dombivli",
+      "latitude": 19.080331934603603,
+      "longitude": 72.91617226890273,
+      "exit": "E1",
+      "distance_m": 555
+    },
+    {
+      "poi_id": "POI-00199",
+      "station": "Dombivli",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Dombivli",
+      "latitude": 19.083469917291964,
+      "longitude": 72.91921079421137,
+      "exit": "E2",
+      "distance_m": 380
+    },
+    {
+      "poi_id": "POI-00200",
+      "station": "Dombivli",
+      "category": "Food Stall",
+      "name": "Food Stall near Dombivli",
+      "latitude": 19.079607796756292,
+      "longitude": 72.92050532658057,
+      "exit": "E2",
+      "distance_m": 625
+    },
+    {
+      "poi_id": "POI-00201",
+      "station": "Thakurli",
+      "category": "Cafe",
+      "name": "Cafe near Thakurli",
+      "latitude": 19.09017233024383,
+      "longitude": 72.92380844369073,
+      "exit": "E1",
+      "distance_m": 542
+    },
+    {
+      "poi_id": "POI-00202",
+      "station": "Thakurli",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Thakurli",
+      "latitude": 19.088681462061214,
+      "longitude": 72.92299176788615,
+      "exit": "E1",
+      "distance_m": 466
+    },
+    {
+      "poi_id": "POI-00203",
+      "station": "Thakurli",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Thakurli",
+      "latitude": 19.0885162966631,
+      "longitude": 72.9244735582685,
+      "exit": "E1",
+      "distance_m": 515
+    },
+    {
+      "poi_id": "POI-00204",
+      "station": "Thakurli",
+      "category": "Food Stall",
+      "name": "Food Stall near Thakurli",
+      "latitude": 19.090906610794022,
+      "longitude": 72.92426823144473,
+      "exit": "E2",
+      "distance_m": 668
+    },
+    {
+      "poi_id": "POI-00205",
+      "station": "Kalyan",
+      "category": "Cafe",
+      "name": "Cafe near Kalyan",
+      "latitude": 19.09156311271545,
+      "longitude": 72.92691167088933,
+      "exit": "E1",
+      "distance_m": 222
+    },
+    {
+      "poi_id": "POI-00206",
+      "station": "Kalyan",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Kalyan",
+      "latitude": 19.09470718690606,
+      "longitude": 72.9245021513126,
+      "exit": "E2",
+      "distance_m": 651
+    },
+    {
+      "poi_id": "POI-00207",
+      "station": "Kalyan",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Kalyan",
+      "latitude": 19.09436149017564,
+      "longitude": 72.92614365475147,
+      "exit": "E2",
+      "distance_m": 604
+    },
+    {
+      "poi_id": "POI-00208",
+      "station": "Kalyan",
+      "category": "Food Stall",
+      "name": "Food Stall near Kalyan",
+      "latitude": 19.09287333159264,
+      "longitude": 72.92708255072803,
+      "exit": "E2",
+      "distance_m": 383
+    },
+    {
+      "poi_id": "POI-00209",
+      "station": "Masjid",
+      "category": "Cafe",
+      "name": "Cafe near Masjid",
+      "latitude": 18.958978542060308,
+      "longitude": 72.85436052722964,
+      "exit": "E1",
+      "distance_m": 674
+    },
+    {
+      "poi_id": "POI-00210",
+      "station": "Masjid",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Masjid",
+      "latitude": 18.95473055426072,
+      "longitude": 72.85296757230012,
+      "exit": "E2",
+      "distance_m": 443
+    },
+    {
+      "poi_id": "POI-00211",
+      "station": "Masjid",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Masjid",
+      "latitude": 18.95736385169672,
+      "longitude": 72.85647508034769,
+      "exit": "E1",
+      "distance_m": 562
+    },
+    {
+      "poi_id": "POI-00212",
+      "station": "Masjid",
+      "category": "Food Stall",
+      "name": "Food Stall near Masjid",
+      "latitude": 18.95690508841544,
+      "longitude": 72.85661362691262,
+      "exit": "E1",
+      "distance_m": 283
+    },
+    {
+      "poi_id": "POI-00213",
+      "station": "Sandhurst Road",
+      "category": "Cafe",
+      "name": "Cafe near Sandhurst Road",
+      "latitude": 18.96367170496909,
+      "longitude": 72.85898516601833,
+      "exit": "E2",
+      "distance_m": 604
+    },
+    {
+      "poi_id": "POI-00214",
+      "station": "Sandhurst Road",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Sandhurst Road",
+      "latitude": 18.963334087524903,
+      "longitude": 72.85536979463996,
+      "exit": "E1",
+      "distance_m": 197
+    },
+    {
+      "poi_id": "POI-00215",
+      "station": "Sandhurst Road",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Sandhurst Road",
+      "latitude": 18.96539095683158,
+      "longitude": 72.85703679028444,
+      "exit": "E1",
+      "distance_m": 665
+    },
+    {
+      "poi_id": "POI-00216",
+      "station": "Sandhurst Road",
+      "category": "Food Stall",
+      "name": "Food Stall near Sandhurst Road",
+      "latitude": 18.963528991553428,
+      "longitude": 72.85763176608197,
+      "exit": "E2",
+      "distance_m": 615
+    },
+    {
+      "poi_id": "POI-00217",
+      "station": "Dockyard Road",
+      "category": "Cafe",
+      "name": "Cafe near Dockyard Road",
+      "latitude": 18.97015019320762,
+      "longitude": 72.8616624826986,
+      "exit": "E1",
+      "distance_m": 320
+    },
+    {
+      "poi_id": "POI-00218",
+      "station": "Dockyard Road",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Dockyard Road",
+      "latitude": 18.96910296142921,
+      "longitude": 72.86433499064627,
+      "exit": "E2",
+      "distance_m": 678
+    },
+    {
+      "poi_id": "POI-00219",
+      "station": "Dockyard Road",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Dockyard Road",
+      "latitude": 18.96767944034829,
+      "longitude": 72.85977964109107,
+      "exit": "E2",
+      "distance_m": 503
+    },
+    {
+      "poi_id": "POI-00220",
+      "station": "Dockyard Road",
+      "category": "Food Stall",
+      "name": "Food Stall near Dockyard Road",
+      "latitude": 18.96852292784882,
+      "longitude": 72.86062650334556,
+      "exit": "E1",
+      "distance_m": 366
+    },
+    {
+      "poi_id": "POI-00221",
+      "station": "Reay Road",
+      "category": "Cafe",
+      "name": "Cafe near Reay Road",
+      "latitude": 18.975212195978695,
+      "longitude": 72.86836057558834,
+      "exit": "E1",
+      "distance_m": 298
+    },
+    {
+      "poi_id": "POI-00222",
+      "station": "Reay Road",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Reay Road",
+      "latitude": 18.978553743431704,
+      "longitude": 72.86465294469906,
+      "exit": "E1",
+      "distance_m": 435
+    },
+    {
+      "poi_id": "POI-00223",
+      "station": "Reay Road",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Reay Road",
+      "latitude": 18.977804411014628,
+      "longitude": 72.86632221594145,
+      "exit": "E2",
+      "distance_m": 361
+    },
+    {
+      "poi_id": "POI-00224",
+      "station": "Reay Road",
+      "category": "Food Stall",
+      "name": "Food Stall near Reay Road",
+      "latitude": 18.974694041876973,
+      "longitude": 72.86832420797319,
+      "exit": "E2",
+      "distance_m": 609
+    },
+    {
+      "poi_id": "POI-00225",
+      "station": "Cotton Green",
+      "category": "Cafe",
+      "name": "Cafe near Cotton Green",
+      "latitude": 18.984487731954097,
+      "longitude": 72.87018914261719,
+      "exit": "E2",
+      "distance_m": 36
+    },
+    {
+      "poi_id": "POI-00226",
+      "station": "Cotton Green",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Cotton Green",
+      "latitude": 18.982964819766632,
+      "longitude": 72.87292390675675,
+      "exit": "E2",
+      "distance_m": 564
+    },
+    {
+      "poi_id": "POI-00227",
+      "station": "Cotton Green",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Cotton Green",
+      "latitude": 18.982901779797448,
+      "longitude": 72.87017385622607,
+      "exit": "E1",
+      "distance_m": 176
+    },
+    {
+      "poi_id": "POI-00228",
+      "station": "Cotton Green",
+      "category": "Food Stall",
+      "name": "Food Stall near Cotton Green",
+      "latitude": 18.983471798483595,
+      "longitude": 72.86760170990439,
+      "exit": "E2",
+      "distance_m": 603
+    },
+    {
+      "poi_id": "POI-00229",
+      "station": "Sewri",
+      "category": "Cafe",
+      "name": "Cafe near Sewri",
+      "latitude": 18.99119167824988,
+      "longitude": 72.87299951467895,
+      "exit": "E1",
+      "distance_m": 646
+    },
+    {
+      "poi_id": "POI-00230",
+      "station": "Sewri",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Sewri",
+      "latitude": 18.989806780528436,
+      "longitude": 72.87514889557302,
+      "exit": "E1",
+      "distance_m": 638
+    },
+    {
+      "poi_id": "POI-00231",
+      "station": "Sewri",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Sewri",
+      "latitude": 18.98821910240225,
+      "longitude": 72.87512479152714,
+      "exit": "E2",
+      "distance_m": 385
+    },
+    {
+      "poi_id": "POI-00232",
+      "station": "Sewri",
+      "category": "Food Stall",
+      "name": "Food Stall near Sewri",
+      "latitude": 18.99096132841786,
+      "longitude": 72.87592610742915,
+      "exit": "E2",
+      "distance_m": 691
+    },
+    {
+      "poi_id": "POI-00233",
+      "station": "Wadala Road",
+      "category": "Cafe",
+      "name": "Cafe near Wadala Road",
+      "latitude": 18.993285796596968,
+      "longitude": 72.88039649811655,
+      "exit": "E1",
+      "distance_m": 91
+    },
+    {
+      "poi_id": "POI-00234",
+      "station": "Wadala Road",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Wadala Road",
+      "latitude": 18.997615114906232,
+      "longitude": 72.8750322777949,
+      "exit": "E1",
+      "distance_m": 67
+    },
+    {
+      "poi_id": "POI-00235",
+      "station": "Wadala Road",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Wadala Road",
+      "latitude": 18.99392862743246,
+      "longitude": 72.87828127570363,
+      "exit": "E1",
+      "distance_m": 55
+    },
+    {
+      "poi_id": "POI-00236",
+      "station": "Wadala Road",
+      "category": "Food Stall",
+      "name": "Food Stall near Wadala Road",
+      "latitude": 18.997123290370006,
+      "longitude": 72.87771493403343,
+      "exit": "E1",
+      "distance_m": 208
+    },
+    {
+      "poi_id": "POI-00237",
+      "station": "Guru Tegh Bahadur Nagar",
+      "category": "Cafe",
+      "name": "Cafe near Guru Tegh Bahadur Nagar",
+      "latitude": 19.001601133599234,
+      "longitude": 72.88349322116589,
+      "exit": "E1",
+      "distance_m": 663
+    },
+    {
+      "poi_id": "POI-00238",
+      "station": "Guru Tegh Bahadur Nagar",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Guru Tegh Bahadur Nagar",
+      "latitude": 18.999537096264355,
+      "longitude": 72.8803406932387,
+      "exit": "E1",
+      "distance_m": 569
+    },
+    {
+      "poi_id": "POI-00239",
+      "station": "Guru Tegh Bahadur Nagar",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Guru Tegh Bahadur Nagar",
+      "latitude": 18.999278935541785,
+      "longitude": 72.88300598344028,
+      "exit": "E1",
+      "distance_m": 638
+    },
+    {
+      "poi_id": "POI-00240",
+      "station": "Guru Tegh Bahadur Nagar",
+      "category": "Food Stall",
+      "name": "Food Stall near Guru Tegh Bahadur Nagar",
+      "latitude": 19.00324505901942,
+      "longitude": 72.88266193492795,
+      "exit": "E2",
+      "distance_m": 698
+    },
+    {
+      "poi_id": "POI-00241",
+      "station": "Chunabhatti",
+      "category": "Cafe",
+      "name": "Cafe near Chunabhatti",
+      "latitude": 19.009874043164313,
+      "longitude": 72.88751626654498,
+      "exit": "E2",
+      "distance_m": 421
+    },
+    {
+      "poi_id": "POI-00242",
+      "station": "Chunabhatti",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Chunabhatti",
+      "latitude": 19.011201117550403,
+      "longitude": 72.88396892145185,
+      "exit": "E1",
+      "distance_m": 445
+    },
+    {
+      "poi_id": "POI-00243",
+      "station": "Chunabhatti",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Chunabhatti",
+      "latitude": 19.011490243544426,
+      "longitude": 72.88672570528328,
+      "exit": "E2",
+      "distance_m": 66
+    },
+    {
+      "poi_id": "POI-00244",
+      "station": "Chunabhatti",
+      "category": "Food Stall",
+      "name": "Food Stall near Chunabhatti",
+      "latitude": 19.008490473481373,
+      "longitude": 72.88445428219075,
+      "exit": "E2",
+      "distance_m": 258
+    },
+    {
+      "poi_id": "POI-00245",
+      "station": "Tilak Nagar",
+      "category": "Cafe",
+      "name": "Cafe near Tilak Nagar",
+      "latitude": 19.022277536276913,
+      "longitude": 72.8940645211369,
+      "exit": "E1",
+      "distance_m": 291
+    },
+    {
+      "poi_id": "POI-00246",
+      "station": "Tilak Nagar",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Tilak Nagar",
+      "latitude": 19.02051119594508,
+      "longitude": 72.89318513414179,
+      "exit": "E2",
+      "distance_m": 512
+    },
+    {
+      "poi_id": "POI-00247",
+      "station": "Tilak Nagar",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Tilak Nagar",
+      "latitude": 19.018572791952604,
+      "longitude": 72.8963859414623,
+      "exit": "E2",
+      "distance_m": 542
+    },
+    {
+      "poi_id": "POI-00248",
+      "station": "Tilak Nagar",
+      "category": "Food Stall",
+      "name": "Food Stall near Tilak Nagar",
+      "latitude": 19.018823473216568,
+      "longitude": 72.89286484242997,
+      "exit": "E2",
+      "distance_m": 145
+    },
+    {
+      "poi_id": "POI-00249",
+      "station": "Chembur",
+      "category": "Cafe",
+      "name": "Cafe near Chembur",
+      "latitude": 19.030645083315754,
+      "longitude": 72.89854880503962,
+      "exit": "E2",
+      "distance_m": 610
+    },
+    {
+      "poi_id": "POI-00250",
+      "station": "Chembur",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Chembur",
+      "latitude": 19.025052634959337,
+      "longitude": 72.89548406860936,
+      "exit": "E2",
+      "distance_m": 177
+    },
+    {
+      "poi_id": "POI-00251",
+      "station": "Chembur",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Chembur",
+      "latitude": 19.02548947913498,
+      "longitude": 72.89701295123801,
+      "exit": "E2",
+      "distance_m": 268
+    },
+    {
+      "poi_id": "POI-00252",
+      "station": "Chembur",
+      "category": "Food Stall",
+      "name": "Food Stall near Chembur",
+      "latitude": 19.025499250394525,
+      "longitude": 72.89692205245818,
+      "exit": "E1",
+      "distance_m": 267
+    },
+    {
+      "poi_id": "POI-00253",
+      "station": "Govandi",
+      "category": "Cafe",
+      "name": "Cafe near Govandi",
+      "latitude": 19.035949463616994,
+      "longitude": 72.89965558500754,
+      "exit": "E1",
+      "distance_m": 245
+    },
+    {
+      "poi_id": "POI-00254",
+      "station": "Govandi",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Govandi",
+      "latitude": 19.03736962096532,
+      "longitude": 72.90001565508607,
+      "exit": "E2",
+      "distance_m": 231
+    },
+    {
+      "poi_id": "POI-00255",
+      "station": "Govandi",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Govandi",
+      "latitude": 19.03605548494376,
+      "longitude": 72.89988785700655,
+      "exit": "E1",
+      "distance_m": 219
+    },
+    {
+      "poi_id": "POI-00256",
+      "station": "Govandi",
+      "category": "Food Stall",
+      "name": "Food Stall near Govandi",
+      "latitude": 19.03559724143881,
+      "longitude": 72.90444401632952,
+      "exit": "E2",
+      "distance_m": 650
+    },
+    {
+      "poi_id": "POI-00257",
+      "station": "Mankhurd",
+      "category": "Cafe",
+      "name": "Cafe near Mankhurd",
+      "latitude": 19.04156983893698,
+      "longitude": 72.90656558637673,
+      "exit": "E1",
+      "distance_m": 37
+    },
+    {
+      "poi_id": "POI-00258",
+      "station": "Mankhurd",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Mankhurd",
+      "latitude": 19.042426274520142,
+      "longitude": 72.90763532843386,
+      "exit": "E1",
+      "distance_m": 125
+    },
+    {
+      "poi_id": "POI-00259",
+      "station": "Mankhurd",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Mankhurd",
+      "latitude": 19.038783794470692,
+      "longitude": 72.904614069868,
+      "exit": "E1",
+      "distance_m": 130
+    },
+    {
+      "poi_id": "POI-00260",
+      "station": "Mankhurd",
+      "category": "Food Stall",
+      "name": "Food Stall near Mankhurd",
+      "latitude": 19.042882697659298,
+      "longitude": 72.9059733290139,
+      "exit": "E1",
+      "distance_m": 296
+    },
+    {
+      "poi_id": "POI-00261",
+      "station": "Vashi",
+      "category": "Cafe",
+      "name": "Cafe near Vashi",
+      "latitude": 19.05042547342346,
+      "longitude": 72.90856288507848,
+      "exit": "E2",
+      "distance_m": 528
+    },
+    {
+      "poi_id": "POI-00262",
+      "station": "Vashi",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Vashi",
+      "latitude": 19.048286115225803,
+      "longitude": 72.91119605420359,
+      "exit": "E2",
+      "distance_m": 197
+    },
+    {
+      "poi_id": "POI-00263",
+      "station": "Vashi",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Vashi",
+      "latitude": 19.049086432906876,
+      "longitude": 72.91029866785546,
+      "exit": "E1",
+      "distance_m": 574
+    },
+    {
+      "poi_id": "POI-00264",
+      "station": "Vashi",
+      "category": "Food Stall",
+      "name": "Food Stall near Vashi",
+      "latitude": 19.049916929192932,
+      "longitude": 72.90793968720702,
+      "exit": "E2",
+      "distance_m": 553
+    },
+    {
+      "poi_id": "POI-00265",
+      "station": "Sanpada",
+      "category": "Cafe",
+      "name": "Cafe near Sanpada",
+      "latitude": 19.051512218898953,
+      "longitude": 72.91581726068189,
+      "exit": "E2",
+      "distance_m": 185
+    },
+    {
+      "poi_id": "POI-00266",
+      "station": "Sanpada",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Sanpada",
+      "latitude": 19.05242439910215,
+      "longitude": 72.91207859718422,
+      "exit": "E1",
+      "distance_m": 635
+    },
+    {
+      "poi_id": "POI-00267",
+      "station": "Sanpada",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Sanpada",
+      "latitude": 19.053499331561117,
+      "longitude": 72.91650278293379,
+      "exit": "E1",
+      "distance_m": 316
+    },
+    {
+      "poi_id": "POI-00268",
+      "station": "Sanpada",
+      "category": "Food Stall",
+      "name": "Food Stall near Sanpada",
+      "latitude": 19.054467557305195,
+      "longitude": 72.91515368108267,
+      "exit": "E1",
+      "distance_m": 640
+    },
+    {
+      "poi_id": "POI-00269",
+      "station": "Juinagar",
+      "category": "Cafe",
+      "name": "Cafe near Juinagar",
+      "latitude": 19.06079086315555,
+      "longitude": 72.92078026253286,
+      "exit": "E2",
+      "distance_m": 33
+    },
+    {
+      "poi_id": "POI-00270",
+      "station": "Juinagar",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Juinagar",
+      "latitude": 19.061398606226625,
+      "longitude": 72.91570001779304,
+      "exit": "E2",
+      "distance_m": 649
+    },
+    {
+      "poi_id": "POI-00271",
+      "station": "Juinagar",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Juinagar",
+      "latitude": 19.058184921470204,
+      "longitude": 72.9184467910553,
+      "exit": "E2",
+      "distance_m": 488
+    },
+    {
+      "poi_id": "POI-00272",
+      "station": "Juinagar",
+      "category": "Food Stall",
+      "name": "Food Stall near Juinagar",
+      "latitude": 19.057551774134318,
+      "longitude": 72.91770298752033,
+      "exit": "E2",
+      "distance_m": 259
+    },
+    {
+      "poi_id": "POI-00273",
+      "station": "Nerul",
+      "category": "Cafe",
+      "name": "Cafe near Nerul",
+      "latitude": 19.069703106044066,
+      "longitude": 72.92300660836572,
+      "exit": "E2",
+      "distance_m": 514
+    },
+    {
+      "poi_id": "POI-00274",
+      "station": "Nerul",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Nerul",
+      "latitude": 19.067766792762335,
+      "longitude": 72.92204127941648,
+      "exit": "E1",
+      "distance_m": 118
+    },
+    {
+      "poi_id": "POI-00275",
+      "station": "Nerul",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Nerul",
+      "latitude": 19.068920022259693,
+      "longitude": 72.92456760924159,
+      "exit": "E1",
+      "distance_m": 599
+    },
+    {
+      "poi_id": "POI-00276",
+      "station": "Nerul",
+      "category": "Food Stall",
+      "name": "Food Stall near Nerul",
+      "latitude": 19.068749702508715,
+      "longitude": 72.91969168597237,
+      "exit": "E2",
+      "distance_m": 404
+    },
+    {
+      "poi_id": "POI-00277",
+      "station": "Seawoods-Darave",
+      "category": "Cafe",
+      "name": "Cafe near Seawoods-Darave",
+      "latitude": 19.070557937161016,
+      "longitude": 72.92546531802302,
+      "exit": "E2",
+      "distance_m": 686
+    },
+    {
+      "poi_id": "POI-00278",
+      "station": "Seawoods-Darave",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Seawoods-Darave",
+      "latitude": 19.076087287188365,
+      "longitude": 72.92701286049002,
+      "exit": "E1",
+      "distance_m": 46
+    },
+    {
+      "poi_id": "POI-00279",
+      "station": "Seawoods-Darave",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Seawoods-Darave",
+      "latitude": 19.071302582306252,
+      "longitude": 72.92461071499086,
+      "exit": "E2",
+      "distance_m": 188
+    },
+    {
+      "poi_id": "POI-00280",
+      "station": "Seawoods-Darave",
+      "category": "Food Stall",
+      "name": "Food Stall near Seawoods-Darave",
+      "latitude": 19.073637835893635,
+      "longitude": 72.92841721420032,
+      "exit": "E2",
+      "distance_m": 177
+    },
+    {
+      "poi_id": "POI-00281",
+      "station": "CBD Belapur",
+      "category": "Cafe",
+      "name": "Cafe near CBD Belapur",
+      "latitude": 19.081230454549488,
+      "longitude": 72.92799235635711,
+      "exit": "E1",
+      "distance_m": 323
+    },
+    {
+      "poi_id": "POI-00282",
+      "station": "CBD Belapur",
+      "category": "Auto Stand",
+      "name": "Auto Stand near CBD Belapur",
+      "latitude": 19.08284944542363,
+      "longitude": 72.93116716240579,
+      "exit": "E1",
+      "distance_m": 326
+    },
+    {
+      "poi_id": "POI-00283",
+      "station": "CBD Belapur",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near CBD Belapur",
+      "latitude": 19.07791931670889,
+      "longitude": 72.93081986843116,
+      "exit": "E2",
+      "distance_m": 268
+    },
+    {
+      "poi_id": "POI-00284",
+      "station": "CBD Belapur",
+      "category": "Food Stall",
+      "name": "Food Stall near CBD Belapur",
+      "latitude": 19.078056649206744,
+      "longitude": 72.93059861690867,
+      "exit": "E1",
+      "distance_m": 222
+    },
+    {
+      "poi_id": "POI-00285",
+      "station": "Kharghar",
+      "category": "Cafe",
+      "name": "Cafe near Kharghar",
+      "latitude": 19.08782844787419,
+      "longitude": 72.93685762930565,
+      "exit": "E1",
+      "distance_m": 521
+    },
+    {
+      "poi_id": "POI-00286",
+      "station": "Kharghar",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Kharghar",
+      "latitude": 19.08646489060527,
+      "longitude": 72.93193419763186,
+      "exit": "E2",
+      "distance_m": 141
+    },
+    {
+      "poi_id": "POI-00287",
+      "station": "Kharghar",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Kharghar",
+      "latitude": 19.089009730188955,
+      "longitude": 72.9326776409936,
+      "exit": "E2",
+      "distance_m": 256
+    },
+    {
+      "poi_id": "POI-00288",
+      "station": "Kharghar",
+      "category": "Food Stall",
+      "name": "Food Stall near Kharghar",
+      "latitude": 19.08462867637798,
+      "longitude": 72.93693244532335,
+      "exit": "E2",
+      "distance_m": 358
+    },
+    {
+      "poi_id": "POI-00289",
+      "station": "Mansarovar",
+      "category": "Cafe",
+      "name": "Cafe near Mansarovar",
+      "latitude": 19.094778482882283,
+      "longitude": 72.93631465837473,
+      "exit": "E2",
+      "distance_m": 38
+    },
+    {
+      "poi_id": "POI-00290",
+      "station": "Mansarovar",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Mansarovar",
+      "latitude": 19.09262086763731,
+      "longitude": 72.93896779387839,
+      "exit": "E2",
+      "distance_m": 413
+    },
+    {
+      "poi_id": "POI-00291",
+      "station": "Mansarovar",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Mansarovar",
+      "latitude": 19.093176176282032,
+      "longitude": 72.9368981908329,
+      "exit": "E2",
+      "distance_m": 530
+    },
+    {
+      "poi_id": "POI-00292",
+      "station": "Mansarovar",
+      "category": "Food Stall",
+      "name": "Food Stall near Mansarovar",
+      "latitude": 19.095760857783283,
+      "longitude": 72.93663603885997,
+      "exit": "E1",
+      "distance_m": 410
+    },
+    {
+      "poi_id": "POI-00293",
+      "station": "Khandeshwar",
+      "category": "Cafe",
+      "name": "Cafe near Khandeshwar",
+      "latitude": 19.0998905666447,
+      "longitude": 72.94202432935549,
+      "exit": "E2",
+      "distance_m": 301
+    },
+    {
+      "poi_id": "POI-00294",
+      "station": "Khandeshwar",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Khandeshwar",
+      "latitude": 19.10238081555156,
+      "longitude": 72.94356059060256,
+      "exit": "E1",
+      "distance_m": 434
+    },
+    {
+      "poi_id": "POI-00295",
+      "station": "Khandeshwar",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Khandeshwar",
+      "latitude": 19.09993829872126,
+      "longitude": 72.94053760534985,
+      "exit": "E1",
+      "distance_m": 146
+    },
+    {
+      "poi_id": "POI-00296",
+      "station": "Khandeshwar",
+      "category": "Food Stall",
+      "name": "Food Stall near Khandeshwar",
+      "latitude": 19.101463887548014,
+      "longitude": 72.94145324797753,
+      "exit": "E2",
+      "distance_m": 170
+    },
+    {
+      "poi_id": "POI-00297",
+      "station": "Panvel",
+      "category": "Cafe",
+      "name": "Cafe near Panvel",
+      "latitude": 19.10731605590439,
+      "longitude": 72.94809138751272,
+      "exit": "E2",
+      "distance_m": 39
+    },
+    {
+      "poi_id": "POI-00298",
+      "station": "Panvel",
+      "category": "Auto Stand",
+      "name": "Auto Stand near Panvel",
+      "latitude": 19.103476160486192,
+      "longitude": 72.94841053663112,
+      "exit": "E2",
+      "distance_m": 101
+    },
+    {
+      "poi_id": "POI-00299",
+      "station": "Panvel",
+      "category": "Taxi Stand",
+      "name": "Taxi Stand near Panvel",
+      "latitude": 19.10502624640772,
+      "longitude": 72.94842169049525,
+      "exit": "E1",
+      "distance_m": 75
+    },
+    {
+      "poi_id": "POI-00300",
+      "station": "Panvel",
+      "category": "Food Stall",
+      "name": "Food Stall near Panvel",
+      "latitude": 19.107561877683455,
+      "longitude": 72.94768660512342,
+      "exit": "E1",
+      "distance_m": 481
+    }
+  ]
+}
