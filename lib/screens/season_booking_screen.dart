@@ -412,7 +412,7 @@ class _SeasonBookingScreenState extends State<SeasonBookingScreen> {
       trainType: _trainType,
       duration: _duration,
       classType: _classType,
-      fare: fareAmount.toInt(),
+      fare: _calculateFare(),
       bookingDate: DateTime.now(),
       status: TicketStatus.upcoming,
       distanceKm: 22.0,
@@ -421,11 +421,6 @@ class _SeasonBookingScreenState extends State<SeasonBookingScreen> {
       passengerIdType: 'PAN Card',
       passengerIdNumber: 'SENP******',
       passengerPhotoPath: _attachedPhotoPath,
-      s2CellToken: s2Token,
-      s2CellId: s2Id,
-      latitude: lat,
-      longitude: lng,
-      locationAccuracyMeters: position?.accuracy ?? 10.0,
       geofenceVerified: true,
     );
 

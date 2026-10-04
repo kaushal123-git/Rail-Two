@@ -72,6 +72,13 @@ class BookedTicket {
     this.passengerPhotoPath,
     String? qrSecurityToken,
     this.riskScore = 0,
+    this.s2CellToken,
+    this.s2CellId,
+    this.latitude,
+    this.longitude,
+    this.locationAccuracyMeters,
+    this.geofenceVerified = true,
+    this.offlineCreated = false,
   }) : qrSecurityToken = qrSecurityToken ?? 'LOCO_SEC_v2:$id:${bookingDate.millisecondsSinceEpoch}:MUMBAI_SUBURBAN';
 
   Map<String, dynamic> toJson() {
