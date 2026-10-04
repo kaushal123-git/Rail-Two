@@ -39,6 +39,15 @@ class BookedTicket {
   final String qrSecurityToken;
   final int riskScore; // 0 to 100 for fraud detection
 
+  // RO1: Spatial Indexing & Geofence Verification Metadata
+  final String? s2CellToken;
+  final String? s2CellId;
+  final double? latitude;
+  final double? longitude;
+  final double? locationAccuracyMeters;
+  final bool geofenceVerified;
+  final bool offlineCreated;
+
   BookedTicket({
     required this.id,
     required this.fromStationName,

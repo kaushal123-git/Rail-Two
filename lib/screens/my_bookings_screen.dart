@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/ticket.dart';
 import '../services/ticket_storage.dart';
+import '../widgets/mobile_qr_scanner_modal.dart';
 import 'season_booking_screen.dart';
 
 class MyBookingsScreen extends StatefulWidget {
@@ -149,6 +150,8 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> with SingleTickerPr
               _buildDetailRow('Passenger', ticket.passengerName),
               _buildDetailRow('ID Details', '${ticket.passengerIdType} (${ticket.passengerIdNumber})'),
               _buildDetailRow('Booking Date', '${ticket.bookingDate.day}/${ticket.bookingDate.month}/${ticket.bookingDate.year}'),
+              if (ticket.s2CellToken != null)
+                _buildDetailRow('S2 Spatial Token', ticket.s2CellToken!),
 
               const SizedBox(height: 20),
               SizedBox(
@@ -200,6 +203,24 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> with SingleTickerPr
         ),
         title: const Text('My Bookings', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.qr_code_scanner, color: Colors.white),
+            tooltip: 'Verify Ticket QR',
+            onPressed: () {
+              MobileQrScannerModal.show(
+                context,
+                onStationScanned: (station, distanceKm) {
+                  if (_allTickets.isNotEmpty) {
+                    _showTicketDetailsDialog(_allTickets.first);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('✓ Scanned: ${station.name}')),
+                    );
+                  }
+                },
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.refresh, color: Colors.white),
             onPressed: _loadTickets,

@@ -10,6 +10,7 @@ import 'forgot_password_screen.dart';
 import 'main_navigation_shell.dart';
 import 'otp_verification_screen.dart';
 import 'signin_screen.dart';
+import 'otp_verification_screen.dart';
 
 enum LoginMode {
   mpin,
