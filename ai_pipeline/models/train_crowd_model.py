@@ -193,7 +193,11 @@ def train_and_export_model(num_samples: int = 15000):
     print(f"Validation MAE: {mae:.2f}% | R² Score: 0.94 | Accuracy: 94.6%")
     
     # Export to assets for direct Flutter embedding
-    export_path = "assets/crowd_ml_model.json"
+    import os
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    assets_dir = os.path.abspath(os.path.join(script_dir, "..", "..", "assets"))
+    os.makedirs(assets_dir, exist_ok=True)
+    export_path = os.path.join(assets_dir, "crowd_ml_model.json")
     with open(export_path, "w", encoding="utf-8") as f:
         json.dump(model_weights, f, indent=2)
         

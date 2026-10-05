@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'core/theme/loco_theme.dart';
+import 'screens/main_navigation_shell.dart';
 import 'screens/splash_screen.dart';
 import 'services/gemini_rail_service.dart';
 import 'services/station_state_service.dart';
@@ -23,7 +24,7 @@ class LocoApp extends StatelessWidget {
 
   const LocoApp({
     super.key,
-    this.initialScreen = const SplashScreen(),
+    this.initialScreen = const MainNavigationShell(),
   });
 
   @override
