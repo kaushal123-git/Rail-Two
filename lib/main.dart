@@ -1,20 +1,15 @@
 import 'package:flutter/material.dart';
 import 'core/theme/loco_theme.dart';
 import 'screens/main_navigation_shell.dart';
-import 'screens/splash_screen.dart';
-import 'services/gemini_rail_service.dart';
+import 'services/loco_assist_service.dart';
 import 'services/station_state_service.dart';
-import 'simulation/train_simulation_engine.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Pre-warm the deterministic train simulation engine
-  TrainSimulationEngine().startSimulation();
-
-  // Initialize unified station state & AI preferences
+  // Initialize unified station state & assistant service
   await StationStateService().initialize();
-  await GeminiRailService().initialize();
+  await LocoAssistService().initialize();
 
   runApp(const LocoApp());
 }

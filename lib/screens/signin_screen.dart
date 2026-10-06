@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/constants/loco_branding.dart';
 import '../core/theme/loco_theme.dart';
-import '../services/auth_database.dart';
+import '../services/api_service.dart';
 import '../services/otp_service.dart';
 import 'login_screen.dart';
 import 'main_navigation_shell.dart';
@@ -69,62 +69,61 @@ class _SignInScreenState extends State<SignInScreen> {
     setState(() => _isLoading = true);
 
     try {
-      final exists = await AuthDatabase().userExists(identifier);
+      final res = await OtpService().requestBackendOtp(
+        phone: identifier,
+        name: name,
+        purpose: 'REGISTRATION',
+      );
       if (!mounted) return;
-
-      if (exists) {
-        setState(() => _isLoading = false);
-        _showError('An account with this ${_isPhoneMode ? "mobile number" : "email"} already exists. Please log in.');
-        return;
-      }
-
-      // Generate 6-digit OTP
-      final otp = OtpService().generateOtp(identifier);
       setState(() => _isLoading = false);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: LocoColors.textPrimary,
-          duration: const Duration(seconds: 8),
-          behavior: SnackBarBehavior.floating,
-          content: Row(
-            children: [
-              const Icon(Icons.mark_email_read_outlined, color: LocoColors.orange),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  'LOCO Verification Code: $otp (Valid for 5 mins)',
-                  style: const TextStyle(fontWeight: FontWeight.w700),
+      if (res['success'] == true) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: LocoColors.textPrimary,
+            duration: const Duration(seconds: 6),
+            behavior: SnackBarBehavior.floating,
+            content: Row(
+              children: [
+                const Icon(Icons.mark_email_read_outlined, color: LocoColors.orange),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Verification code sent to $identifier via SMS gateway',
+                    style: const TextStyle(fontWeight: FontWeight.w700),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      );
+        );
 
-      final payload = {
-        'name': name,
-        'identifier': identifier,
-        'phone': _isPhoneMode ? identifier : null,
-        'email': !_isPhoneMode ? identifier : null,
-        'password': password,
-      };
+        final payload = {
+          'name': name,
+          'identifier': identifier,
+          'phone': _isPhoneMode ? identifier : null,
+          'email': !_isPhoneMode ? identifier : null,
+          'password': password,
+        };
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => OtpVerificationScreen(
-            identifier: identifier,
-            purpose: OtpPurpose.registration,
-            isPhone: _isPhoneMode,
-            registrationPayload: payload,
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => OtpVerificationScreen(
+              identifier: identifier,
+              purpose: OtpPurpose.registration,
+              isPhone: _isPhoneMode,
+              registrationPayload: payload,
+            ),
           ),
-        ),
-      );
+        );
+      } else {
+        _showError(res['message'] ?? 'Failed to send verification code.');
+      }
     } catch (e) {
       if (!mounted) return;
       setState(() => _isLoading = false);
-      _showError('Error: $e');
+      _showError('Registration error: $e');
     }
   }
 
@@ -196,7 +195,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       textCapitalization: TextCapitalization.words,
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.person_outline, color: LocoColors.textSecondary),
-                        hintText: 'e.g. Aayush Sinha',
+                        hintText: 'Enter your full name',
                         filled: true,
                         fillColor: Colors.white,
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: LocoColors.border)),

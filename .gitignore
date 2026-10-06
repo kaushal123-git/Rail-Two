@@ -50,3 +50,12 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Python & Backend runtime
+backend/*.db
+backend/*.sqlite
+backend/*.sqlite3
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/

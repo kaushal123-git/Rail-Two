@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    container_name: loco_fastapi_backend
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=production
+      - DATABASE_URL=postgresql+asyncpg://loco_user:loco_secure_pass_2026@postgres:5432/loco_db
+      - SYNC_DATABASE_URL=postgresql://loco_user:loco_secure_pass_2026@postgres:5432/loco_db
+      - REDIS_URL=redis://redis:6379/0
+      - JWT_SECRET_KEY=loco_prod_jwt_super_secret_signing_key_railway_2026_x89a
+      - OTP_PROVIDER=mock
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:17-alpine
+    container_name: loco_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: loco_user
+      POSTGRES_PASSWORD: loco_secure_pass_2026
+      POSTGRES_DB: loco_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - loco_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U loco_user -d loco_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: loco_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - loco_redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  loco_pgdata:
+  loco_redisdata:

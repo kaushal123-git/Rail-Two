@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:railway_station_finder/services/auth_database.dart';
-import 'package:railway_station_finder/services/otp_service.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,27 +13,8 @@ void main() {
     databaseFactory = databaseFactoryFfi;
   });
 
-  group('AuthDatabase and OtpService Tests', () {
+  group('AuthDatabase Tests', () {
     final authDb = AuthDatabase();
-    final otpService = OtpService();
-
-    test('OTP Generation and Verification works correctly', () {
-      const phone = '9820154321';
-      final otp = otpService.generateOtp(phone);
-      expect(otp.length, 6);
-
-      // Verify wrong code fails
-      expect(otpService.verifyOtp(phone, '000000'), isFalse);
-
-      // Verify correct code passes
-      expect(otpService.verifyOtp(phone, otp), isTrue);
-
-      // Verify code is consumed and cannot be reused
-      expect(otpService.verifyOtp(phone, otp), isFalse);
-
-      // Default demo fallback code 123456 always passes
-      expect(otpService.verifyOtp(phone, '123456'), isTrue);
-    });
 
     test('User Registration and Password Authentication in SQLite', () async {
       const testIdentifier = 'test_commuter_99@rail.in';

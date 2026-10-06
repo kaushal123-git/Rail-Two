@@ -1,6 +1,6 @@
 import '../models/ai_models.dart';
-import 'gemini_rail_service.dart';
 import 'journey_guardian_service.dart';
+import 'loco_assist_service.dart';
 
 class RailAIService {
   static final RailAIService _instance = RailAIService._internal();
@@ -28,11 +28,11 @@ class RailAIService {
       ];
     }
 
-    return GeminiRailService().getInitialMessages();
+    return LocoAssistService().getInitialMessages();
   }
 
   Future<RailAIMessage> processQueryAsync(String query) async {
-    return await GeminiRailService().processQuery(query);
+    return await LocoAssistService().processQuery(query);
   }
 
   RailAIMessage processQuery(String query) {

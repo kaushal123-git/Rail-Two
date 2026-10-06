@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -25,27 +26,36 @@ class LocationService {
     bool serviceEnabled;
     LocationPermission permission;
 
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return false;
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
+    try {
+      serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled && !kIsWeb) {
         return false;
       }
+    } catch (_) {
+      // On web, isLocationServiceEnabled can throw or be unsupported
     }
 
-    if (permission == LocationPermission.deniedForever) {
+    try {
+      permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          return false;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        return false;
+      }
+
+      return permission == LocationPermission.whileInUse ||
+          permission == LocationPermission.always;
+    } catch (_) {
       return false;
     }
-
-    return true;
   }
 
-  /// Set a custom location (e.g., Vasai Road) and persist it
+  /// Set a custom location (e.g., Virar, Dadar) and persist it
   static Future<void> setCustomLocation(double lat, double lng, {String? name}) async {
     _cachedCustomPosition = Position(
       longitude: lng,
@@ -82,12 +92,12 @@ class LocationService {
     await prefs.remove(_keyCustomName);
   }
 
-  /// Default Vasai Road Position (Vasai Road, Thane/Palghar)
-  static final Position defaultVasaiPosition = Position(
-    longitude: 72.8325893,
-    latitude: 19.3825255,
+  /// Default Virar Position (Virar Western Railway, Palghar/Mumbai Suburban)
+  static final Position defaultVirarPosition = Position(
+    longitude: 72.811989,
+    latitude: 19.454787,
     timestamp: DateTime.now(),
-    accuracy: 1.0,
+    accuracy: 5.0,
     altitude: 0.0,
     altitudeAccuracy: 0.0,
     heading: 0.0,
@@ -95,6 +105,9 @@ class LocationService {
     speed: 0.0,
     speedAccuracy: 0.0,
   );
+
+  /// Backward-compatible alias
+  static Position get defaultVasaiPosition => defaultVirarPosition;
 
   /// Check if custom location override is active
   static Future<bool> isCustomOverrideActive() async {
@@ -107,72 +120,118 @@ class LocationService {
   static Future<String?> getCustomLocationName() async {
     if (_cachedLocationName != null) return _cachedLocationName;
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_keyCustomName) ?? 'Vasai Road';
+    return prefs.getString(_keyCustomName) ?? 'Virar';
   }
 
-  /// Retrieves current position (defaults to Vasai Road so Vasai, Naigaon & Nalasopara are suggested)
-  static Future<Position> getCurrentLocation() async {
-    if (_cachedCustomPosition != null) {
-      return _cachedCustomPosition!;
+  /// Retrieves current position from real browser/device GPS.
+  /// Falls back to default Virar position only if GPS is disabled or permission denied.
+  static Future<Position> getCurrentLocation({bool forceRealGps = false}) async {
+    // 1. If not forcing real GPS, check custom override in memory or SharedPreferences
+    if (!forceRealGps) {
+      if (_cachedCustomPosition != null) {
+        return _cachedCustomPosition!;
+      }
+
+      final prefs = await SharedPreferences.getInstance();
+      if (prefs.containsKey(_keyCustomLat) && prefs.containsKey(_keyCustomLng)) {
+        final lat = prefs.getDouble(_keyCustomLat)!;
+        final lng = prefs.getDouble(_keyCustomLng)!;
+        _cachedLocationName = prefs.getString(_keyCustomName) ?? 'Selected Location';
+        _cachedCustomPosition = Position(
+          longitude: lng,
+          latitude: lat,
+          timestamp: DateTime.now(),
+          accuracy: 1.0,
+          altitude: 0.0,
+          altitudeAccuracy: 0.0,
+          heading: 0.0,
+          headingAccuracy: 0.0,
+          speed: 0.0,
+          speedAccuracy: 0.0,
+        );
+        return _cachedCustomPosition!;
+      }
     }
 
-    final prefs = await SharedPreferences.getInstance();
-    if (prefs.containsKey(_keyCustomLat) && prefs.containsKey(_keyCustomLng)) {
-      final lat = prefs.getDouble(_keyCustomLat)!;
-      final lng = prefs.getDouble(_keyCustomLng)!;
-      _cachedLocationName = prefs.getString(_keyCustomName) ?? 'Vasai Road';
-      _cachedCustomPosition = Position(
-        longitude: lng,
-        latitude: lat,
-        timestamp: DateTime.now(),
-        accuracy: 1.0,
-        altitude: 0.0,
-        altitudeAccuracy: 0.0,
-        heading: 0.0,
-        headingAccuracy: 0.0,
-        speed: 0.0,
-        speedAccuracy: 0.0,
-      );
-      return _cachedCustomPosition!;
-    }
-
-    // Default position is Vasai Road to ensure Vasai Road, Naigaon & Nalasopara are offered
-    _cachedCustomPosition = defaultVasaiPosition;
-    _cachedLocationName = 'Vasai Road';
-    return _cachedCustomPosition!;
-  }
-
-  /// Force fetch live GPS from device/browser
-  static Future<Position> forceFetchDeviceGps() async {
+    // 2. Query real device / browser GPS
     try {
       final hasPermission = await handleLocationPermission();
       if (hasPermission) {
         final realPos = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high,
-          timeLimit: const Duration(seconds: 4),
+          timeLimit: const Duration(seconds: 6),
         );
         _cachedCustomPosition = realPos;
-        _cachedLocationName = 'Browser GPS (${realPos.latitude.toStringAsFixed(2)}, ${realPos.longitude.toStringAsFixed(2)})';
+        _cachedLocationName =
+            'Live GPS (${realPos.latitude.toStringAsFixed(3)}, ${realPos.longitude.toStringAsFixed(3)})';
         return realPos;
       }
     } catch (e) {
-      print('Device GPS fetch failed: $e');
+      debugPrint('Real GPS fetch error: $e');
     }
-    _cachedCustomPosition = defaultVasaiPosition;
-    _cachedLocationName = 'Vasai Road';
-    return defaultVasaiPosition;
+
+    // 3. Fallback position is Virar (default terminal station)
+    _cachedCustomPosition = defaultVirarPosition;
+    _cachedLocationName = 'Virar (Default)';
+    return _cachedCustomPosition!;
+  }
+
+  /// Force fetch live GPS from device/browser
+  static Future<Position> forceFetchDeviceGps() async {
+    await clearCustomLocation();
+    return getCurrentLocation(forceRealGps: true);
+  }
+
+  /// Returns location evidence dictionary suitable for Phase 4 API requests
+  static Future<Map<String, dynamic>> getLocationEvidence() async {
+    final pos = await getCurrentLocation();
+    return {
+      'latitude': pos.latitude,
+      'longitude': pos.longitude,
+      'accuracy_meters': pos.accuracy,
+      'altitude': pos.altitude,
+      'speed_mps': pos.speed,
+      'bearing': pos.heading,
+      'timestamp_device': pos.timestamp.toUtc().toIso8601String(),
+      'provider': 'gps',
+      'is_mock': pos.isMocked,
+      'mock_confidence': pos.isMocked ? 1.0 : 0.0,
+    };
   }
 
   /// Returns a stream of position updates to track user movement in real-time.
-  static Stream<Position> getLocationStream() {
+  static Stream<Position> getLocationStream({int distanceFilter = 15}) {
     return Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(
+      locationSettings: LocationSettings(
         accuracy: LocationAccuracy.high,
-        distanceFilter: 10, // Update when user moves 10 meters
+        distanceFilter: distanceFilter, // Update when user moves configured meters
       ),
     );
   }
 }
 
+/// Abstract contract for device location fetching.
+abstract class LocationRepository {
+  Future<Position> getCurrentPosition();
+  Stream<Position> getPositionStream();
+}
 
+/// Abstract contract for server-side geofence and location validation.
+abstract class LocationValidationService {
+  Future<bool> validateLocation({
+    required double latitude,
+    required double longitude,
+    required String stationId,
+  });
+}
 
+/// Abstract contract for station geofence boundary verification.
+abstract class GeofenceService {
+  Future<bool> isInsideGeofence({
+    required double userLat,
+    required double userLng,
+    required double stationLat,
+    required double stationLng,
+    double radiusMeters = 300.0,
+  });
+}

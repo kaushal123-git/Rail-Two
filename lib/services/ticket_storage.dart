@@ -1,25 +1,74 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/ticket.dart';
+import 'api_service.dart';
 
+/// Abstract repository for LOCO Tickets.
+abstract class TicketRepository {
+  Future<List<BookedTicket>> getTickets();
+  Future<void> addTicket(BookedTicket ticket);
+  Future<void> saveTickets(List<BookedTicket> tickets);
+}
+
+class LocalTicketRepository implements TicketRepository {
+  @override
+  Future<List<BookedTicket>> getTickets() => TicketStorage.getTickets();
+
+  @override
+  Future<void> addTicket(BookedTicket ticket) => TicketStorage.addTicket(ticket);
+
+  @override
+  Future<void> saveTickets(List<BookedTicket> tickets) => TicketStorage.saveTickets(tickets);
+}
+
+/// Storage & synchronization service for user tickets.
+/// Connects to LOCO FastAPI backend authority with local offline caching.
 class TicketStorage {
   static const String _storageKey = 'rail_two_booked_tickets';
 
+  /// Get user tickets: Synchronizes with backend if online, otherwise serves local cache.
   static Future<List<BookedTicket>> getTickets() async {
     final prefs = await SharedPreferences.getInstance();
+
+    // 1. Try synchronizing with backend authority if online
+    try {
+      final token = await ApiService.getAccessToken();
+      if (token != null && token.isNotEmpty) {
+        final backendTickets = await ApiService.getTickets();
+        if (backendTickets.isNotEmpty) {
+          final List<BookedTicket> mappedTickets = [];
+          for (final t in backendTickets) {
+            try {
+              mappedTickets.add(BookedTicket.fromBackendJson(t));
+            } catch (err) {
+              debugPrint('Error mapping backend ticket: $err');
+            }
+          }
+
+          if (mappedTickets.isNotEmpty) {
+            await saveTickets(mappedTickets);
+            return mappedTickets;
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Notice: Backend tickets sync fallback: $e');
+    }
+
+    // 2. Offline fallback from local cache
     final String? data = prefs.getString(_storageKey);
     if (data == null || data.isEmpty) {
-      final initialTickets = _getInitialMockTickets();
-      await saveTickets(initialTickets);
-      return initialTickets;
+      return [];
     }
     try {
       final List<dynamic> jsonList = jsonDecode(data);
       return jsonList.map((e) => BookedTicket.fromJson(e as Map<String, dynamic>)).toList();
     } catch (e) {
-      return _getInitialMockTickets();
+      return [];
     }
   }
+
 
   static Future<void> saveTickets(List<BookedTicket> tickets) async {
     final prefs = await SharedPreferences.getInstance();
@@ -29,93 +78,7 @@ class TicketStorage {
 
   static Future<void> addTicket(BookedTicket ticket) async {
     final tickets = await getTickets();
-    tickets.insert(0, ticket); // Insert latest at the top
+    tickets.insert(0, ticket);
     await saveTickets(tickets);
-  }
-
-  static List<BookedTicket> _getInitialMockTickets() {
-    final now = DateTime.now();
-    return [
-      BookedTicket(
-        id: 'XODHEGL014',
-        fromStationName: 'DAHISAR',
-        fromStationCode: 'DIC',
-        toStationName: 'BORIVALI',
-        toStationCode: 'BVI',
-        ticketType: TicketType.journey,
-        bookingType: BookingType.issue,
-        trainType: 'ORDINARY',
-        duration: 'SINGLE',
-        classType: 'SECOND',
-        fare: 5,
-        bookingDate: now,
-        status: TicketStatus.upcoming,
-        distanceKm: 3.0,
-        passengerName: 'Rakhi sinha',
-        passengerAddress: '006-yashwant sneh, YK Nagar NX Virar West, Thane, India',
-        passengerIdType: 'PAN Card',
-        passengerIdNumber: 'SENP******',
-      ),
-      BookedTicket(
-        id: 'XODJEE0036',
-        fromStationName: 'DAHISAR',
-        fromStationCode: 'DIC',
-        toStationName: 'BORIVALI',
-        toStationCode: 'BVI',
-        ticketType: TicketType.journey,
-        bookingType: BookingType.issue,
-        trainType: 'ORDINARY',
-        duration: 'SINGLE',
-        classType: 'SECOND',
-        fare: 5,
-        bookingDate: DateTime(2026, 7, 11),
-        status: TicketStatus.completed,
-        distanceKm: 3.0,
-        passengerName: 'Rakhi sinha',
-        passengerAddress: '006-yashwant sneh, YK Nagar NX Virar West, Thane, India',
-        passengerIdType: 'PAN Card',
-        passengerIdNumber: 'SENP******',
-      ),
-      BookedTicket(
-        id: 'XO3MEE320G',
-        fromStationName: 'VASAI ROAD',
-        fromStationCode: 'BSR',
-        toStationName: 'VIRAR',
-        toStationCode: 'VR',
-        ticketType: TicketType.journey,
-        bookingType: BookingType.issue,
-        trainType: 'ORDINARY',
-        duration: 'SINGLE',
-        classType: 'SECOND',
-        fare: 10,
-        bookingDate: DateTime(2026, 7, 11),
-        status: TicketStatus.completed,
-        distanceKm: 9.0,
-        passengerName: 'Rakhi sinha',
-        passengerAddress: '006-yashwant sneh, YK Nagar NX Virar West, Thane, India',
-        passengerIdType: 'PAN Card',
-        passengerIdNumber: 'SENP******',
-      ),
-      BookedTicket(
-        id: 'XODHEEL01D',
-        fromStationName: 'DAHISAR',
-        fromStationCode: 'DIC',
-        toStationName: 'BORIVALI',
-        toStationCode: 'BVI',
-        ticketType: TicketType.journey,
-        bookingType: BookingType.issue,
-        trainType: 'ORDINARY',
-        duration: 'SINGLE',
-        classType: 'SECOND',
-        fare: 5,
-        bookingDate: DateTime(2026, 7, 13),
-        status: TicketStatus.completed,
-        distanceKm: 3.0,
-        passengerName: 'Rakhi sinha',
-        passengerAddress: '006-yashwant sneh, YK Nagar NX Virar West, Thane, India',
-        passengerIdType: 'PAN Card',
-        passengerIdNumber: 'SENP******',
-      ),
-    ];
   }
 }

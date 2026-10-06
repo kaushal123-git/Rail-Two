@@ -22,6 +22,7 @@ dependencies:
   local_auth: ^3.0.2
   crypto: ^3.0.7
   sqflite_common_ffi: ^2.4.3
+  http: ^1.2.0
 
 dev_dependencies:
   flutter_test:
@@ -35,4 +36,3 @@ flutter:
     - assets/default_stations.json
     - assets/loco_logo.png
     - assets/mumbai_live_rail_feed.json
-    - assets/crowd_ml_model.json

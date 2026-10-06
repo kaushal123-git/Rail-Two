@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io' if (dart.library.html) 'dart:html' as io_or_html;
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;

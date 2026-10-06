@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:railway_station_finder/models/ai_models.dart';
 import 'package:railway_station_finder/services/ai_intent_engine.dart';
 import 'package:railway_station_finder/services/live_rail_telemetry_engine.dart';
-import 'package:railway_station_finder/services/app_guide_engine.dart';
 import 'package:railway_station_finder/services/gemini_rail_service.dart';
 
 void main() {
@@ -46,7 +45,7 @@ void main() {
       print(crowd);
       print('======================================================\n');
 
-      expect(crowd, contains('Crowd Radar'));
+      expect(crowd, contains('removed from LOCO product scope'));
     });
 
     test('Demonstrating Query 4: Emergency Safety SOS Deep Link', () async {

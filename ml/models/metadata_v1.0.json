@@ -1,0 +1,108 @@
+{
+  "model_name": "LOCO Custom ML Fraud Detector",
+  "model_version": "LOCO-FRAUD-v1.0",
+  "algorithm": "GradientBoosting",
+  "training_dataset_version": "LOCO-FRAUD-DATASET-v1.0-CONTROLLED",
+  "feature_schema_version": "LOCO-FRAUD-FEATURE-v1.0",
+  "trained_at": "2026-10-06T12:52:09.797893+00:00",
+  "random_seed": 42,
+  "thresholds": {
+    "low_medium_threshold": 0.25,
+    "medium_high_threshold": 0.55,
+    "high_critical_threshold": 0.8
+  },
+  "metrics": {
+    "test_sample_count": 2250,
+    "test_fraud_count": 180,
+    "inference_latency_ms_per_sample": 0.0061,
+    "roc_auc": 1.0,
+    "pr_auc": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1_score": 1.0,
+    "brier_score": 0.0,
+    "false_positive_rate": 0.0,
+    "false_negative_rate": 0.0,
+    "confusion_matrix": {
+      "true_negatives": 2070,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "true_positives": 180
+    },
+    "classification_report": {
+      "Legitimate": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 2070.0
+      },
+      "Fraudulent": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 180.0
+      },
+      "accuracy": 1.0,
+      "macro avg": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 2250.0
+      },
+      "weighted avg": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 2250.0
+      }
+    },
+    "risk_level_distribution": {
+      "LOW": 2070,
+      "MEDIUM": 0,
+      "HIGH": 0,
+      "CRITICAL": 180
+    }
+  },
+  "top_features": [
+    {
+      "feature": "location_confidence",
+      "importance": 0.3968
+    },
+    {
+      "feature": "active_ticket_count",
+      "importance": 0.2628
+    },
+    {
+      "feature": "distance_from_expected_station",
+      "importance": 0.0961
+    },
+    {
+      "feature": "play_integrity_status",
+      "importance": 0.061
+    },
+    {
+      "feature": "suspicious_network_signal",
+      "importance": 0.0469
+    },
+    {
+      "feature": "ticket_state_consistency",
+      "importance": 0.0353
+    },
+    {
+      "feature": "emulator_detected",
+      "importance": 0.0329
+    },
+    {
+      "feature": "app_integrity_status",
+      "importance": 0.0275
+    },
+    {
+      "feature": "device_integrity_status",
+      "importance": 0.0217
+    },
+    {
+      "feature": "ticket_reuse_count",
+      "importance": 0.0118
+    }
+  ]
+}

@@ -113,10 +113,10 @@ class TrainDetailsSheet extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               _buildTelemetryCard(
-                icon: Icons.people_outline,
-                label: 'Crowd Level',
-                value: train.crowdLevel,
-                color: _getCrowdColor(train.crowdLevel),
+                icon: Icons.train_outlined,
+                label: 'Service Type',
+                value: train.isFast ? 'Fast Local' : 'Slow Local',
+                color: train.isFast ? LocoColors.orange : LocoColors.textSecondary,
               ),
               const SizedBox(width: 12),
               _buildTelemetryCard(
@@ -227,18 +227,5 @@ class TrainDetailsSheet extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Color _getCrowdColor(String crowd) {
-    switch (crowd.toLowerCase()) {
-      case 'low':
-        return LocoColors.crowdLow;
-      case 'high':
-        return LocoColors.crowdHigh;
-      case 'very high':
-        return LocoColors.crowdVeryHigh;
-      default:
-        return LocoColors.crowdModerate;
-    }
   }
 }

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import '../core/theme/loco_theme.dart';
+import '../services/api_service.dart';
 import '../services/auth_database.dart';
 import '../services/otp_service.dart';
 import 'main_navigation_shell.dart';
@@ -77,68 +78,59 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
 
     setState(() => _isVerifying = true);
 
-    final isValid = OtpService().verifyOtp(widget.identifier, code);
-    if (!isValid) {
-      setState(() => _isVerifying = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: LocoColors.error,
-          content: Text('Invalid or expired OTP. Please try again or tap Resend.'),
-        ),
-      );
-      return;
-    }
-
     try {
-      if (widget.purpose == OtpPurpose.registration) {
-        // Complete SQLite Registration
-        final payload = widget.registrationPayload ?? {};
-        final name = payload['name'] as String? ?? 'Commuter';
-        final password = payload['password'] as String? ?? '123456';
-        final phone = payload['phone'] as String?;
-        final email = payload['email'] as String?;
+      final res = await OtpService().verifyBackendOtp(
+        phone: widget.identifier,
+        otp: code,
+      );
 
-        final registeredUser = await AuthDatabase().registerUser(
+      if (!mounted) return;
+      setState(() => _isVerifying = false);
+
+      if (res['success'] == true) {
+        final userData = res['user'] as Map<String, dynamic>?;
+        final name = userData?['full_name'] as String? ?? 
+            (widget.registrationPayload?['name'] as String? ?? 'Commuter');
+
+        final userAccount = await AuthDatabase().registerUser(
           name: name,
           identifier: widget.identifier,
-          phone: phone,
-          email: email,
-          password: password,
+          phone: widget.identifier,
+          password: widget.registrationPayload?['password'] as String? ?? '',
           biometricEnabled: true,
         );
+        await AuthDatabase().setActiveSession(userAccount);
 
-        if (!mounted) return;
-        setState(() => _isVerifying = false);
-
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => SetMpinScreen(
-              identifier: registeredUser.identifier,
-              userName: registeredUser.name,
+        if (widget.purpose == OtpPurpose.registration) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SetMpinScreen(
+                identifier: userAccount.identifier,
+                userName: userAccount.name,
+              ),
             ),
-          ),
-        );
-      } else if (widget.purpose == OtpPurpose.forgotPassword) {
-        setState(() => _isVerifying = false);
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ResetPasswordScreen(identifier: widget.identifier),
-          ),
-        );
-      } else if (widget.purpose == OtpPurpose.directLogin) {
-        final user = await AuthDatabase().getUserByIdentifier(widget.identifier);
-        if (user != null) {
-          await AuthDatabase().setActiveSession(user);
+          );
+        } else if (widget.purpose == OtpPurpose.forgotPassword) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ResetPasswordScreen(identifier: widget.identifier),
+            ),
+          );
+        } else {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const MainNavigationShell()),
+            (route) => false,
+          );
         }
-        if (!mounted) return;
-        setState(() => _isVerifying = false);
-
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => const MainNavigationShell()),
-          (route) => false,
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: LocoColors.error,
+            content: Text(res['message'] ?? 'Invalid or expired OTP.'),
+          ),
         );
       }
     } catch (e) {
@@ -150,31 +142,24 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     }
   }
 
-  void _resendCode() {
+  void _resendCode() async {
     if (_secondsRemaining > 0) return;
 
-    final newCode = OtpService().generateOtp(widget.identifier);
     _startCountdown();
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: LocoColors.textPrimary,
-        duration: const Duration(seconds: 8),
-        behavior: SnackBarBehavior.floating,
-        content: Row(
-          children: [
-            const Icon(Icons.mark_email_read_outlined, color: LocoColors.orange),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                'New OTP Sent: $newCode (Valid for 5 mins)',
-                style: const TextStyle(fontWeight: FontWeight.w700),
-              ),
-            ),
-          ],
-        ),
-      ),
+    final res = await OtpService().requestBackendOtp(
+      phone: widget.identifier,
+      purpose: widget.purpose == OtpPurpose.registration ? 'REGISTRATION' : 'LOGIN',
     );
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: res['success'] == true ? LocoColors.textPrimary : LocoColors.error,
+          duration: const Duration(seconds: 5),
+          behavior: SnackBarBehavior.floating,
+          content: Text(res['message'] ?? (res['success'] == true ? 'Verification code resent via SMS gateway' : 'Failed to resend OTP')),
+        ),
+      );
+    }
   }
 
   @override
@@ -294,11 +279,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                       ),
                     ),
                 ],
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'Demo default fallback code: 123456',
-                style: TextStyle(fontSize: 12, color: LocoColors.textMuted),
               ),
             ],
           ),

@@ -134,7 +134,6 @@ class ErrorRecoveryService {
       station.latitude,
       station.longitude,
     );
-    final distanceKm = distanceMeters / 1000.0;
     final radiusMeters = geofenceRadiusKm * 1000.0;
 
     logEvent('Geofence Verification for ${station.name}: Dist=${distanceMeters.toStringAsFixed(1)} m, MaxRadius=${radiusMeters.toStringAsFixed(0)} m, GPS Error=±${accuracyMeters.toStringAsFixed(1)} m');

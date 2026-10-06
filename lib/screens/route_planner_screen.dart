@@ -20,15 +20,41 @@ class RoutePlannerScreen extends StatefulWidget {
 }
 
 class _RoutePlannerScreenState extends State<RoutePlannerScreen> {
-  late List<RouteOption> _options;
+  List<RouteOption> _options = [];
+  bool _isLoading = true;
+  String? _errorMessage;
 
   @override
   void initState() {
     super.initState();
-    _options = RouteRecommendationService.getRecommendations(
-      fromStation: widget.fromStation,
-      toStation: widget.toStation,
-    );
+    _loadRoutes();
+  }
+
+  Future<void> _loadRoutes() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final routes = await RouteRecommendationService.getRecommendationsAsync(
+        fromStation: widget.fromStation,
+        toStation: widget.toStation,
+      );
+      if (mounted) {
+        setState(() {
+          _options = routes;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = 'Could not calculate route: $e';
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -106,7 +132,62 @@ class _RoutePlannerScreenState extends State<RoutePlannerScreen> {
             const SizedBox(height: 12),
 
             // Route Options Cards
-            ..._options.map((opt) => _buildOptionCard(opt)),
+            if (_isLoading)
+              const Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 40),
+                  child: CircularProgressIndicator(color: LocoColors.orange),
+                ),
+              )
+            else if (_errorMessage != null)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.red.shade50,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.red.shade200),
+                ),
+                child: Column(
+                  children: [
+                    Text(_errorMessage!, style: const TextStyle(color: Colors.red, fontSize: 13)),
+                    const SizedBox(height: 8),
+                    ElevatedButton(
+                      onPressed: _loadRoutes,
+                      style: ElevatedButton.styleFrom(backgroundColor: LocoColors.orange),
+                      child: const Text('Retry Route Search', style: TextStyle(color: Colors.white)),
+                    ),
+                  ],
+                ),
+              )
+            else if (_options.isEmpty)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: LocoColors.border),
+                ),
+                child: const Column(
+                  children: [
+                    Icon(Icons.route_outlined, size: 40, color: LocoColors.textMuted),
+                    SizedBox(height: 12),
+                    Text(
+                      'No Network Graph Path Found',
+                      style: TextStyle(fontWeight: FontWeight.w700, color: LocoColors.textPrimary),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      'No operational railway connections found between these stations.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 12, color: LocoColors.textSecondary),
+                    ),
+                  ],
+                ),
+              )
+            else
+              ..._options.map((opt) => _buildOptionCard(opt)),
           ],
         ),
       ),
@@ -139,7 +220,7 @@ class _RoutePlannerScreenState extends State<RoutePlannerScreen> {
                 builder: (context) => BookingScreen(
                   fromStation: widget.fromStation,
                   toStation: widget.toStation,
-                  stationDifference: 6,
+                  stationDifference: opt.intermediateStops.isNotEmpty ? opt.intermediateStops.length : 6,
                 ),
               ),
             );
@@ -186,8 +267,8 @@ class _RoutePlannerScreenState extends State<RoutePlannerScreen> {
                       style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: LocoColors.textPrimary),
                     ),
                     Text(
-                      'Departs in ${opt.nextDepartureInMin}m',
-                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: LocoColors.success),
+                      '${opt.durationMinutes} mins',
+                      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: LocoColors.orange),
                     ),
                   ],
                 ),
@@ -208,19 +289,24 @@ class _RoutePlannerScreenState extends State<RoutePlannerScreen> {
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.people_outline, size: 16, color: LocoColors.textMuted),
+                        const Icon(Icons.directions_transit, size: 16, color: LocoColors.textMuted),
                         const SizedBox(width: 4),
-                        Text('Crowd: ${opt.crowdLevel}', style: const TextStyle(fontSize: 12, color: LocoColors.textSecondary)),
+                        Text(
+                          opt.transfers > 0
+                              ? '${opt.transfers} Transfer • ${opt.intermediateStops.length} stops'
+                              : '${opt.intermediateStops.isNotEmpty ? opt.intermediateStops.length : "Direct"} stops',
+                          style: const TextStyle(fontSize: 12, color: LocoColors.textSecondary),
+                        ),
                       ],
                     ),
-                    Row(
+                    const Row(
                       children: [
-                        const Text(
+                        Text(
                           'Book Ticket',
                           style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: LocoColors.orange),
                         ),
-                        const SizedBox(width: 4),
-                        const Icon(Icons.arrow_forward_ios, size: 12, color: LocoColors.orange),
+                        SizedBox(width: 4),
+                        Icon(Icons.arrow_forward_ios, size: 12, color: LocoColors.orange),
                       ],
                     ),
                   ],

@@ -66,8 +66,8 @@ void main() {
     // 4. Passenger Details Card
     expect(find.text('Passenger Details'), findsOneWidget);
     expect(find.text('+ Add ID'), findsOneWidget);
-    expect(find.text('Rakhi sinha. 46 yrs, F'), findsOneWidget);
-    expect(find.textContaining('006-yashwant sneh'), findsOneWidget);
+    expect(find.text('Commuter. Adult'), findsOneWidget);
+    expect(find.textContaining('Mumbai Suburban'), findsOneWidget);
 
     // 5. Class
     expect(find.text('Class'), findsOneWidget);

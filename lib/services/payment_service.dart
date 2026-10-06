@@ -1,38 +1,29 @@
 import 'dart:async';
+import 'payment_repository.dart';
 
-enum PaymentMethod {
-  upi,
-  card,
-  netBanking,
-  locoWallet,
-}
+// Re-export payment types for UI components
+export 'payment_repository.dart' show PaymentMethod, PaymentResult, PaymentRepository;
 
-class PaymentResult {
-  final bool success;
-  final String transactionId;
-  final String message;
-
-  PaymentResult({
-    required this.success,
-    required this.transactionId,
-    required this.message,
-  });
-}
-
+/// Clean service wrapper delegating to [PaymentRepository].
+/// Removed fake delays and simulated TXN_LOCO_* transactions.
 class PaymentService {
+  static PaymentRepository _repository = DefaultPaymentRepository();
+
+  static void setRepository(PaymentRepository repository) {
+    _repository = repository;
+  }
+
   static Future<PaymentResult> processPayment({
     required int amount,
     required PaymentMethod method,
     String? upiId,
-  }) async {
-    // Simulate instantaneous, secure payment gateway transaction
-    await Future.delayed(const Duration(milliseconds: 900));
-
-    final txId = 'TXN_LOCO_${DateTime.now().millisecondsSinceEpoch.toString().substring(4)}';
-    return PaymentResult(
-      success: true,
-      transactionId: txId,
-      message: '₹$amount received successfully via ${method.name.toUpperCase()}.',
+    String? ticketId,
+  }) {
+    return _repository.processPayment(
+      amount: amount,
+      method: method,
+      upiId: upiId,
+      ticketId: ticketId,
     );
   }
 }

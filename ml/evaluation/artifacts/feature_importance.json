@@ -1,0 +1,210 @@
+[
+  {
+    "feature": "location_confidence",
+    "importance": 0.3968
+  },
+  {
+    "feature": "active_ticket_count",
+    "importance": 0.2628
+  },
+  {
+    "feature": "distance_from_expected_station",
+    "importance": 0.0961
+  },
+  {
+    "feature": "play_integrity_status",
+    "importance": 0.061
+  },
+  {
+    "feature": "suspicious_network_signal",
+    "importance": 0.0469
+  },
+  {
+    "feature": "ticket_state_consistency",
+    "importance": 0.0353
+  },
+  {
+    "feature": "emulator_detected",
+    "importance": 0.0329
+  },
+  {
+    "feature": "app_integrity_status",
+    "importance": 0.0275
+  },
+  {
+    "feature": "device_integrity_status",
+    "importance": 0.0217
+  },
+  {
+    "feature": "ticket_reuse_count",
+    "importance": 0.0118
+  },
+  {
+    "feature": "root_detected",
+    "importance": 0.007
+  },
+  {
+    "feature": "gps_accuracy",
+    "importance": 0.0
+  },
+  {
+    "feature": "distance_from_route",
+    "importance": 0.0
+  },
+  {
+    "feature": "speed_kmh",
+    "importance": 0.0
+  },
+  {
+    "feature": "acceleration",
+    "importance": 0.0
+  },
+  {
+    "feature": "bearing_change",
+    "importance": 0.0
+  },
+  {
+    "feature": "location_jump_distance",
+    "importance": 0.0
+  },
+  {
+    "feature": "location_jump_time",
+    "importance": 0.0
+  },
+  {
+    "feature": "location_update_frequency",
+    "importance": 0.0
+  },
+  {
+    "feature": "mock_location_signal",
+    "importance": 0.0
+  },
+  {
+    "feature": "location_replay_signal",
+    "importance": 0.0
+  },
+  {
+    "feature": "journey_duration",
+    "importance": 0.0
+  },
+  {
+    "feature": "expected_journey_duration",
+    "importance": 0.0
+  },
+  {
+    "feature": "journey_progress",
+    "importance": 0.0
+  },
+  {
+    "feature": "route_deviation_distance",
+    "importance": 0.0
+  },
+  {
+    "feature": "boarding_station_match",
+    "importance": 0.0
+  },
+  {
+    "feature": "destination_match",
+    "importance": 0.0
+  },
+  {
+    "feature": "station_transition_time",
+    "importance": 0.0
+  },
+  {
+    "feature": "number_of_route_deviations",
+    "importance": 0.0
+  },
+  {
+    "feature": "tickets_created_24h",
+    "importance": 0.0
+  },
+  {
+    "feature": "tickets_created_7d",
+    "importance": 0.0
+  },
+  {
+    "feature": "ticket_age",
+    "importance": 0.0
+  },
+  {
+    "feature": "ticket_validity_remaining",
+    "importance": 0.0
+  },
+  {
+    "feature": "ticket_location_mismatch",
+    "importance": 0.0
+  },
+  {
+    "feature": "payment_attempts_24h",
+    "importance": 0.0
+  },
+  {
+    "feature": "payment_failures_24h",
+    "importance": 0.0
+  },
+  {
+    "feature": "payment_success_rate",
+    "importance": 0.0
+  },
+  {
+    "feature": "payment_amount",
+    "importance": 0.0
+  },
+  {
+    "feature": "payment_retry_count",
+    "importance": 0.0
+  },
+  {
+    "feature": "payment_ticket_consistency",
+    "importance": 0.0
+  },
+  {
+    "feature": "account_age_days",
+    "importance": 0.0
+  },
+  {
+    "feature": "login_count_24h",
+    "importance": 0.0
+  },
+  {
+    "feature": "otp_requests_24h",
+    "importance": 0.0
+  },
+  {
+    "feature": "otp_failures_24h",
+    "importance": 0.0
+  },
+  {
+    "feature": "device_change_count",
+    "importance": 0.0
+  },
+  {
+    "feature": "session_count_24h",
+    "importance": 0.0
+  },
+  {
+    "feature": "device_age_days",
+    "importance": 0.0
+  },
+  {
+    "feature": "jailbreak_detected",
+    "importance": 0.0
+  },
+  {
+    "feature": "app_attest_status",
+    "importance": 0.0
+  },
+  {
+    "feature": "network_change_frequency",
+    "importance": 0.0
+  },
+  {
+    "feature": "vpn_signal",
+    "importance": 0.0
+  },
+  {
+    "feature": "proxy_signal",
+    "importance": 0.0
+  }
+]

@@ -4,7 +4,6 @@ import '../models/station.dart';
 import '../models/ticket.dart';
 import '../services/journey_guardian_service.dart';
 import '../services/security_services.dart';
-import '../simulation/train_simulation_engine.dart';
 
 class DemoDashboardScreen extends StatefulWidget {
   const DemoDashboardScreen({super.key});
@@ -50,6 +49,29 @@ class _DemoDashboardScreenState extends State<DemoDashboardScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Phase 0 Architecture Notice Banner
+            Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFEFF6FF),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFFBFDBFE)),
+              ),
+              child: const Row(
+                children: [
+                  Icon(Icons.info_outline, color: Color(0xFF2563EB), size: 20),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'Phase 0 Architecture: Prototype simulation engines are disconnected. Real railway telemetry and external providers connect in Phase 4.',
+                      style: TextStyle(fontSize: 12, color: Color(0xFF1E40AF), fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
             // Current State Header Card
             Container(
               padding: const EdgeInsets.all(16),
@@ -129,7 +151,7 @@ class _DemoDashboardScreenState extends State<DemoDashboardScreen> {
                     bookingDate: DateTime.now(),
                     status: TicketStatus.upcoming,
                     distanceKm: 24.0,
-                    passengerName: 'Aayush Sinha',
+                    passengerName: 'Commuter',
                     passengerAddress: 'Borivali West, Mumbai',
                     passengerIdType: 'PAN Card',
                     passengerIdNumber: 'SENP******',
@@ -151,9 +173,7 @@ class _DemoDashboardScreenState extends State<DemoDashboardScreen> {
               onTap: () => _triggerScenario(
                 name: 'Train Approaching',
                 description: 'Platform 3 signaled. Speed slowing for docking.',
-                action: () {
-                  TrainSimulationEngine().setTrainCrowd('WR-90142', 'Moderate');
-                },
+                action: () {},
               ),
             ),
 
@@ -167,7 +187,6 @@ class _DemoDashboardScreenState extends State<DemoDashboardScreen> {
                 name: 'Train Delayed (+8 min)',
                 description: 'LOCO detects signal delay and recommends alternative train.',
                 action: () {
-                  TrainSimulationEngine().injectDelay('WR-90142', 8);
                   guardian.injectDelay(delayMinutes: 8);
                 },
               ),
@@ -182,9 +201,7 @@ class _DemoDashboardScreenState extends State<DemoDashboardScreen> {
               onTap: () => _triggerScenario(
                 name: 'High Crowd Alert',
                 description: 'Coach occupancy elevated. Suggests alternative car 4 or 8.',
-                action: () {
-                  TrainSimulationEngine().setTrainCrowd('WR-90142', 'Very High');
-                },
+                action: () {},
               ),
             ),
 
@@ -306,7 +323,6 @@ class _DemoDashboardScreenState extends State<DemoDashboardScreen> {
                   guardian.clearJourney();
                   trustService.resetTrust();
                   fraudService.clearEvents();
-                  TrainSimulationEngine().resetSimulation();
                 },
               ),
             ),

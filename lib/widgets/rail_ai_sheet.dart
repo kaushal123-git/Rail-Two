@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/theme/loco_theme.dart';
 import '../models/ai_models.dart';
-import '../services/gemini_rail_service.dart';
+import '../services/loco_assist_service.dart';
 
 class RailAISheet extends StatefulWidget {
   final VoidCallback? onViewTicket;
@@ -30,7 +30,7 @@ class _RailAISheetState extends State<RailAISheet> {
   @override
   void initState() {
     super.initState();
-    _messages = GeminiRailService().getInitialMessages();
+    _messages = LocoAssistService().getInitialMessages();
     if (widget.initialQuery != null && widget.initialQuery!.trim().isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _sendMessage(widget.initialQuery!);
@@ -57,7 +57,7 @@ class _RailAISheetState extends State<RailAISheet> {
     _scrollToBottom();
 
     try {
-      final aiResponse = await GeminiRailService().processQuery(query);
+      final aiResponse = await LocoAssistService().processQuery(query);
       if (mounted) {
         setState(() {
           _messages.add(aiResponse);
@@ -76,9 +76,57 @@ class _RailAISheetState extends State<RailAISheet> {
         setState(() {
           _messages.add(RailAIMessage(
             id: DateTime.now().millisecondsSinceEpoch.toString(),
-            text: 'I ran into a telemetry glitch, but our local signal processors confirm trains are on time.',
+            text: "I can't verify that information right now. Please check your network or try again.",
             isUser: false,
             timestamp: DateTime.now(),
+            cardType: 'ERROR_CARD',
+          ));
+          _isProcessing = false;
+        });
+        _scrollToBottom();
+      }
+    }
+  }
+
+  Future<void> _handleActionConfirmation({
+    required String actionId,
+    required String confirmationToken,
+    required bool confirmed,
+  }) async {
+    setState(() => _isProcessing = true);
+    try {
+      final res = await LocoAssistService().confirmAction(
+        actionId: actionId,
+        confirmationToken: confirmationToken,
+        confirmed: confirmed,
+      );
+      if (mounted) {
+        setState(() {
+          _messages.add(RailAIMessage(
+            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            text: res.message,
+            isUser: false,
+            timestamp: DateTime.now(),
+            cardType: res.success ? 'TEXT' : 'ERROR_CARD',
+            quickReplies: const ['🎫 View My Tickets', '🚆 Plan Route', '📋 Help'],
+          ));
+          _isProcessing = false;
+        });
+        _scrollToBottom();
+
+        if (confirmed && res.success && widget.onViewTicket != null) {
+          Future.delayed(const Duration(milliseconds: 1000), widget.onViewTicket!);
+        }
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          _messages.add(RailAIMessage(
+            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            text: 'Action could not be executed at this time. Please check your ticket status under My Tickets.',
+            isUser: false,
+            timestamp: DateTime.now(),
+            cardType: 'ERROR_CARD',
           ));
           _isProcessing = false;
         });
@@ -99,74 +147,8 @@ class _RailAISheetState extends State<RailAISheet> {
     });
   }
 
-  void _showApiKeyDialog() {
-    final controller = TextEditingController(text: GeminiRailService().apiKey ?? '');
-    showDialog(
-      context: context,
-      builder: (dialogCtx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Row(
-          children: [
-            Text('✨', style: TextStyle(fontSize: 22)),
-            SizedBox(width: 8),
-            Text('Gemini Cloud AI Key', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Enter your Google Gemini API Key from Google AI Studio (aistudio.google.com) to enable live Cloud Generative AI reasoning.',
-              style: TextStyle(fontSize: 13, color: LocoColors.textSecondary, height: 1.4),
-            ),
-            const SizedBox(height: 14),
-            TextField(
-              controller: controller,
-              decoration: const InputDecoration(
-                hintText: 'AIzaSy...',
-                labelText: 'API Key',
-              ),
-              obscureText: true,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogCtx),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              final nav = Navigator.of(dialogCtx);
-              final messenger = ScaffoldMessenger.of(context);
-              await GeminiRailService().setApiKey(controller.text);
-              nav.pop();
-              if (mounted) {
-                messenger.showSnackBar(
-                  SnackBar(
-                    backgroundColor: LocoColors.textPrimary,
-                    content: Text(
-                      controller.text.trim().isEmpty
-                          ? 'Using built-in Local Mumbai Rail AI'
-                          : 'Gemini Cloud AI Key Saved & Active!',
-                    ),
-                  ),
-                );
-                setState(() {});
-              }
-            },
-            child: const Text('Save Key'),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    final hasCloud = GeminiRailService().hasCloudGemini;
-
     return Container(
       height: MediaQuery.of(context).size.height * 0.85,
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
@@ -193,45 +175,26 @@ class _RailAISheetState extends State<RailAISheet> {
                 ),
               ),
               const SizedBox(width: 12),
-              Column(
+              const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
-                      const Text(
-                        'LOCOpilot AI',
+                      Text(
+                        'LOCO Assist',
                         style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: LocoColors.textPrimary),
                       ),
-                      const SizedBox(width: 6),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: hasCloud ? LocoColors.successLight : LocoColors.orangeLight,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          hasCloud ? 'GEMINI 1.5' : 'SMART LOCAL',
-                          style: TextStyle(
-                            fontSize: 9.5,
-                            fontWeight: FontWeight.w800,
-                            color: hasCloud ? LocoColors.success : LocoColors.orange,
-                          ),
-                        ),
-                      ),
+                      SizedBox(width: 6),
+                      Text('• Railway Assistant', style: TextStyle(fontSize: 12, color: LocoColors.orange, fontWeight: FontWeight.w700)),
                     ],
                   ),
-                  const Text(
-                    'Real-Time Mumbai Suburban Telemetry',
+                  Text(
+                    'Verified Railway & Journey Control',
                     style: TextStyle(fontSize: 11.5, color: LocoColors.textMuted, fontWeight: FontWeight.w500),
                   ),
                 ],
               ),
               const Spacer(),
-              IconButton(
-                icon: const Icon(Icons.key_rounded, size: 20, color: LocoColors.textMuted),
-                tooltip: 'Configure Gemini API Key',
-                onPressed: _showApiKeyDialog,
-              ),
               IconButton(
                 icon: const Icon(Icons.close, color: LocoColors.textMuted),
                 onPressed: () => Navigator.pop(context),
@@ -267,7 +230,7 @@ class _RailAISheetState extends State<RailAISheet> {
                           ),
                           SizedBox(width: 10),
                           Text(
-                            'LOCOpilot is evaluating track signals...',
+                            'LOCO Assist is calling verified railway tools...',
                             style: TextStyle(fontSize: 12, color: LocoColors.textMuted, fontWeight: FontWeight.w600),
                           ),
                         ],
@@ -281,7 +244,7 @@ class _RailAISheetState extends State<RailAISheet> {
             ),
           ),
 
-          // Quick Action Chips from the latest message
+          // Quick Action Chips from latest message
           if (_messages.isNotEmpty && _messages.last.quickReplies.isNotEmpty && !_isProcessing)
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -312,7 +275,7 @@ class _RailAISheetState extends State<RailAISheet> {
                   onSubmitted: _sendMessage,
                   enabled: !_isProcessing,
                   decoration: InputDecoration(
-                    hintText: 'Ask LOCOpilot (e.g. "Crowd radar for Dadar fast")...',
+                    hintText: 'Ask LOCO Assist (e.g. "Route Dadar to Borivali")...',
                     filled: true,
                     fillColor: LocoColors.canvas,
                     border: OutlineInputBorder(
@@ -340,6 +303,8 @@ class _RailAISheetState extends State<RailAISheet> {
   }
 
   Widget _buildMessageBubble(RailAIMessage msg) {
+    final cardType = msg.cardType?.toUpperCase() ?? 'TEXT';
+    final cardData = msg.cardData;
     final hasAction = !msg.isUser && (msg.actionPayload != null || msg.actionType != null);
     final actionLabel = msg.actionPayload?.label ?? (msg.actionType == 'VIEW_TICKET' ? '🎫 View Ticket' : '⚡ Proceed');
 
@@ -348,7 +313,7 @@ class _RailAISheetState extends State<RailAISheet> {
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 6),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
-        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.84),
+        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.88),
         decoration: BoxDecoration(
           color: msg.isUser ? LocoColors.orange : LocoColors.canvas,
           borderRadius: BorderRadius.circular(16).copyWith(
@@ -369,9 +334,20 @@ class _RailAISheetState extends State<RailAISheet> {
                 height: 1.4,
               ),
             ),
-            if (msg.mediaCard != null && msg.mediaCard!.category == 'CROWD')
-              _buildCoachCrowdHeatmap(msg.mediaCard!),
-            if (hasAction) ...[
+
+            // Rich Card Embeddings
+            if (!msg.isUser && cardData != null) ...[
+              const SizedBox(height: 8),
+              if (cardType == 'ROUTE_CARD') _buildRouteCard(cardData),
+              if (cardType == 'TICKET_CARD') _buildTicketCard(cardData),
+              if (cardType == 'JOURNEY_CARD') _buildJourneyCard(cardData),
+              if (cardType == 'STATION_CARD') _buildStationCard(cardData),
+              if (cardType == 'CONFIRMATION_CARD') _buildConfirmationCard(cardData),
+              if (cardType == 'ALERT_CARD') _buildAlertCard(cardData),
+            ],
+
+            // Action Button (if not already handled inside cards)
+            if (hasAction && cardType != 'CONFIRMATION_CARD') ...[
               const SizedBox(height: 10),
               ElevatedButton.icon(
                 onPressed: () {
@@ -387,7 +363,7 @@ class _RailAISheetState extends State<RailAISheet> {
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('Action triggered: $actionLabel'),
+                        content: Text('Action: $actionLabel'),
                         backgroundColor: LocoColors.textPrimary,
                       ),
                     );
@@ -410,96 +386,286 @@ class _RailAISheetState extends State<RailAISheet> {
     );
   }
 
-  Widget _buildCoachCrowdHeatmap(RichMediaCardPayload mediaCard) {
-    final List<CoachCrowdData> coaches = (mediaCard.data['coaches'] as List<dynamic>?)?.cast<CoachCrowdData>() ?? [];
-    if (coaches.isEmpty) return const SizedBox.shrink();
+  // ================= RICH CARD RENDERERS =================
+
+  Widget _buildRouteCard(Map<String, dynamic> data) {
+    final origin = data['origin'] ?? 'Origin';
+    final dest = data['destination'] ?? 'Destination';
+    final duration = data['duration_minutes'] ?? 0;
+    final transfers = data['transfers'] ?? 0;
+    final fare = data['fare'] ?? 0.0;
+    final stations = (data['stations'] as List<dynamic>?)?.cast<String>() ?? [];
 
     return Container(
-      margin: const EdgeInsets.only(top: 10),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: LocoColors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                mediaCard.title,
-                style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w800, color: LocoColors.textPrimary),
+              const Icon(Icons.train_rounded, color: LocoColors.orange, size: 18),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  '$origin → $dest',
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: LocoColors.textPrimary),
+                ),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: LocoColors.orangeLight,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: const Text(
-                  '12-COACH EMU',
-                  style: TextStyle(fontSize: 9, fontWeight: FontWeight.w900, color: LocoColors.orange),
+                decoration: BoxDecoration(color: LocoColors.orangeLight, borderRadius: BorderRadius.circular(6)),
+                child: Text(
+                  '₹${fare.toStringAsFixed(0)}',
+                  style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: LocoColors.orange),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 10),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: coaches.map((c) {
-                Color color;
-                if (c.densityPercent > 150) {
-                  color = LocoColors.error;
-                } else if (c.densityPercent > 100) {
-                  color = LocoColors.orange;
-                } else if (c.densityPercent > 50) {
-                  color = const Color(0xFFF59E0B);
-                } else {
-                  color = LocoColors.success;
-                }
-
-                return Container(
-                  width: 44,
-                  margin: const EdgeInsets.only(right: 6),
-                  padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
-                  decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: color.withValues(alpha: 0.6), width: 1),
-                  ),
-                  child: Column(
-                    children: [
-                      Text(
-                        c.coachId,
-                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.w900, color: color),
-                      ),
-                      const SizedBox(height: 2),
-                      Container(
-                        width: 24,
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: color,
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                      ),
-                      const SizedBox(height: 3),
-                      Text(
-                        '${c.densityPercent}%',
-                        style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.w800, color: color),
-                      ),
-                    ],
-                  ),
-                );
-              }).toList(),
-            ),
+          const SizedBox(height: 6),
+          Row(
+            children: [
+              Text('⏱️ ${duration}m', style: const TextStyle(fontSize: 11.5, color: LocoColors.textMuted)),
+              const SizedBox(width: 10),
+              Text(transfers == 0 ? '🟢 Direct' : '🔄 $transfers transfer(s)', style: const TextStyle(fontSize: 11.5, color: LocoColors.textMuted)),
+              const Spacer(),
+              const Text('Verified Route', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.green)),
+            ],
           ),
-          const SizedBox(height: 8),
-          const Text(
-            '💡 Green: Low/Seated | Yellow: Moderate | Orange: Heavy | Red: Packed (>150%)',
-            style: TextStyle(fontSize: 10, color: LocoColors.textMuted, fontWeight: FontWeight.w500),
+          if (stations.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            Text(
+              stations.take(4).join(' → ') + (stations.length > 4 ? ' ...' : ''),
+              style: const TextStyle(fontSize: 11, color: LocoColors.textMuted, fontStyle: FontStyle.italic),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTicketCard(Map<String, dynamic> data) {
+    final ticketId = (data['ticket_id'] ?? '').toString();
+    final origin = data['origin'] ?? 'Origin';
+    final dest = data['destination'] ?? 'Destination';
+    final status = data['status'] ?? 'ISSUED';
+    final fare = data['fare'] ?? 0.0;
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: LocoColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.qr_code_2_rounded, color: LocoColors.orange, size: 20),
+              const SizedBox(width: 6),
+              Text(
+                'Ticket #${ticketId.length > 8 ? ticketId.substring(0, 8).toUpperCase() : ticketId}',
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: LocoColors.textPrimary),
+              ),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: status == 'ACTIVE' || status == 'ISSUED' ? Colors.green.shade50 : Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  status.toString().toUpperCase(),
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: status == 'ACTIVE' || status == 'ISSUED' ? Colors.green.shade700 : LocoColors.textMuted,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text('$origin → $dest', style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600)),
+          const SizedBox(height: 2),
+          Text('Fare: ₹${(fare as num).toStringAsFixed(0)} • Authorized Server Ticket', style: const TextStyle(fontSize: 11, color: LocoColors.textMuted)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildJourneyCard(Map<String, dynamic> data) {
+    final current = data['current_station'] ?? 'In Transit';
+    final dest = data['destination'] ?? 'Destination';
+    final remaining = data['stations_remaining'] ?? 0;
+    final secStatus = data['security_status'] ?? 'NORMAL';
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: LocoColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.security, color: Colors.green, size: 18),
+              const SizedBox(width: 6),
+              const Text('Journey Guardian Active', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+              const Spacer(),
+              Text('Security: $secStatus', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.green)),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text('Near: $current  →  Destination: $dest', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
+          const SizedBox(height: 2),
+          Text('Remaining Stations: $remaining', style: const TextStyle(fontSize: 11.5, color: LocoColors.textMuted)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStationCard(Map<String, dynamic> data) {
+    final name = data['name'] ?? 'Station';
+    final code = data['code'] ?? '';
+    final lines = (data['lines'] as List<dynamic>?)?.cast<String>() ?? [];
+    final facilities = (data['facilities'] as List<dynamic>?)?.cast<String>() ?? [];
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: LocoColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.apartment_rounded, color: LocoColors.orange, size: 18),
+              const SizedBox(width: 6),
+              Text('$name ($code)', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+            ],
+          ),
+          if (lines.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Text('Serving Lines: ${lines.join(', ')}', style: const TextStyle(fontSize: 11.5, color: LocoColors.textMuted)),
+          ],
+          if (facilities.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Text('Facilities: ${facilities.join(' • ')}', style: const TextStyle(fontSize: 11, color: LocoColors.textMuted)),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildConfirmationCard(Map<String, dynamic> data) {
+    final actionId = data['action_id'] as String? ?? '';
+    final token = data['confirmation_token'] as String? ?? '';
+    final origin = data['origin'] ?? 'Origin';
+    final dest = data['destination'] ?? 'Destination';
+    final fare = data['fare'] ?? 0.0;
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF7ED),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.orange.shade200),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.warning_amber_rounded, color: Colors.orange.shade800, size: 20),
+              const SizedBox(width: 6),
+              Text(
+                'Action Confirmation Required',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.orange.shade900),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Confirm cancellation of ticket $origin → $dest (Refund: ₹${(fare as num).toStringAsFixed(0)})?',
+            style: const TextStyle(fontSize: 12, color: LocoColors.textPrimary),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: _isProcessing
+                      ? null
+                      : () => _handleActionConfirmation(
+                            actionId: actionId,
+                            confirmationToken: token,
+                            confirmed: false,
+                          ),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    side: const BorderSide(color: LocoColors.border),
+                  ),
+                  child: const Text('Keep Ticket', style: TextStyle(fontSize: 12, color: LocoColors.textPrimary)),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: _isProcessing
+                      ? null
+                      : () => _handleActionConfirmation(
+                            actionId: actionId,
+                            confirmationToken: token,
+                            confirmed: true,
+                          ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red.shade700,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                  ),
+                  child: const Text('Cancel Ticket', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAlertCard(Map<String, dynamic> data) {
+    final line = data['line'] ?? 'Network';
+    final status = data['status'] ?? 'NORMAL';
+
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.blue.shade50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.blue.shade200),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.info_outline_rounded, color: Colors.blue.shade800, size: 18),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              '$line: $status. All suburban services operational.',
+              style: TextStyle(fontSize: 11.5, color: Colors.blue.shade900, fontWeight: FontWeight.w500),
+            ),
           ),
         ],
       ),

@@ -65,6 +65,11 @@ class RailAIMessage {
   final AIIntentType? intent;
   final AIActionPayload? actionPayload;
   final RichMediaCardPayload? mediaCard;
+  final String? cardType; // e.g. "ROUTE_CARD", "STATION_CARD", "TICKET_CARD", "JOURNEY_CARD", "CONFIRMATION_CARD", "ALERT_CARD", "ERROR_CARD"
+  final Map<String, dynamic>? cardData;
+  final String? toolName;
+  final String? status;
+  final String? errorCode;
 
   RailAIMessage({
     required this.id,
@@ -76,6 +81,11 @@ class RailAIMessage {
     this.intent,
     this.actionPayload,
     this.mediaCard,
+    this.cardType,
+    this.cardData,
+    this.toolName,
+    this.status,
+    this.errorCode,
   });
 }
 

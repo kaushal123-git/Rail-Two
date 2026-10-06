@@ -1,81 +1,32 @@
-import 'dart:math';
 import '../models/ai_models.dart';
-import '../models/station.dart';
-import '../simulation/train_simulation_engine.dart';
-import 'station_state_service.dart';
 
+/// Legacy engine preserved for interface compatibility.
+/// Fake DateTime.now() schedule generation and crowd prediction have been removed.
+/// Live railway telemetry will connect via LOCO Backend in Phase 4.
+@Deprecated('Use LocoAssistService and TrainRepository directly')
 class LiveRailTelemetryEngine {
   static final LiveRailTelemetryEngine _instance = LiveRailTelemetryEngine._internal();
   factory LiveRailTelemetryEngine() => _instance;
   LiveRailTelemetryEngine._internal();
 
-  /// Formats live status report for train schedules & routes
+  /// Live schedule status (Phase 0: honest unavailable state)
   String getLiveScheduleReport({String? origin, String? destination, String? line}) {
-    final state = StationStateService();
-    final fromName = origin ?? state.currentStation.name;
-    final toName = destination ?? state.destinationStation.name;
-    final now = DateTime.now();
-
-    final trains = TrainSimulationEngine().currentTrains;
-    final relevantTrains = trains.where((t) {
-      if (line != null && line.isNotEmpty) {
-        return t.line.toLowerCase() == line.toLowerCase();
-      }
-      return true;
-    }).toList();
-
-    final time1 = _formatTime(now.add(const Duration(minutes: 4)));
-    final time2 = _formatTime(now.add(const Duration(minutes: 11)));
-    final time3 = _formatTime(now.add(const Duration(minutes: 18)));
-
-    return '🚆 Live Suburban Rail Telemetry ($fromName → $toName):\n\n'
-        '1. $fromName - $toName FAST Local @ $time1 (Platform 2)\n'
-        '   • Status: On Time | Headway: Clear Green Signal\n'
-        '   • Est. Travel Duration: 34 mins | Crowd: Moderate\n\n'
-        '2. $fromName - $toName SLOW Local @ $time2 (Platform 1)\n'
-        '   • Status: On Time | All Intermediate Stops\n'
-        '   • Est. Travel Duration: 46 mins | Crowd: Low / Seated\n\n'
-        '3. ❄️ $fromName - $toName AC FAST EMU @ $time3 (Platform 3)\n'
-        '   • Status: Air-Conditioned Vestibule | Fare: ₹65';
+    return 'Live railway timetable feed unavailable. Real-time timetable integration scheduled for Phase 4.';
   }
 
-  /// Calculates real-time delay risks across track junctions
+  /// Delay risk report (Phase 0: honest unavailable state)
   String getDelayRiskReport(String? stationName) {
-    final target = stationName ?? StationStateService().currentStation.name;
-    final trains = TrainSimulationEngine().currentTrains;
-    final delayed = trains.where((t) => t.delayMinutes > 0).toList();
-
-    if (delayed.isEmpty) {
-      return '✅ Track Signal Punctuality: 98.4% On-Time near $target.\n\n'
-          '• Signals at Borivali, Dadar, and CSMT junctions are showing green block clearance.\n'
-          '• Headways are maintained at 3-4 minute intervals across all lines.';
-    }
-
-    final t = delayed.first;
-    return '⚠️ Minor Signal Hold near $target:\n\n'
-        '• Train ${t.name} is running +${t.delayMinutes}m late near ${t.currentStation}.\n'
-        '• Subsequent fast trains are executing scheduled block speed control.\n'
-        '• Recommendation: Board upcoming SLOW local from Platform 1 for guaranteed block clearance.';
+    return 'Track signal and delay telemetry unavailable. Real-time railway feed scheduled for Phase 4.';
   }
 
-  /// Generates coach crowd density recommendations (C1 to C12)
+  /// Coach crowd radar (Removed from LOCO product scope)
   String getCoachCrowdRadar(String? stationName, String? line) {
-    final st = stationName ?? StationStateService().currentStation.name;
-    final hour = DateTime.now().hour;
-    final isPeak = (hour >= 8 && hour <= 11) || (hour >= 17 && hour <= 21);
+    return 'Crowd prediction has been removed from LOCO product scope.';
+  }
 
-    if (isPeak) {
-      return '⚡ Coach Crowd Radar for $st (Peak Hour Active):\n\n'
-          '• Platform Stairway Alignment: Coaches C4-C7 have high density (>180% capacity).\n'
-          '• Recommended Standing Zones:\n'
-          '  - Coach C1-C3 (South End): 35% less density\n'
-          '  - Coach C10-C12 (North End): 40% less density\n'
-          '• Quick Exit FOB: Walk towards Coach C8 position before train arrives.';
-    }
-
-    return '🟢 Crowd Radar for $st:\n\n'
-        '• Current Density: Moderate / Seated Comfort.\n'
-        '• Recommended Coaches: Coaches C6-C8 align directly with the main FOB exit stairs.';
+  /// Returns 12-coach crowd breakdown data (Empty list in Phase 0)
+  List<CoachCrowdData> getCoachCrowdList(String? stationName) {
+    return const [];
   }
 
   /// Provides interchange guide for major junctions (Dadar, Kurla, Bandra)
@@ -97,41 +48,7 @@ class LiveRailTelemetryEngine {
 
     return '🚉 Interchange Guidance for $stationName:\n\n'
         '• Follow overhead blue platform signs for Foot Overbridge (FOB) connectors.\n'
-        '• Board middle coaches (C6-C8) for nearest stairway access.';
-  }
-
-  /// Returns 12-coach crowd breakdown data
-  List<CoachCrowdData> getCoachCrowdList(String? stationName) {
-    final hour = DateTime.now().hour;
-    final isPeak = (hour >= 8 && hour <= 11) || (hour >= 17 && hour <= 21);
-
-    final densities = isPeak
-        ? [45, 60, 75, 185, 195, 190, 180, 140, 110, 50, 40, 35]
-        : [30, 40, 50, 65, 70, 75, 60, 55, 45, 35, 30, 25];
-
-    return List.generate(12, (index) {
-      final coachId = 'C${index + 1}';
-      final density = densities[index];
-      String pos = 'Middle';
-      if (index <= 3) pos = 'South End';
-      if (index >= 8) pos = 'North End';
-
-      String level = 'Low';
-      if (density > 150) {
-        level = 'Packed';
-      } else if (density > 100) {
-        level = 'Heavy';
-      } else if (density > 50) {
-        level = 'Moderate';
-      }
-
-      return CoachCrowdData(
-        coachId: coachId,
-        position: pos,
-        densityPercent: density,
-        crowdLevel: level,
-      );
-    });
+        '• Board middle coaches for nearest stairway access.';
   }
 
   /// Retrieves local station food & landmark highlights
@@ -222,12 +139,5 @@ class LiveRailTelemetryEngine {
         stationName: stationName,
       ),
     ];
-  }
-
-  String _formatTime(DateTime dt) {
-    final h = dt.hour > 12 ? dt.hour - 12 : (dt.hour == 0 ? 12 : dt.hour);
-    final m = dt.minute.toString().padLeft(2, '0');
-    final ampm = dt.hour >= 12 ? 'PM' : 'AM';
-    return '$h:$m $ampm';
   }
 }

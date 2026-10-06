@@ -2,14 +2,17 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../core/constants/loco_branding.dart';
 import '../core/theme/loco_theme.dart';
-import '../models/station.dart';
 import '../models/ticket.dart';
-import '../services/gemini_rail_service.dart';
+import '../services/auth_service.dart';
+import '../services/loco_assist_service.dart';
 import '../services/station_state_service.dart';
 import '../services/ticket_storage.dart';
-import '../simulation/train_simulation_engine.dart';
 import '../widgets/digital_ticket_inspector.dart';
 import '../widgets/rail_ai_sheet.dart';
+import '../models/journey.dart';
+import '../services/journey_guardian_service.dart';
+import '../services/location_service.dart';
+import '../widgets/journey_guardian_card.dart';
 import 'booking_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -23,23 +26,11 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final StationStateService _stationState = StationStateService();
-  StreamSubscription? _simSubscription;
-  Timer? _countdownTicker;
-  int _clockTick = 0;
 
   @override
   void initState() {
     super.initState();
     _stationState.addListener(_onStateChange);
-
-    // Refresh trains simulation every 15s
-    _simSubscription = TrainSimulationEngine().trainsStream.listen((_) {
-      if (mounted) setState(() {});
-    });
-
-    _countdownTicker = Timer.periodic(const Duration(seconds: 15), (_) {
-      if (mounted) setState(() => _clockTick++);
-    });
   }
 
   void _onStateChange() {
@@ -49,8 +40,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     _stationState.removeListener(_onStateChange);
-    _simSubscription?.cancel();
-    _countdownTicker?.cancel();
     super.dispose();
   }
 
@@ -148,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         onTap: () async {
                           Navigator.pop(context);
-                          final detected = await _stationState.detectCurrentLocation();
+                          final detected = await _stationState.detectCurrentLocation(forceGps: true);
                           if (mounted && detected != null) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
@@ -206,13 +195,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           trailing: isSelected
                               ? const Icon(Icons.check_circle, color: LocoColors.orange, size: 20)
                               : const Icon(Icons.chevron_right, size: 18, color: LocoColors.textMuted),
-                          onTap: () {
+                          onTap: () async {
                             if (isFrom) {
                               _stationState.setCurrentStation(s);
+                              await LocationService.setCustomLocation(s.latitude, s.longitude, name: s.name);
                             } else {
                               _stationState.setDestinationStation(s);
                             }
-                            Navigator.pop(context);
+                            if (mounted) Navigator.pop(context);
                           },
                         );
                       },
@@ -278,6 +268,11 @@ class _HomeScreenState extends State<HomeScreen> {
     final now = DateTime.now();
     final passId = 'PLT-${station.code}-${now.millisecondsSinceEpoch % 10000}';
 
+    final currentUser = await AuthService.getCurrentUser();
+    final passengerName = (currentUser != null && currentUser.name.isNotEmpty)
+        ? currentUser.name
+        : 'Commuter';
+
     final ticket = BookedTicket(
       id: passId,
       fromStationName: station.name,
@@ -294,7 +289,7 @@ class _HomeScreenState extends State<HomeScreen> {
       validUntil: now.add(const Duration(hours: 2)),
       status: TicketStatus.upcoming,
       distanceKm: 0.0,
-      passengerName: 'Aayush Sinha',
+      passengerName: passengerName,
       passengerAddress: 'Mumbai Suburban Area',
       passengerIdType: 'Digital Identity',
       passengerIdNumber: 'UTS-PASS',
@@ -314,15 +309,14 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildLoCoPilotAIBossCard() {
-    final geminiService = GeminiRailService();
-    final hasCloud = geminiService.hasCloudGemini;
-    final liveInsight = geminiService.getHomeBannerInsight();
+    final assistService = LocoAssistService();
+    final liveInsight = assistService.getHomeBannerInsight();
     final quickQueries = [
-      '⚡ Crowd Radar',
-      '⏱ Delay Risk',
       '🎫 Book Ticket',
-      '❄️ AC Local Times',
+      '💳 Season Pass',
+      '📋 UTS Rules',
       '🛡️ Journey Guardian',
+      '❄️ AC Local Times',
     ];
 
     return Container(
@@ -366,26 +360,26 @@ class _HomeScreenState extends State<HomeScreen> {
                   Row(
                     children: [
                       const Text(
-                        'LOCOpilot AI 2.0',
+                        'LOCO Assist',
                         style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 0.2),
                       ),
                       const SizedBox(width: 8),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                         decoration: BoxDecoration(
-                          color: hasCloud ? const Color(0xFF10B981).withValues(alpha: 0.2) : const Color(0xFFFF5200).withValues(alpha: 0.2),
+                          color: const Color(0xFFFF5200).withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                            color: hasCloud ? const Color(0xFF10B981) : const Color(0xFFFF5200),
+                            color: const Color(0xFFFF5200),
                             width: 0.8,
                           ),
                         ),
-                        child: Text(
-                          hasCloud ? 'GEMINI 1.5 ACTIVE' : 'MAIN BOSS ONLINE',
+                        child: const Text(
+                          'ASSISTANT',
                           style: TextStyle(
                             fontSize: 9,
                             fontWeight: FontWeight.w900,
-                            color: hasCloud ? const Color(0xFF34D399) : const Color(0xFFFF7A33),
+                            color: Color(0xFFFF7A33),
                           ),
                         ),
                       ),
@@ -393,7 +387,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: 2),
                   const Text(
-                    'Real-Time Autonomous Railway Command Engine',
+                    'Mumbai Suburban Railway Guidance Engine',
                     style: TextStyle(fontSize: 11, color: Color(0xFF94A3B8), fontWeight: FontWeight.w500),
                   ),
                 ],
@@ -610,6 +604,25 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
 
               const SizedBox(height: 14),
+
+              // ACTIVE JOURNEY GUARDIAN CARD (Phase 4 Real Backend Geofence & Progress Monitor)
+              StreamBuilder<ActiveJourney?>(
+                stream: JourneyGuardianService().journeyStream,
+                initialData: JourneyGuardianService().activeJourney,
+                builder: (context, snapshot) {
+                  final active = snapshot.data;
+                  if (active != null &&
+                      active.state != JourneyState.completed &&
+                      active.state != JourneyState.abandoned) {
+                    return JourneyGuardianCard(
+                      journey: active,
+                      onCompleted: () => setState(() {}),
+                      onAbandoned: () => setState(() {}),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
 
               // 1.5. LOCOPILOT AI BOSS HERO COMMAND CARD
               _buildLoCoPilotAIBossCard(),

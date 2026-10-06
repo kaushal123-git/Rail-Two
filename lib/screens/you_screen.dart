@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import '../core/constants/loco_branding.dart';
 import '../core/theme/loco_theme.dart';
 import '../models/user_account.dart';
+import '../services/api_service.dart';
 import '../services/auth_database.dart';
-import '../services/gemini_rail_service.dart';
 import '../services/security_services.dart';
 import '../services/station_state_service.dart';
+import '../widgets/rail_ai_sheet.dart';
 import 'demo_dashboard_screen.dart';
 import 'login_screen.dart';
 
@@ -26,7 +27,7 @@ class _YouScreenState extends State<YouScreen> {
   }
 
   Future<void> _loadUser() async {
-    final user = await AuthDatabase().getActiveSession() ?? await AuthDatabase().getLastActiveUser();
+    final user = await AuthDatabase().getActiveSession();
     if (mounted) {
       setState(() {
         _currentUser = user;
@@ -68,8 +69,10 @@ class _YouScreenState extends State<YouScreen> {
     );
 
     if (confirm == true) {
+      await ApiService.logout();
       await AuthDatabase().logout();
       if (!mounted) return;
+      setState(() => _currentUser = null);
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const LoginScreen()),
@@ -81,11 +84,12 @@ class _YouScreenState extends State<YouScreen> {
   @override
   Widget build(BuildContext context) {
     final trustService = LocationTrustService();
-    final displayName = _currentUser?.name ?? 'Aayush Sinha';
+    final isLoggedIn = _currentUser != null;
+    final displayName = _currentUser?.name ?? 'Unauthenticated Commuter';
     final displayIdentifier = _currentUser?.phone != null
         ? '+91 ${_currentUser!.phone}'
-        : (_currentUser?.email ?? '+91 98201 54321');
-    final initials = _getInitials(displayName);
+        : (_currentUser?.email ?? 'No active session');
+    final initials = isLoggedIn ? _getInitials(displayName) : '?';
 
     return Scaffold(
       backgroundColor: LocoColors.canvas,
@@ -143,20 +147,36 @@ class _YouScreenState extends State<YouScreen> {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          '$displayIdentifier • Mumbai Suburban',
+                          isLoggedIn ? '$displayIdentifier • Mumbai Suburban' : 'Sign in to access tickets & passes',
                           style: const TextStyle(fontSize: 13, color: LocoColors.textMuted),
                         ),
                       ],
                     ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: LocoColors.successLight,
-                      borderRadius: BorderRadius.circular(6),
+                  if (isLoggedIn)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: LocoColors.successLight,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: const Text('VERIFIED', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: LocoColors.success)),
+                    )
+                  else
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const LoginScreen()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: LocoColors.orange,
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                      child: const Text('Sign In', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: Colors.white)),
                     ),
-                    child: const Text('VERIFIED', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: LocoColors.success)),
-                  ),
                 ],
               ),
             ),
@@ -185,13 +205,11 @@ class _YouScreenState extends State<YouScreen> {
 
             const SizedBox(height: 20),
 
-            // AI & DEFAULT APP STATION STATUS
+            // LOCO ASSIST & DEFAULT APP STATION STATUS
             ListenableBuilder(
               listenable: StationStateService(),
               builder: (context, _) {
                 final state = StationStateService();
-                final gemini = GeminiRailService();
-                final hasCloud = gemini.hasCloudGemini;
 
                 return Container(
                   padding: const EdgeInsets.all(16),
@@ -219,7 +237,7 @@ class _YouScreenState extends State<YouScreen> {
                               ),
                               const SizedBox(width: 8),
                               const Text(
-                                'LOCOpilot AI Engine',
+                                'LOCO Assist Companion',
                                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: LocoColors.textPrimary),
                               ),
                             ],
@@ -227,15 +245,15 @@ class _YouScreenState extends State<YouScreen> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                             decoration: BoxDecoration(
-                              color: hasCloud ? LocoColors.successLight : LocoColors.orangeLight,
+                              color: LocoColors.orangeLight,
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: Text(
-                              hasCloud ? 'GEMINI 1.5 ACTIVE' : 'SMART LOCAL AI',
+                            child: const Text(
+                              'READY',
                               style: TextStyle(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w800,
-                                color: hasCloud ? LocoColors.success : LocoColors.orange,
+                                color: LocoColors.orange,
                               ),
                             ),
                           ),
@@ -263,66 +281,32 @@ class _YouScreenState extends State<YouScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Expanded(
+                          const Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text('Google Gemini API Key', style: TextStyle(fontSize: 11, color: LocoColors.textMuted, fontWeight: FontWeight.w600)),
+                                Text('Guidance Engine', style: TextStyle(fontSize: 11, color: LocoColors.textMuted, fontWeight: FontWeight.w600)),
                                 Text(
-                                  hasCloud ? '••••••••••••${gemini.apiKey!.substring(gemini.apiKey!.length > 4 ? gemini.apiKey!.length - 4 : 0)}' : 'Not configured (using local AI)',
-                                  style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: LocoColors.textSecondary),
+                                  'Suburban Ticketing & Rules Guidance',
+                                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: LocoColors.textSecondary),
                                 ),
                               ],
                             ),
                           ),
                           OutlinedButton(
                             onPressed: () {
-                              final ctrl = TextEditingController(text: gemini.apiKey ?? '');
-                              showDialog(
+                              showModalBottomSheet(
                                 context: context,
-                                builder: (dialogCtx) => AlertDialog(
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                                  title: const Text('Configure Gemini Key', style: TextStyle(fontWeight: FontWeight.w800)),
-                                  content: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Text('Enter your Google Gemini API key to enable live Generative AI transit reasoning:'),
-                                      const SizedBox(height: 12),
-                                      TextField(
-                                        controller: ctrl,
-                                        decoration: const InputDecoration(labelText: 'Gemini API Key', hintText: 'AIzaSy...'),
-                                        obscureText: true,
-                                      ),
-                                    ],
-                                  ),
-                                  actions: [
-                                    TextButton(onPressed: () => Navigator.pop(dialogCtx), child: const Text('Cancel')),
-                                    ElevatedButton(
-                                      onPressed: () async {
-                                        final nav = Navigator.of(dialogCtx);
-                                        await gemini.setApiKey(ctrl.text);
-                                        nav.pop();
-                                        if (context.mounted) {
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            SnackBar(
-                                              backgroundColor: LocoColors.textPrimary,
-                                              content: Text(ctrl.text.isEmpty ? 'Gemini Key cleared' : 'Gemini Key active!'),
-                                            ),
-                                          );
-                                          setState(() {});
-                                        }
-                                      },
-                                      child: const Text('Save'),
-                                    ),
-                                  ],
-                                ),
+                                isScrollControlled: true,
+                                backgroundColor: Colors.transparent,
+                                builder: (_) => const RailAISheet(),
                               );
                             },
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                               side: const BorderSide(color: LocoColors.orange),
                             ),
-                            child: Text(hasCloud ? 'Change' : 'Add Key', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: LocoColors.orange)),
+                            child: const Text('Ask Assist', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: LocoColors.orange)),
                           ),
                         ],
                       ),

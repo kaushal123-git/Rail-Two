@@ -36,12 +36,10 @@ void main() {
       final telemetry = LiveRailTelemetryEngine();
 
       final report = telemetry.getLiveScheduleReport(origin: 'Borivali', destination: 'Churchgate');
-      expect(report, contains('Live Suburban Rail Telemetry'));
-      expect(report, contains('Borivali'));
-      expect(report, contains('Churchgate'));
+      expect(report, contains('Live railway timetable feed unavailable'));
 
       final crowd = telemetry.getCoachCrowdRadar('Dadar', 'Western');
-      expect(crowd, contains('Crowd Radar'));
+      expect(crowd, contains('removed from LOCO product scope'));
 
       final interchange = telemetry.getInterchangeGuide('Dadar');
       expect(interchange, contains('Dadar Master Interchange Guide'));
@@ -72,8 +70,7 @@ void main() {
       expect(msg1.actionPayload?.actionType, equals('BOOK_TICKET'));
 
       final msg2 = await service.processQuery('Show me food options near Dadar station');
-      expect(msg2.text, contains('Station Spotlight near Dadar'));
-      expect(msg2.text, contains('Aaswad Upahar'));
+      expect(msg2.text, contains('Station POI and exit navigation will connect to live station mapping in Phase 4.'));
     });
   });
 }

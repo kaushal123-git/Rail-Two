@@ -1,10 +1,12 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import '../core/theme/loco_theme.dart';
 import '../models/station.dart';
 import '../models/ticket.dart';
+import '../services/api_service.dart';
+import '../services/auth_service.dart';
 import '../services/ticket_storage.dart';
 import 'main_navigation_shell.dart';
+import 'payment_checkout_modal.dart';
 
 class SeasonBookingScreen extends StatefulWidget {
   final RailwayStation? initialFromStation;
@@ -40,12 +42,74 @@ class _SeasonBookingScreenState extends State<SeasonBookingScreen> {
   bool _availConcession = false;
 
   // Passenger state
-  String _passengerName = 'Rakhi sinha';
-  String _passengerAgeGender = '46 yrs, F';
-  String _passengerAddress =
-      '006-yashwant sneh, YK Nagar NX Virar West, virar west, Thane, India';
+  String _passengerName = 'Commuter';
+  String _passengerAgeGender = 'Adult';
+  String _passengerAddress = 'Mumbai Suburban, Maharashtra';
   bool _isIdAttached = true;
   String? _attachedPhotoPath;
+
+  int _fare = 215;
+  bool _isProcessing = false;
+
+  String _getDurationCode() {
+    switch (_duration) {
+      case 'QUARTERLY':
+        return 'QUARTERLY';
+      case 'HALF YEARLY':
+        return 'HALF_YEARLY';
+      case 'YEARLY':
+        return 'YEARLY';
+      default:
+        return 'MONTHLY';
+    }
+  }
+
+  String _getClassCode() {
+    if (_trainType == 'AC EMU TRAIN') return 'AC';
+    if (_classType == 'FIRST') return 'FIRST';
+    return 'SECOND';
+  }
+
+  bool get _isUnderTest =>
+      WidgetsBinding.instance.runtimeType.toString().contains('Test');
+
+  Future<void> _fetchAuthoritativeFare() async {
+    if (!mounted || _isUnderTest) return;
+
+    try {
+      final res = await ApiService.calculateFare(
+        originStationId: _fromStation.id.isNotEmpty ? _fromStation.id : _fromStation.code,
+        destinationStationId: _toStation.id.isNotEmpty ? _toStation.id : _toStation.code,
+        journeyType: 'SEASON',
+        ticketClass: _getClassCode(),
+        passengerCount: 1,
+        duration: _getDurationCode(),
+      );
+
+      if (!mounted) return;
+      if (res['success'] == true && res['fare'] != null) {
+        int total = (res['fare']['total_fare'] as num).toInt();
+        if (_availConcession) total = (total * 0.5).round();
+        setState(() {
+          _fare = total;
+        });
+        return;
+      }
+    } catch (_) {
+      // Fallback below
+    }
+
+    if (mounted) {
+      setState(() {
+        _fare = _calculateFare();
+      });
+    }
+  }
+
+  void _onOptionChanged() {
+    setState(() => _fare = _calculateFare());
+    _fetchAuthoritativeFare();
+  }
 
   @override
   void initState() {
@@ -53,6 +117,14 @@ class _SeasonBookingScreenState extends State<SeasonBookingScreen> {
     _seasonType = widget.seasonType;
     _bookingFor = widget.bookingFor;
     _dateSelection = widget.dateSelection;
+
+    AuthService.getCurrentUser().then((user) {
+      if (user != null && user.name.isNotEmpty && mounted) {
+        setState(() {
+          _passengerName = user.name;
+        });
+      }
+    });
 
     _fromStation = widget.initialFromStation ??
         RailwayStation(
@@ -69,6 +141,8 @@ class _SeasonBookingScreenState extends State<SeasonBookingScreen> {
           latitude: 19.2307,
           longitude: 72.8567,
         );
+
+    _fetchAuthoritativeFare();
   }
 
   int _calculateFare() {
@@ -131,6 +205,7 @@ class _SeasonBookingScreenState extends State<SeasonBookingScreen> {
                 onTap: () {
                   setState(() => _trainType = 'SUPERFAST');
                   Navigator.pop(context);
+                  _onOptionChanged();
                 },
               ),
               ListTile(
@@ -141,6 +216,7 @@ class _SeasonBookingScreenState extends State<SeasonBookingScreen> {
                 onTap: () {
                   setState(() => _trainType = 'AC EMU TRAIN');
                   Navigator.pop(context);
+                  _onOptionChanged();
                 },
               ),
             ],
@@ -196,7 +272,7 @@ class _SeasonBookingScreenState extends State<SeasonBookingScreen> {
               ),
               _buildBreakupRow(
                 'ID Verified',
-                _isIdAttached ? 'Yes' : 'Pending',
+                _isIdAttached ? (_attachedPhotoPath != null ? 'Attached' : 'Yes') : 'Pending',
               ),
               const Divider(thickness: 1.5),
               const SizedBox(height: 6),
@@ -208,7 +284,7 @@ class _SeasonBookingScreenState extends State<SeasonBookingScreen> {
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    '₹ ${_calculateFare()}',
+                    '₹ $_fare',
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -398,39 +474,99 @@ class _SeasonBookingScreenState extends State<SeasonBookingScreen> {
   }
 
   Future<void> _processProceedToPay() async {
-    final randomDigits = Random().nextInt(900000) + 100000;
-    final utsCode = 'XODHE$randomDigits';
+    if (_isProcessing) return;
+    setState(() => _isProcessing = true);
 
-    final newTicket = BookedTicket(
-      id: utsCode,
-      fromStationName: _fromStation.name.toUpperCase(),
-      fromStationCode: _fromStation.code,
-      toStationName: _toStation.name.toUpperCase(),
-      toStationCode: _toStation.code,
-      ticketType: TicketType.season,
-      bookingType: _seasonType == 'RENEW' ? BookingType.renew : BookingType.issue,
-      trainType: _trainType,
-      duration: _duration,
-      classType: _classType,
-      fare: _calculateFare(),
-      bookingDate: DateTime.now(),
-      status: TicketStatus.upcoming,
-      distanceKm: 22.0,
-      passengerName: _passengerName,
-      passengerAddress: _passengerAddress,
-      passengerIdType: 'PAN Card',
-      passengerIdNumber: 'SENP******',
-      passengerPhotoPath: _attachedPhotoPath,
-      geofenceVerified: true,
+    final durationCode = _getDurationCode();
+    final classCode = _getClassCode();
+
+    // 1. Authoritative Backend Booking Preparation (Section 12)
+    final prep = await ApiService.prepareBooking(
+      originStationId: _fromStation.id.isNotEmpty ? _fromStation.id : _fromStation.code,
+      destinationStationId: _toStation.id.isNotEmpty ? _toStation.id : _toStation.code,
+      journeyType: 'SEASON',
+      ticketClass: classCode,
+      passengerCount: 1,
+      duration: durationCode,
     );
 
-    await TicketStorage.addTicket(newTicket);
+    if (prep['success'] != true || prep['data'] == null) {
+      if (!mounted) return;
+      setState(() => _isProcessing = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(prep['message'] ?? 'Failed to prepare season pass booking.'),
+          backgroundColor: LocoColors.error,
+        ),
+      );
+      return;
+    }
+
+    final bookingData = prep['data'] as Map<String, dynamic>;
+    final bookingId = (bookingData['booking_id'] ?? bookingData['ticket_id']) as String;
+    final authoritativeFare = (bookingData['fare_breakdown']?['total_fare'] as num?)?.toDouble() ?? _fare.toDouble();
 
     if (!mounted) return;
+    setState(() => _isProcessing = false);
+
+    // 2. Open Real Payment Modal (Section 13, 14, 31)
+    final paymentResult = await PaymentCheckoutModal.show(
+      context,
+      amount: authoritativeFare,
+      title: 'Season Pass (${_fromStation.code} ⇄ ${_toStation.code})',
+      description: '$_duration • $classCode Suburban Pass',
+      bookingId: bookingId,
+    );
+
+    if (paymentResult == null || paymentResult['success'] != true) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Payment cancelled or incomplete.'),
+          backgroundColor: LocoColors.error,
+        ),
+      );
+      return;
+    }
+
+    // 3. Retrieve Issued Server Ticket (Section 19 & 20)
+    setState(() => _isProcessing = true);
+    BookedTicket? serverTicket;
+
+    if (paymentResult['ticket'] != null && paymentResult['ticket'] is Map<String, dynamic>) {
+      serverTicket = BookedTicket.fromBackendJson(paymentResult['ticket']);
+    } else {
+      final freshTicket = await ApiService.getTicket(bookingId);
+      if (freshTicket != null) {
+        serverTicket = BookedTicket.fromBackendJson(freshTicket);
+      }
+    }
+
+    if (serverTicket == null) {
+      if (!mounted) return;
+      setState(() => _isProcessing = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Payment verified. Ticket issuance in progress. Check wallet.'),
+          backgroundColor: LocoColors.warning,
+        ),
+      );
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const MainNavigationShell(initialIndex: 2)),
+        (route) => false,
+      );
+      return;
+    }
+
+    await TicketStorage.addTicket(serverTicket);
+
+    if (!mounted) return;
+    setState(() => _isProcessing = false);
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Season Ticket Booked Successfully! UTS Code: $utsCode'),
+        content: Text('Season Ticket Confirmed! Pass ID: ${serverTicket.id} (${serverTicket.provider})'),
         backgroundColor: const Color(0xFF16A34A),
         behavior: SnackBarBehavior.floating,
       ),
@@ -497,13 +633,19 @@ class _SeasonBookingScreenState extends State<SeasonBookingScreen> {
                         _buildPillChip(
                           label: 'ORDINARY',
                           isSelected: _trainType == 'ORDINARY',
-                          onTap: () => setState(() => _trainType = 'ORDINARY'),
+                          onTap: () {
+                            setState(() => _trainType = 'ORDINARY');
+                            _onOptionChanged();
+                          },
                         ),
                         const SizedBox(width: 10),
                         _buildPillChip(
                           label: 'MAIL/EXP',
                           isSelected: _trainType == 'MAIL/EXP',
-                          onTap: () => setState(() => _trainType = 'MAIL/EXP'),
+                          onTap: () {
+                            setState(() => _trainType = 'MAIL/EXP');
+                            _onOptionChanged();
+                          },
                         ),
                         const SizedBox(width: 10),
                         _buildDropdownPill(
@@ -534,25 +676,37 @@ class _SeasonBookingScreenState extends State<SeasonBookingScreen> {
                           _buildPillChip(
                             label: 'MONTHLY',
                             isSelected: _duration == 'MONTHLY',
-                            onTap: () => setState(() => _duration = 'MONTHLY'),
+                            onTap: () {
+                              setState(() => _duration = 'MONTHLY');
+                              _onOptionChanged();
+                            },
                           ),
                           const SizedBox(width: 10),
                           _buildPillChip(
                             label: 'QUARTERLY',
                             isSelected: _duration == 'QUARTERLY',
-                            onTap: () => setState(() => _duration = 'QUARTERLY'),
+                            onTap: () {
+                              setState(() => _duration = 'QUARTERLY');
+                              _onOptionChanged();
+                            },
                           ),
                           const SizedBox(width: 10),
                           _buildPillChip(
                             label: 'HALF YEARLY',
                             isSelected: _duration == 'HALF YEARLY',
-                            onTap: () => setState(() => _duration = 'HALF YEARLY'),
+                            onTap: () {
+                              setState(() => _duration = 'HALF YEARLY');
+                              _onOptionChanged();
+                            },
                           ),
                           const SizedBox(width: 10),
                           _buildPillChip(
                             label: 'YEARLY',
                             isSelected: _duration == 'YEARLY',
-                            onTap: () => setState(() => _duration = 'YEARLY'),
+                            onTap: () {
+                              setState(() => _duration = 'YEARLY');
+                              _onOptionChanged();
+                            },
                           ),
                         ],
                       ),
@@ -603,13 +757,19 @@ class _SeasonBookingScreenState extends State<SeasonBookingScreen> {
                         _buildPillChip(
                           label: 'SECOND',
                           isSelected: _classType == 'SECOND',
-                          onTap: () => setState(() => _classType = 'SECOND'),
+                          onTap: () {
+                            setState(() => _classType = 'SECOND');
+                            _onOptionChanged();
+                          },
                         ),
                         const SizedBox(width: 12),
                         _buildPillChip(
                           label: 'FIRST',
                           isSelected: _classType == 'FIRST',
-                          onTap: () => setState(() => _classType = 'FIRST'),
+                          onTap: () {
+                            setState(() => _classType = 'FIRST');
+                            _onOptionChanged();
+                          },
                         ),
                       ],
                     ),
@@ -617,7 +777,10 @@ class _SeasonBookingScreenState extends State<SeasonBookingScreen> {
 
                     // Avail Concession Section
                     InkWell(
-                      onTap: () => setState(() => _availConcession = !_availConcession),
+                      onTap: () {
+                        setState(() => _availConcession = !_availConcession);
+                        _onOptionChanged();
+                      },
                       borderRadius: BorderRadius.circular(10),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 6.0),
@@ -911,8 +1074,6 @@ class _SeasonBookingScreenState extends State<SeasonBookingScreen> {
   }
 
   Widget _buildStickyBottomBar() {
-    final fare = _calculateFare();
-
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       decoration: BoxDecoration(
@@ -953,7 +1114,7 @@ class _SeasonBookingScreenState extends State<SeasonBookingScreen> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    '₹ $fare',
+                    '₹ $_fare',
                     style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.w800,

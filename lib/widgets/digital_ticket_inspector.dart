@@ -167,7 +167,13 @@ class DigitalTicketInspector extends StatelessWidget {
                     _buildInfoRow('ID Proof', '${ticket.passengerIdType} (${ticket.passengerIdNumber})'),
                     _buildInfoRow('Class', '${ticket.classType} CLASS'),
                     _buildInfoRow('Distance', '${ticket.distanceKm.toStringAsFixed(1)} km'),
-                    _buildInfoRow('Total Fare', '₹${ticket.fare} (PAID VIA LOCO UPI)'),
+                    _buildInfoRow('Total Fare', '₹${ticket.fare.toInt()} (PAID • LOCO AUTH)'),
+                    _buildInfoRow('Provider', ticket.provider.isNotEmpty ? ticket.provider : 'LOCO_CORE'),
+                    if (ticket.validUntil != null)
+                      _buildInfoRow(
+                        'Valid Until',
+                        '${ticket.validUntil!.day}/${ticket.validUntil!.month}/${ticket.validUntil!.year} at ${ticket.validUntil!.hour}:${ticket.validUntil!.minute.toString().padLeft(2, '0')}',
+                      ),
                     _buildInfoRow(
                       'Booking Time',
                       '${ticket.bookingDate.day}/${ticket.bookingDate.month}/${ticket.bookingDate.year} at ${ticket.bookingDate.hour}:${ticket.bookingDate.minute.toString().padLeft(2, '0')}',

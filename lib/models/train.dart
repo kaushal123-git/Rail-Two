@@ -84,4 +84,6 @@ class LocoTrain {
       isAc: isAc ?? this.isAc,
     );
   }
+
+  bool get isFast => trainType.toLowerCase().contains('fast');
 }

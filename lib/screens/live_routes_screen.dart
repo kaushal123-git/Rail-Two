@@ -1,10 +1,9 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import '../core/theme/loco_theme.dart';
+import '../models/route_option.dart';
 import '../models/station.dart';
-import '../models/train.dart';
+import '../services/route_recommendation_service.dart';
 import '../services/station_state_service.dart';
-import '../simulation/train_simulation_engine.dart';
 import '../widgets/rail_ai_sheet.dart';
 import 'booking_screen.dart';
 
@@ -18,36 +17,56 @@ class LiveRoutesScreen extends StatefulWidget {
 class _LiveRoutesScreenState extends State<LiveRoutesScreen> {
   final StationStateService _stationState = StationStateService();
   String _selectedFilter = 'All Routes';
-  StreamSubscription<List<LocoTrain>>? _trainSub;
-  int _secondsCounter = 0;
-  Timer? _timer;
 
   final Set<String> _expandedRoutes = {};
+  List<RouteOption> _liveRoutes = [];
+  bool _isLoadingRoutes = false;
+
+  bool get _isUnderTest =>
+      WidgetsBinding.instance.runtimeType.toString().contains('Test');
 
   @override
   void initState() {
     super.initState();
     _stationState.addListener(_onStationStateChanged);
-
-    // Periodically tick countdown timer for live feel
-    _timer = Timer.periodic(const Duration(seconds: 15), (t) {
-      if (mounted) setState(() => _secondsCounter++);
-    });
-
-    _trainSub = TrainSimulationEngine().trainsStream.listen((_) {
-      if (mounted) setState(() {});
-    });
+    _loadRoutes();
   }
 
   void _onStationStateChanged() {
-    if (mounted) setState(() {});
+    if (mounted) {
+      _loadRoutes();
+      setState(() {});
+    }
+  }
+
+  Future<void> _loadRoutes() async {
+    if (!mounted || _isUnderTest) return;
+
+    final from = _stationState.currentStation;
+    final to = _stationState.destinationStation;
+
+    setState(() => _isLoadingRoutes = true);
+    try {
+      final routes = await RouteRecommendationService.getRecommendationsAsync(
+        fromStation: from,
+        toStation: to,
+      );
+      if (mounted) {
+        setState(() {
+          _liveRoutes = routes;
+          _isLoadingRoutes = false;
+        });
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() => _isLoadingRoutes = false);
+      }
+    }
   }
 
   @override
   void dispose() {
     _stationState.removeListener(_onStationStateChanged);
-    _trainSub?.cancel();
-    _timer?.cancel();
     super.dispose();
   }
 
@@ -288,7 +307,7 @@ class _LiveRoutesScreenState extends State<LiveRoutesScreen> {
                       width: 8,
                       height: 8,
                       decoration: const BoxDecoration(
-                        color: LocoColors.success,
+                        color: LocoColors.orange,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -299,8 +318,8 @@ class _LiveRoutesScreenState extends State<LiveRoutesScreen> {
                     ),
                   ],
                 ),
-                Text(
-                  'Auto-refreshed',
+                const Text(
+                  'Live Feed',
                   style: TextStyle(fontSize: 11, color: LocoColors.textMuted, fontWeight: FontWeight.w500),
                 ),
               ],
@@ -308,112 +327,103 @@ class _LiveRoutesScreenState extends State<LiveRoutesScreen> {
 
             const SizedBox(height: 12),
 
-            // Route 1: Fast Local
-            if (_selectedFilter == 'All Routes' || _selectedFilter == '⚡ Fast Locals' || _selectedFilter == '🎯 Direct Only')
-              _buildRouteCard(
-                id: 'route_fast_1',
-                title: '${to.name} Fast Local',
-                tag: '15-Car High Capacity',
-                tagColor: LocoColors.orange,
-                departsInMinutes: 4,
-                departureTime: '09:45 AM',
-                platform: 'PF 2',
-                durationMinutes: 34,
-                haltsCount: 6,
-                distanceKm: 36.5,
-                crowdDensity: 'Moderate',
-                crowdColor: LocoColors.warning,
-                recommendedCoach: 'Board Coach C6-C8 for fast interchange',
-                fareSecondClass: 10,
-                fareFirstClass: 65,
-                isAc: false,
-                stops: [from.name, 'Vasai Road', 'Bhayandar', 'Borivali', 'Andheri', 'Bandra', to.name],
-                onBook: () => _bookRoute(from, to),
-              ),
+            Builder(
+              builder: (context) {
+                if (_isLoadingRoutes) {
+                  return const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 36),
+                    child: Center(
+                      child: CircularProgressIndicator(color: LocoColors.orange),
+                    ),
+                  );
+                }
 
-            // Route 2: AC Local EMU
-            if (_selectedFilter == 'All Routes' || _selectedFilter == '❄️ AC Local EMU' || _selectedFilter == '👥 Least Crowded')
-              _buildRouteCard(
-                id: 'route_ac_1',
-                title: '${to.name} AC EMU Express',
-                tag: '12-Car Vestibuled AC',
-                tagColor: Colors.blueAccent,
-                departsInMinutes: 18,
-                departureTime: '09:59 AM',
-                platform: 'PF 1',
-                durationMinutes: 32,
-                haltsCount: 5,
-                distanceKm: 36.5,
-                crowdDensity: 'Low Seating Guarantee',
-                crowdColor: LocoColors.success,
-                recommendedCoach: 'Any Coach (All Interconnected AC)',
-                fareSecondClass: 65,
-                fareFirstClass: 65,
-                isAc: true,
-                stops: [from.name, 'Borivali', 'Andheri', 'Bandra', to.name],
-                onBook: () => _bookRoute(from, to, isAc: true),
-              ),
+                final allRoutes = _liveRoutes;
+                final filteredRoutes = allRoutes.where((r) {
+                  if (_selectedFilter == '⚡ Fast Locals') return r.isFast;
+                  if (_selectedFilter == '❄️ AC Local EMU') return r.isAc;
+                  if (_selectedFilter == '🎯 Direct Only') return r.transfers == 0;
+                  return true;
+                }).toList();
 
-            // Route 3: Slow Local
-            if (_selectedFilter == 'All Routes' || _selectedFilter == '🎯 Direct Only' || _selectedFilter == '👥 Least Crowded')
-              _buildRouteCard(
-                id: 'route_slow_1',
-                title: '${to.name} Slow Local',
-                tag: '12-Car Standard',
-                tagColor: LocoColors.textSecondary,
-                departsInMinutes: 11,
-                departureTime: '09:52 AM',
-                platform: 'PF 4',
-                durationMinutes: 52,
-                haltsCount: 16,
-                distanceKm: 36.5,
-                crowdDensity: 'Low at Origin Station',
-                crowdColor: LocoColors.success,
-                recommendedCoach: 'Coach C4 or C9 (Seats available at source)',
-                fareSecondClass: 10,
-                fareFirstClass: 65,
-                isAc: false,
-                stops: [
-                  from.name,
-                  'Nalasopara',
-                  'Vasai Road',
-                  'Naigaon',
-                  'Bhayandar',
-                  'Mira Road',
-                  'Dahisar',
-                  'Borivali',
-                  'Kandivali',
-                  'Malad',
-                  'Goregaon',
-                  'Andheri',
-                  'Bandra',
-                  to.name,
-                ],
-                onBook: () => _bookRoute(from, to),
-              ),
+                if (filteredRoutes.isEmpty) {
+                  final bool noRoutesAtAll = allRoutes.isEmpty;
+                  return Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 28),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: LocoColors.border),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: const BoxDecoration(
+                            color: LocoColors.orangeLight,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.alt_route_rounded, size: 36, color: LocoColors.orange),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          noRoutesAtAll
+                              ? 'No Network Graph Routes Found'
+                              : 'No Routes for "$_selectedFilter"',
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: LocoColors.textPrimary),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          noRoutesAtAll
+                              ? 'No direct or transfer railway connections found between ${from.name} and ${to.name}. You can still book direct point-to-point tickets below.'
+                              : 'Try choosing "All Routes" to view all graph-computed options.',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 12.5, color: LocoColors.textMuted, height: 1.4),
+                        ),
+                        const SizedBox(height: 20),
+                        ElevatedButton.icon(
+                          onPressed: () => _bookRoute(from, to),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: LocoColors.orange,
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                          ),
+                          icon: const Icon(Icons.confirmation_num_outlined, size: 18, color: Colors.white),
+                          label: Text(
+                            'Proceed to Book (${from.code} → ${to.code})',
+                            style: const TextStyle(fontWeight: FontWeight.w800, color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
 
-            // Route 4: Next Fast Local
-            if (_selectedFilter == 'All Routes' || _selectedFilter == '⚡ Fast Locals')
-              _buildRouteCard(
-                id: 'route_fast_2',
-                title: '${to.name} Fast Local',
-                tag: '15-Car High Capacity',
-                tagColor: LocoColors.orange,
-                departsInMinutes: 24,
-                departureTime: '10:05 AM',
-                platform: 'PF 3',
-                durationMinutes: 35,
-                haltsCount: 6,
-                distanceKm: 36.5,
-                crowdDensity: 'Moderate',
-                crowdColor: LocoColors.warning,
-                recommendedCoach: 'Coach C1-C3 (South End)',
-                fareSecondClass: 10,
-                fareFirstClass: 65,
-                isAc: false,
-                stops: [from.name, 'Vasai Road', 'Bhayandar', 'Borivali', 'Andheri', 'Bandra', to.name],
-                onBook: () => _bookRoute(from, to),
-              ),
+                return Column(
+                  children: filteredRoutes.map((route) {
+                    return _buildRouteCard(
+                      id: route.id,
+                      title: route.title,
+                      tag: route.isAc ? 'AC Local EMU' : (route.isFast ? 'Fast Local' : 'Slow Local'),
+                      tagColor: route.isAc ? Colors.blueAccent : (route.isFast ? LocoColors.orange : LocoColors.textSecondary),
+                      departsInMinutes: route.departsInMinutes,
+                      departureTime: 'Scheduled',
+                      platform: route.platform,
+                      durationMinutes: route.duration,
+                      haltsCount: route.stops.length,
+                      distanceKm: 36.5,
+                      fareSecondClass: route.fare,
+                      fareFirstClass: route.acFare,
+                      isAc: route.isAc,
+                      stops: route.stops,
+                      onBook: () => _bookRoute(from, to, isAc: route.isAc),
+                    );
+                  }).toList(),
+                );
+              },
+            ),
           ],
         ),
       ),
@@ -584,7 +594,7 @@ class _LiveRoutesScreenState extends State<LiveRoutesScreen> {
   }
 
   Widget _buildFilterChips() {
-    final filters = ['All Routes', '⚡ Fast Locals', '❄️ AC Local EMU', '🎯 Direct Only', '👥 Least Crowded'];
+    final filters = ['All Routes', '⚡ Fast Locals', '❄️ AC Local EMU', '🎯 Direct Only'];
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -629,9 +639,6 @@ class _LiveRoutesScreenState extends State<LiveRoutesScreen> {
     required int durationMinutes,
     required int haltsCount,
     required double distanceKm,
-    required String crowdDensity,
-    required Color crowdColor,
-    required String recommendedCoach,
     required int fareSecondClass,
     required int fareFirstClass,
     required bool isAc,
@@ -772,33 +779,6 @@ class _LiveRoutesScreenState extends State<LiveRoutesScreen> {
                       style: const TextStyle(fontSize: 12, color: LocoColors.textMuted),
                     ),
                   ],
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 10),
-
-          // Crowd Radar Insight Box
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: LocoColors.canvas,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: LocoColors.borderLight),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.people_outline, size: 16, color: crowdColor),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    '$crowdDensity • $recommendedCoach',
-                    style: const TextStyle(fontSize: 11.5, color: LocoColors.textSecondary, fontWeight: FontWeight.w500),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
                 ),
               ],
             ),

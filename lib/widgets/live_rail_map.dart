@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../core/theme/loco_theme.dart';
 import '../models/station.dart';
 import '../models/train.dart';
-import '../simulation/train_simulation_engine.dart';
+import '../services/train_repository.dart';
 
 class LiveRailMap extends StatefulWidget {
   final List<RailwayStation> stations;
@@ -54,8 +54,8 @@ class _LiveRailMapState extends State<LiveRailMap> with SingleTickerProviderStat
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<LocoTrain>>(
-      stream: TrainSimulationEngine().trainsStream,
-      initialData: TrainSimulationEngine().currentTrains,
+      stream: TrainRepository().trainsStream,
+      initialData: TrainRepository().currentTrains,
       builder: (context, snapshot) {
         final trains = snapshot.data ?? [];
 
@@ -131,14 +131,16 @@ class _LiveRailMapState extends State<LiveRailMap> with SingleTickerProviderStat
                     Container(
                       width: 8,
                       height: 8,
-                      decoration: const BoxDecoration(
-                        color: LocoColors.success,
+                      decoration: BoxDecoration(
+                        color: trains.isEmpty ? LocoColors.warning : LocoColors.success,
                         shape: BoxShape.circle,
                       ),
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      '${trains.length} Trains Live',
+                      trains.isEmpty
+                          ? 'Live train positions unavailable'
+                          : '${trains.length} Trains Active',
                       style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w700,

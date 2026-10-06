@@ -15,7 +15,7 @@ void main() {
 
     // 1. Initial State: MPIN Unlock tab is active
     expect(find.text('Enter 4-Digit MPIN'), findsOneWidget);
-    expect(find.text('Demo default PIN: 1234'), findsOneWidget);
+    expect(find.text('Enter your 4-digit security PIN'), findsOneWidget);
     expect(find.text('UNLOCK LOCO'), findsOneWidget);
     expect(find.text('GET OTP CODE'), findsNothing);
     expect(find.text('LOG IN WITH PASSWORD'), findsNothing);
@@ -42,7 +42,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
 
     expect(find.text('Enter 4-Digit MPIN'), findsOneWidget);
-    expect(find.text('Demo default PIN: 1234'), findsOneWidget);
+    expect(find.text('Enter your 4-digit security PIN'), findsOneWidget);
     expect(find.text('UNLOCK LOCO'), findsOneWidget);
     expect(find.text('GET OTP CODE'), findsNothing);
 

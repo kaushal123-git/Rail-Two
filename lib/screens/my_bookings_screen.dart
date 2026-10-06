@@ -65,7 +65,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> with SingleTickerPr
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
-                      'UTS: ${ticket.id}',
+                      '${ticket.provider.isNotEmpty ? ticket.provider : 'LOCO'}: ${ticket.id}',
                       style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF0066FF)),
                     ),
                   ),
@@ -328,7 +328,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> with SingleTickerPr
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'UTS: ${ticket.id}',
+                      '${ticket.provider.isNotEmpty ? ticket.provider : 'LOCO'}: ${ticket.id}',
                       style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Color(0xFF1E293B)),
                     ),
                   ],

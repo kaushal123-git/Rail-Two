@@ -10,6 +10,8 @@ enum JourneyState {
   inTransit,
   destinationApproach,
   completed,
+  abandoned,
+  suspicious,
 }
 
 class ActiveJourney {
@@ -30,6 +32,17 @@ class ActiveJourney {
   final String? alternativeReason;
   final DateTime startTime;
 
+  // Phase 4 Backend Integration Fields
+  final String? serverJourneyId;
+  final String? serverTicketId;
+  final String securityState; // NORMAL, LOCATION_UNCERTAIN, ROUTE_DEVIATION, SECURITY_WARNING, SUSPICIOUS
+  final double locationConfidence; // 0.0 to 1.0
+  final double riskScore; // 0.0 to 1.0
+  final List<String> routeStationNames;
+  final int currentStationIndex;
+  final DateTime? serverLastValidated;
+  final Map<String, dynamic>? lastIntegrityReport;
+
   ActiveJourney({
     required this.ticket,
     required this.originStation,
@@ -47,6 +60,15 @@ class ActiveJourney {
     this.isAlternativeAvailable = false,
     this.alternativeReason,
     DateTime? startTime,
+    this.serverJourneyId,
+    this.serverTicketId,
+    this.securityState = 'NORMAL',
+    this.locationConfidence = 1.0,
+    this.riskScore = 0.0,
+    this.routeStationNames = const [],
+    this.currentStationIndex = 0,
+    this.serverLastValidated,
+    this.lastIntegrityReport,
   }) : startTime = startTime ?? DateTime.now();
 
   ActiveJourney copyWith({
@@ -66,6 +88,15 @@ class ActiveJourney {
     bool? isAlternativeAvailable,
     String? alternativeReason,
     DateTime? startTime,
+    String? serverJourneyId,
+    String? serverTicketId,
+    String? securityState,
+    double? locationConfidence,
+    double? riskScore,
+    List<String>? routeStationNames,
+    int? currentStationIndex,
+    DateTime? serverLastValidated,
+    Map<String, dynamic>? lastIntegrityReport,
   }) {
     return ActiveJourney(
       ticket: ticket ?? this.ticket,
@@ -84,6 +115,15 @@ class ActiveJourney {
       isAlternativeAvailable: isAlternativeAvailable ?? this.isAlternativeAvailable,
       alternativeReason: alternativeReason ?? this.alternativeReason,
       startTime: startTime ?? this.startTime,
+      serverJourneyId: serverJourneyId ?? this.serverJourneyId,
+      serverTicketId: serverTicketId ?? this.serverTicketId,
+      securityState: securityState ?? this.securityState,
+      locationConfidence: locationConfidence ?? this.locationConfidence,
+      riskScore: riskScore ?? this.riskScore,
+      routeStationNames: routeStationNames ?? this.routeStationNames,
+      currentStationIndex: currentStationIndex ?? this.currentStationIndex,
+      serverLastValidated: serverLastValidated ?? this.serverLastValidated,
+      lastIntegrityReport: lastIntegrityReport ?? this.lastIntegrityReport,
     );
   }
 }

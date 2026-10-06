@@ -70,20 +70,32 @@ class _TicketsScreenState extends State<TicketsScreen> with SingleTickerProvider
     );
   }
 
-  void _startJourneyWithGuardian(BookedTicket ticket) {
+  Future<void> _startJourneyWithGuardian(BookedTicket ticket) async {
     final bvi = RailwayStation(id: 'borivali', name: ticket.fromStationName, latitude: 19.2290, longitude: 72.8573);
     final ddr = RailwayStation(id: 'dadar', name: ticket.toStationName, latitude: 19.0192, longitude: 72.8438);
 
-    JourneyGuardianService().startJourney(
+    final res = await JourneyGuardianService().startJourney(
       ticket: ticket,
       originStation: bvi,
       destinationStation: ddr,
     );
 
+    if (!mounted) return;
+
+    if (res['success'] == false && res['error']?['code'] == 'JOURNEY_START_REJECTED') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: LocoColors.warning,
+          content: Text('⚠️ Geofence Validation: ${res['error']?['message'] ?? 'You must be near the origin station to start this journey.'}'),
+        ),
+      );
+      return;
+    }
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         backgroundColor: LocoColors.orange,
-        content: Text('🛡️ Journey Guardian Active! Switched to Home tracking.'),
+        content: Text('🛡️ Journey Guardian Active! Server verified station boarding geofence.'),
       ),
     );
   }
@@ -126,57 +138,69 @@ class _TicketsScreenState extends State<TicketsScreen> with SingleTickerProvider
     final list = _getFilteredTickets(tabIndex);
 
     if (list.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 64,
-                height: 64,
-                decoration: const BoxDecoration(
-                  color: LocoColors.orangeLight,
-                  shape: BoxShape.circle,
+      return RefreshIndicator(
+        onRefresh: _loadTickets,
+        color: LocoColors.orange,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Container(
+            alignment: Alignment.center,
+            padding: const EdgeInsets.all(32.0),
+            height: MediaQuery.of(context).size.height * 0.6,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 64,
+                  height: 64,
+                  decoration: const BoxDecoration(
+                    color: LocoColors.orangeLight,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.confirmation_number_outlined, color: LocoColors.orange, size: 32),
                 ),
-                child: const Icon(Icons.confirmation_number_outlined, color: LocoColors.orange, size: 32),
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'No Tickets Here',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: LocoColors.textPrimary),
-              ),
-              const SizedBox(height: 6),
-              const Text(
-                'You’re all clear. Booked journeys and active season passes will be safely accessible here offline.',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 13, color: LocoColors.textMuted),
-              ),
-              const SizedBox(height: 20),
-              if (widget.onPlanJourneyTap != null)
-                ElevatedButton(
-                  onPressed: widget.onPlanJourneyTap,
-                  child: const Text('Plan a Journey'),
+                const SizedBox(height: 16),
+                const Text(
+                  'No Tickets Here',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: LocoColors.textPrimary),
                 ),
-            ],
+                const SizedBox(height: 6),
+                const Text(
+                  'You’re all clear. Booked journeys and active season passes will be safely accessible here offline.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 13, color: LocoColors.textMuted),
+                ),
+                const SizedBox(height: 20),
+                if (widget.onPlanJourneyTap != null)
+                  ElevatedButton(
+                    onPressed: widget.onPlanJourneyTap,
+                    child: const Text('Plan a Journey'),
+                  ),
+              ],
+            ),
           ),
         ),
       );
     }
 
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: list.length,
-      itemBuilder: (context, index) {
-        final ticket = list[index];
-        return DynamicTicketCard(
-          ticket: ticket,
-          onTap: () => _showInspector(ticket),
-          onStartJourney: ticket.status == TicketStatus.upcoming
-              ? () => _startJourneyWithGuardian(ticket)
-              : null,
-        );
-      },
+    return RefreshIndicator(
+      onRefresh: _loadTickets,
+      color: LocoColors.orange,
+      child: ListView.builder(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(16),
+        itemCount: list.length,
+        itemBuilder: (context, index) {
+          final ticket = list[index];
+          return DynamicTicketCard(
+            ticket: ticket,
+            onTap: () => _showInspector(ticket),
+            onStartJourney: ticket.status == TicketStatus.upcoming
+                ? () => _startJourneyWithGuardian(ticket)
+                : null,
+          );
+        },
+      ),
     );
   }
 }

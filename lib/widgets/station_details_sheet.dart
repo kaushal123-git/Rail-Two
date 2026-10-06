@@ -91,13 +91,13 @@ class StationDetailsSheet extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: LocoColors.canvas,
+                  color: lineColor.withOpacity(0.12),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: LocoColors.border),
+                  border: Border.all(color: lineColor.withOpacity(0.3)),
                 ),
                 child: Text(
-                  station.crowdLevel,
-                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+                  '$line Line',
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: lineColor),
                 ),
               ),
             ],

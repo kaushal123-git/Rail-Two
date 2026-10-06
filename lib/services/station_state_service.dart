@@ -74,7 +74,7 @@ class StationStateService extends ChangeNotifier {
       notifyListeners();
 
       // Silently attempt GPS location detection
-      await detectCurrentLocation(silent: true);
+      await detectCurrentLocation(silent: true, forceGps: true);
     } catch (e) {
       debugPrint('Error initializing StationStateService: $e');
     }
@@ -82,25 +82,21 @@ class StationStateService extends ChangeNotifier {
 
   /// Detects the user's current GPS position, finds the nearest Mumbai station,
   /// and updates the default origin station across the entire app.
-  Future<RailwayStation?> detectCurrentLocation({bool silent = false}) async {
+  Future<RailwayStation?> detectCurrentLocation({bool silent = false, bool forceGps = false}) async {
     _isDetecting = true;
     _lastDetectionMessage = 'Detecting current GPS location...';
     if (!silent) notifyListeners();
 
     try {
-      final position = await LocationService.getCurrentLocation();
-      if (position != null) {
-        _lastGpsPosition = position;
-        final nearest = findNearestStation(position.latitude, position.longitude);
-        if (nearest != null) {
-          _currentStation = nearest;
-          _lastDetectionMessage = 'Detected near ${nearest.name}';
-          _isDetecting = false;
-          notifyListeners();
-          return nearest;
-        }
-      } else {
-        _lastDetectionMessage = 'Location permission not available. Using default station.';
+      final position = await LocationService.getCurrentLocation(forceRealGps: forceGps);
+      _lastGpsPosition = position;
+      final nearest = findNearestStation(position.latitude, position.longitude);
+      if (nearest != null) {
+        _currentStation = nearest;
+        _lastDetectionMessage = 'Detected near ${nearest.name}';
+        _isDetecting = false;
+        notifyListeners();
+        return nearest;
       }
     } catch (e) {
       _lastDetectionMessage = 'Location error: $e';

@@ -38,6 +38,7 @@ class BookedTicket {
   final String? passengerPhotoPath;
   final String qrSecurityToken;
   final int riskScore; // 0 to 100 for fraud detection
+  final String provider;
 
   // RO1: Spatial Indexing & Geofence Verification Metadata
   final String? s2CellToken;
@@ -72,6 +73,7 @@ class BookedTicket {
     this.passengerPhotoPath,
     String? qrSecurityToken,
     this.riskScore = 0,
+    this.provider = 'LOCO_CORE',
     this.s2CellToken,
     this.s2CellId,
     this.latitude,
@@ -106,6 +108,7 @@ class BookedTicket {
       'passengerPhotoPath': passengerPhotoPath,
       'qrSecurityToken': qrSecurityToken,
       'riskScore': riskScore,
+      'provider': provider,
     };
   }
 
@@ -140,13 +143,101 @@ class BookedTicket {
         orElse: () => TicketLifecycle.active,
       ),
       distanceKm: (json['distanceKm'] as num? ?? 3.0).toDouble(),
-      passengerName: json['passengerName'] as String? ?? 'Aayush Sinha',
-      passengerAddress: json['passengerAddress'] as String? ?? 'Bandra West, Mumbai',
+      passengerName: json['passengerName'] as String? ?? 'Commuter',
+      passengerAddress: json['passengerAddress'] as String? ?? 'Mumbai Suburban',
       passengerIdType: json['passengerIdType'] as String? ?? 'PAN Card',
       passengerIdNumber: json['passengerIdNumber'] as String? ?? 'SENP******',
       passengerPhotoPath: json['passengerPhotoPath'] as String?,
       qrSecurityToken: json['qrSecurityToken'] as String?,
       riskScore: (json['riskScore'] as num?)?.toInt() ?? 0,
+      provider: json['provider'] as String? ?? 'LOCO_CORE',
+    );
+  }
+
+  factory BookedTicket.fromBackendJson(Map<String, dynamic> json) {
+    final bDate = json['issued_at'] != null
+        ? DateTime.parse(json['issued_at'] as String)
+        : (json['created_at'] != null
+            ? DateTime.parse(json['created_at'] as String)
+            : DateTime.now());
+    final vUntil = json['valid_until'] != null
+        ? DateTime.parse(json['valid_until'] as String)
+        : bDate.add(const Duration(hours: 3));
+
+    final backendStatus = (json['ticket_status'] as String? ?? 'ISSUED').toUpperCase();
+    TicketStatus st = TicketStatus.upcoming;
+    TicketLifecycle lc = TicketLifecycle.active;
+
+    switch (backendStatus) {
+      case 'COMPLETED':
+        st = TicketStatus.completed;
+        lc = TicketLifecycle.completed;
+        break;
+      case 'CANCELLED':
+        st = TicketStatus.cancelled;
+        lc = TicketLifecycle.cancelled;
+        break;
+      case 'EXPIRED':
+        st = TicketStatus.completed;
+        lc = TicketLifecycle.expired;
+        break;
+      case 'FRAUD_BLOCKED':
+        st = TicketStatus.suspicious;
+        lc = TicketLifecycle.suspicious;
+        break;
+      case 'IN_JOURNEY':
+        st = TicketStatus.upcoming;
+        lc = TicketLifecycle.inJourney;
+        break;
+      case 'ACTIVE':
+      case 'ISSUED':
+      default:
+        st = TicketStatus.upcoming;
+        lc = TicketLifecycle.active;
+        break;
+    }
+
+    final origMap = json['origin_station'] as Map<String, dynamic>?;
+    final destMap = json['destination_station'] as Map<String, dynamic>?;
+
+    final origName = origMap?['name'] ?? origMap?['display_name'] ?? 'Origin';
+    final origCode = origMap?['code'] ?? 'ORIG';
+    final destName = destMap?['name'] ?? destMap?['display_name'] ?? 'Destination';
+    final destCode = destMap?['code'] ?? 'DEST';
+
+    final jType = (json['journey_type'] as String? ?? 'SINGLE').toUpperCase();
+    final TicketType tType;
+    if (jType == 'SEASON') {
+      tType = TicketType.season;
+    } else if (jType == 'RETURN') {
+      tType = TicketType.returnTicket;
+    } else {
+      tType = TicketType.journey;
+    }
+
+    return BookedTicket(
+      id: json['provider_ticket_id'] as String? ?? (json['id'] as String? ?? 'LOCO-TKT'),
+      fromStationName: origName as String,
+      fromStationCode: origCode as String,
+      toStationName: destName as String,
+      toStationCode: destCode as String,
+      ticketType: tType,
+      bookingType: BookingType.issue,
+      trainType: 'SUBURBAN EMU',
+      duration: jType,
+      classType: json['ticket_class'] as String? ?? 'SECOND',
+      fare: (json['fare'] as num?)?.toInt() ?? 10,
+      bookingDate: bDate,
+      validUntil: vUntil,
+      status: st,
+      lifecycle: lc,
+      distanceKm: (json['distance_km'] as num?)?.toDouble() ?? 5.0,
+      passengerName: json['passenger_name'] as String? ?? 'Commuter',
+      passengerAddress: 'Mumbai Suburban Transit',
+      passengerIdType: 'Digital Identity',
+      passengerIdNumber: json['id'] as String? ?? '',
+      qrSecurityToken: json['qr_token_id'] as String?,
+      provider: json['provider'] as String? ?? 'LOCO_CORE',
     );
   }
 
@@ -174,6 +265,7 @@ class BookedTicket {
     String? passengerPhotoPath,
     String? qrSecurityToken,
     int? riskScore,
+    String? provider,
   }) {
     return BookedTicket(
       id: id ?? this.id,
@@ -199,6 +291,7 @@ class BookedTicket {
       passengerPhotoPath: passengerPhotoPath ?? this.passengerPhotoPath,
       qrSecurityToken: qrSecurityToken ?? this.qrSecurityToken,
       riskScore: riskScore ?? this.riskScore,
+      provider: provider ?? this.provider,
     );
   }
 }

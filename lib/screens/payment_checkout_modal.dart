@@ -8,12 +8,14 @@ class PaymentCheckoutModal extends StatefulWidget {
   final double amount;
   final String title;
   final String description;
+  final String? bookingId;
 
   const PaymentCheckoutModal({
     super.key,
     required this.amount,
     required this.title,
     required this.description,
+    this.bookingId,
   });
 
   static Future<Map<String, dynamic>?> show(
@@ -21,6 +23,7 @@ class PaymentCheckoutModal extends StatefulWidget {
     required double amount,
     required String title,
     required String description,
+    String? bookingId,
   }) {
     return showModalBottomSheet<Map<String, dynamic>>(
       context: context,
@@ -34,6 +37,7 @@ class PaymentCheckoutModal extends StatefulWidget {
           amount: amount,
           title: title,
           description: description,
+          bookingId: bookingId,
         ),
       ),
     );
@@ -55,21 +59,18 @@ class _PaymentCheckoutModalState extends State<PaymentCheckoutModal>
   String _walletError = '';
 
   // Razorpay State
-  bool _isInitializingRazorpay = false;
   String _selectedCardType = 'CREDIT_CARD';
-  String _selectedBank = 'HDFC';
   bool _isProcessingRazorpay = false;
 
   // UPI QR State
   bool _isGeneratingUpi = false;
-  String _upiIntentUrl = '';
   String _transactionId = '';
   String _upiUtr = '';
   int _upiCountdown = 300; // 5 minutes
   Timer? _timer;
   bool _isVerifyingUpi = false;
 
-  String _userPhone = '9876543210';
+  String _userPhone = '';
 
   @override
   void initState() {
@@ -94,7 +95,7 @@ class _PaymentCheckoutModalState extends State<PaymentCheckoutModal>
     final backendBal = await ApiService.getWalletBalance(_userPhone);
     if (mounted) {
       setState(() {
-        _walletBalance = backendBal ?? user?.rwalletBalance ?? 100.0;
+        _walletBalance = backendBal ?? user?.rwalletBalance ?? 0.0;
         _isLoadingBalance = false;
       });
     }
@@ -129,6 +130,7 @@ class _PaymentCheckoutModalState extends State<PaymentCheckoutModal>
       amount: widget.amount,
       mpin: _mpin,
       description: widget.description,
+      ticketId: widget.bookingId,
     );
 
     if (!mounted) return;
@@ -144,6 +146,7 @@ class _PaymentCheckoutModalState extends State<PaymentCheckoutModal>
         'payment_method': 'RWALLET',
         'transaction_id': data['transaction_id'],
         'amount': widget.amount,
+        'ticket': data['ticket'],
       });
     } else {
       setState(() => _walletError = res['message'] ?? 'Wallet payment failed.');
@@ -172,7 +175,7 @@ class _PaymentCheckoutModalState extends State<PaymentCheckoutModal>
     if (res['success'] == true) {
       final txData = res['data'];
       final verifyRes = await ApiService.verifyPayment(
-        transactionId: txData['transaction_id'],
+        transactionId: txData['transaction_id'] ?? txData['gateway_order_id'] ?? '',
         phone: _userPhone,
         razorpayOrderId: txData['gateway_order_id'],
         razorpayPaymentId: 'pay_topup_${DateTime.now().millisecondsSinceEpoch}',
@@ -207,6 +210,7 @@ class _PaymentCheckoutModalState extends State<PaymentCheckoutModal>
       paymentMethod: 'RAZORPAY',
       purpose: 'TICKET_BOOKING',
       description: widget.description,
+      ticketId: widget.bookingId,
     );
 
     if (orderRes['success'] != true) {
@@ -220,8 +224,8 @@ class _PaymentCheckoutModalState extends State<PaymentCheckoutModal>
     }
 
     final orderData = orderRes['data'];
-    final String txId = orderData['transaction_id'];
-    final String orderId = orderData['gateway_order_id'];
+    final String txId = orderData['transaction_id'] ?? orderData['payment_id'] ?? orderData['gateway_order_id'] ?? '';
+    final String orderId = orderData['gateway_order_id'] ?? '';
 
     // Simulate Razorpay Gateway Interface Delay
     await Future.delayed(const Duration(milliseconds: 1200));
@@ -232,6 +236,7 @@ class _PaymentCheckoutModalState extends State<PaymentCheckoutModal>
       razorpayOrderId: orderId,
       razorpayPaymentId: 'pay_rzp_${DateTime.now().millisecondsSinceEpoch}',
       razorpaySignature: 'ver_rzp_sig_2026',
+      ticketId: widget.bookingId,
     );
 
     if (!mounted) return;
@@ -242,8 +247,9 @@ class _PaymentCheckoutModalState extends State<PaymentCheckoutModal>
         'success': true,
         'payment_method': 'RAZORPAY',
         'transaction_id': txId,
-        'payment_id': verifyRes['data']['payment_id'],
+        'payment_id': verifyRes['data']?['payment_id'] ?? verifyRes['ticket']?['id'] ?? txId,
         'amount': widget.amount,
+        'ticket': verifyRes['ticket'],
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -262,6 +268,7 @@ class _PaymentCheckoutModalState extends State<PaymentCheckoutModal>
       paymentMethod: 'UPI_QR',
       purpose: 'TICKET_BOOKING',
       description: widget.description,
+      ticketId: widget.bookingId,
     );
 
     if (!mounted) return;
@@ -270,8 +277,7 @@ class _PaymentCheckoutModalState extends State<PaymentCheckoutModal>
     if (res['success'] == true) {
       final data = res['data'];
       setState(() {
-        _transactionId = data['transaction_id'];
-        _upiIntentUrl = data['upi_intent_url'];
+        _transactionId = data['transaction_id'] ?? data['gateway_order_id'] ?? '';
       });
       _startUpiTimer();
     }
@@ -288,7 +294,11 @@ class _PaymentCheckoutModalState extends State<PaymentCheckoutModal>
     final verifyRes = await ApiService.verifyPayment(
       transactionId: _transactionId,
       phone: _userPhone,
+      razorpayOrderId: _transactionId,
+      razorpayPaymentId: 'pay_upi_${DateTime.now().millisecondsSinceEpoch}',
+      razorpaySignature: 'ver_upi_sig_2026',
       upiUtr: _upiUtr.isNotEmpty ? _upiUtr : null,
+      ticketId: widget.bookingId,
     );
 
     if (!mounted) return;
@@ -299,8 +309,9 @@ class _PaymentCheckoutModalState extends State<PaymentCheckoutModal>
         'success': true,
         'payment_method': 'UPI_QR',
         'transaction_id': _transactionId,
-        'payment_id': verifyRes['data']['payment_id'],
+        'payment_id': verifyRes['data']?['payment_id'] ?? verifyRes['ticket']?['id'] ?? _transactionId,
         'amount': widget.amount,
+        'ticket': verifyRes['ticket'],
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

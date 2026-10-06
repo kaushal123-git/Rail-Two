@@ -58,54 +58,52 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     setState(() => _isLoading = true);
 
     try {
-      final exists = await AuthDatabase().userExists(rawInput);
+      final res = await OtpService().requestBackendOtp(
+        phone: rawInput,
+        purpose: 'RESET_PIN',
+      );
       if (!mounted) return;
-
-      if (!exists) {
-        setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            backgroundColor: LocoColors.error,
-            content: Text('No account found with this identifier. Please sign up first.'),
-          ),
-        );
-        return;
-      }
-
-      // Generate 6-digit OTP
-      final otp = OtpService().generateOtp(rawInput);
       setState(() => _isLoading = false);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: LocoColors.textPrimary,
-          duration: const Duration(seconds: 8),
-          behavior: SnackBarBehavior.floating,
-          content: Row(
-            children: [
-              const Icon(Icons.lock_reset, color: LocoColors.orange),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  'Password Reset OTP: $otp (Valid for 5 mins)',
-                  style: const TextStyle(fontWeight: FontWeight.w700),
+      if (res['success'] == true) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: LocoColors.textPrimary,
+            duration: const Duration(seconds: 6),
+            behavior: SnackBarBehavior.floating,
+            content: Row(
+              children: [
+                const Icon(Icons.lock_reset, color: LocoColors.orange),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Reset code sent to $rawInput via SMS gateway',
+                    style: const TextStyle(fontWeight: FontWeight.w700),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      );
+        );
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => OtpVerificationScreen(
-            identifier: rawInput,
-            purpose: OtpPurpose.forgotPassword,
-            isPhone: _isPhoneMode,
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => OtpVerificationScreen(
+              identifier: rawInput,
+              purpose: OtpPurpose.forgotPassword,
+              isPhone: _isPhoneMode,
+            ),
           ),
-        ),
-      );
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: LocoColors.error,
+            content: Text(res['message'] ?? 'Failed to send reset code.'),
+          ),
+        );
+      }
     } catch (e) {
       if (!mounted) return;
       setState(() => _isLoading = false);

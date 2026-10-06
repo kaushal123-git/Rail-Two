@@ -3,6 +3,7 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import '../core/constants/loco_branding.dart';
 import '../core/theme/loco_theme.dart';
 import '../models/user_account.dart';
+import '../services/api_service.dart';
 import '../services/auth_database.dart';
 import '../services/biometric_service.dart';
 import '../services/otp_service.dart';
@@ -10,7 +11,6 @@ import 'forgot_password_screen.dart';
 import 'main_navigation_shell.dart';
 import 'otp_verification_screen.dart';
 import 'signin_screen.dart';
-import 'otp_verification_screen.dart';
 
 enum LoginMode {
   mpin,
@@ -153,6 +153,35 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = true);
 
     try {
+      final phone = _identifierController.text.trim().isNotEmpty
+          ? _identifierController.text.trim()
+          : (_lastActiveUser?.phone ?? _lastActiveUser?.identifier ?? '');
+
+      final isOnline = await ApiService.isServerAvailable();
+      if (isOnline && phone.isNotEmpty && !phone.contains('@')) {
+        final res = await ApiService.loginMpin(phone: phone, mpin: mpin);
+        if (res['success'] == true) {
+          final user = await AuthDatabase().authenticateWithMpin(
+            mpin,
+            rawIdentifier: phone,
+          );
+          if (user != null) {
+            await AuthDatabase().setActiveSession(user);
+          }
+          if (!mounted) return;
+          setState(() => _isLoading = false);
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const MainNavigationShell()),
+          );
+          return;
+        } else if (res['statusCode'] == 401) {
+          setState(() => _isLoading = false);
+          _showError(res['message'] ?? 'Invalid MPIN. Please try again.');
+          return;
+        }
+      }
+
       final user = await AuthDatabase().authenticateWithMpin(
         mpin,
         rawIdentifier: _identifierController.text.trim().isNotEmpty
@@ -160,8 +189,7 @@ class _LoginScreenState extends State<LoginScreen> {
             : null,
       );
 
-      // Support demo fallback: 1234
-      if (user != null || mpin == '1234') {
+      if (user != null) {
         if (!mounted) return;
         setState(() => _isLoading = false);
         Navigator.pushReplacement(
@@ -170,7 +198,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       } else {
         setState(() => _isLoading = false);
-        _showError('Invalid MPIN. Try default demo code: 1234');
+        _showError('Invalid MPIN. Please try again.');
       }
     } catch (e) {
       setState(() => _isLoading = false);
@@ -224,52 +252,52 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = true);
 
     try {
-      final exists = await AuthDatabase().userExists(identifier);
-      if (!mounted) return;
-
-      if (!exists) {
-        setState(() => _isLoading = false);
-        _showError('No account found with this identifier. Please register.');
-        return;
-      }
-
-      final otp = OtpService().generateOtp(identifier);
-      setState(() => _isLoading = false);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: LocoColors.textPrimary,
-          duration: const Duration(seconds: 8),
-          behavior: SnackBarBehavior.floating,
-          content: Row(
-            children: [
-              const Icon(Icons.mark_email_read_outlined, color: LocoColors.orange),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  'LOCO Sign-In OTP: $otp (Valid for 5 mins)',
-                  style: const TextStyle(fontWeight: FontWeight.w700),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-
       final isPhone = !identifier.contains('@');
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => OtpVerificationScreen(
-            identifier: identifier,
-            purpose: OtpPurpose.directLogin,
-            isPhone: isPhone,
-          ),
-        ),
+      final res = await OtpService().requestBackendOtp(
+        phone: identifier,
+        purpose: 'LOGIN',
       );
-    } catch (e) {
+      if (!mounted) return;
       setState(() => _isLoading = false);
-      _showError('Error: $e');
+
+      if (res['success'] == true) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: LocoColors.textPrimary,
+            duration: const Duration(seconds: 6),
+            behavior: SnackBarBehavior.floating,
+            content: Row(
+              children: [
+                const Icon(Icons.mark_email_read_outlined, color: LocoColors.orange),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'OTP sent to $identifier via SMS gateway',
+                    style: const TextStyle(fontWeight: FontWeight.w700),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => OtpVerificationScreen(
+              identifier: identifier,
+              purpose: OtpPurpose.directLogin,
+              isPhone: isPhone,
+            ),
+          ),
+        );
+      } else {
+        _showError(res['message'] ?? 'Failed to send OTP via server.');
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      _showError('Login error: $e');
     }
   }
 
@@ -355,7 +383,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             const SizedBox(height: 4),
                             const Text(
-                              'Demo default PIN: 1234',
+                              'Enter your 4-digit security PIN',
                               style: TextStyle(fontSize: 12, color: LocoColors.textMuted),
                             ),
                             const SizedBox(height: 24),
